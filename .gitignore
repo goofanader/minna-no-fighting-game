@@ -44,3 +44,6 @@ Temporary Items
 
 # My additions to this file
 *.zip
+.sass-cache
+*.css.map
+public_html/css/*.css
