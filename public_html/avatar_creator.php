@@ -13,7 +13,7 @@
   <!-- Bootstrap -->
   <link rel="stylesheet" href="css/reset.css">
   <link href="bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
-  <!--<link rel="stylesheet" href="css/avatar_creator.css">-->
+  <link rel="stylesheet" href="css/avatar_creator.css">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -52,7 +52,7 @@
   <div>-->
 
   <!-- Nav tabs -->
-  <div>
+  <div class="avatar-app">
   <ul class="nav nav-pills nav-justified" role="tablist">
     <li role="presentation" class="active"><a href="#body" aria-controls="body" role="tab" data-toggle="pill">o-|-&lt;</a></li>
     <li role="presentation"><a href="#eyes" aria-controls="eyes" role="tab" data-toggle="pill">.__.</a></li>
