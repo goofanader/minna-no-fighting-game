@@ -48,3 +48,4 @@ Temporary Items
 *.css.map
 public_html/css/*.css
 !public_html/css/reset.css
+!public_html/css/bootflat.min.css

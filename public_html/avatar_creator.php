@@ -1,6 +1,6 @@
 <?php
   //$hello = "hello world";
-  $tabPreference = "pills";
+  $tabPreference = "tabs";
 ?>
 <html>
 
@@ -40,11 +40,12 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Minna no Avatar</a>
+        <div class="navbar-brand">Minna no Avatar</div>
       </div>
       <div class="collapse navbar-collapse" id="avatar-items-collapse">
       <!--<div class="navbar-inner"><a class="brand" href="#">Minna no Avatar</a>-->
-        <?php echo '<ul class="nav nav-'.$tabPreference.'" role="tablist">'; ?>
+        <!--< ?php echo '<ul class="nav nav-'.$tabPreference.'" role="tablist">'; ?>-->
+        <?php echo '<ul class="nav navbar-nav" role="tablist">'; ?>
           <?php
           // want to iterate through
           $tabs = array(
