@@ -20,6 +20,7 @@
   <!--<link rel="stylesheet" href="css/reset.css">-->
   <link href="bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/avatar_creator.css">
+  <!--<link rel="stylesheet" href="css/bootstrap-horizon.css">-->
   <link rel="stylesheet" href="css/bootflat.min.css">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -77,7 +78,7 @@
             $tabName = $tabs[$i][0];
             $icon = $tabs[$i][1];
 
-            echo "<li role='presentation'$class_info><a href='#$tabName' aria-controls='$tabName' role='tab' data-toggle='tab'><img class='pixelated' src='media/images/SYMBOLS/$tabName.png' alt='$icon' width='$iconSize' height='$iconSize'></a></li>\n";
+            echo "<li role='presentation'$class_info><a href='#$tabName' aria-controls='$tabName' role='tab' data-toggle='tab'><img class='pixelated' src='media/images/ICONS/$tabName.png' alt='$icon' width='$iconSize' height='$iconSize'></a></li>\n";
           }
           ?>
         </ul>
