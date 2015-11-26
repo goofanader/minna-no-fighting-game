@@ -14,7 +14,7 @@
   <script language="javascript" type="text/javascript" src='js/libraries/jquery-2.1.4.min.js'></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
-  <!--<script language="javascript" type="text/javascript" src="js/avatar_creator.js"></script>-->
+  <script language="javascript" type="text/javascript" src="js/avatar_creator.js"></script>
 
   <!-- Bootstrap -->
   <!--<link rel="stylesheet" href="css/reset.css">-->
@@ -77,14 +77,36 @@
 
             $tabName = $tabs[$i][0];
             $icon = $tabs[$i][1];
+            $mediaFolder = "media/images/$tabName";
 
-            echo "<li role='presentation'$class_info><a href='#$tabName' aria-controls='$tabName' role='tab' data-toggle='tab'><img class='pixelated' src='media/images/ICONS/$tabName.png' alt='$icon' width='$iconSize' height='$iconSize'></a></li>\n";
+            try {
+              $files = scandir($mediaFolder);
+
+              if (!$files) {
+                $class_info = " class='disabled'";
+              }
+            } catch (Exception $e) {
+                $class_info = " class='disabled'";
+            }
+
+            echo "<li role='presentation'$class_info><a href='#$tabName' aria-controls='$tabName' role='tab' data-toggle='tab'><img class='pixelated' src='media/images/ICONS/$tabName.png' alt='$icon' title='$icon' width='$iconSize' height='$iconSize' onerror='this.src=\"media/images/ICONS/no_icon.png\"'></a></li>\n";
           }
           ?>
         </ul>
       </div>
     </nav>
     <div class="row">
+      <?php // avatar picture // ?>
+      <div class="col-xs-12 col-md-3 col-lg-3">
+        <img class="avatar-picture" id="avatar-BODY" src='media/images/BODY/front.png'>
+        <img class="avatar-picture" id="avatar-EYES" src="media/images/EYES/line eyes.png">
+        <img class="avatar-picture" id="avatar-MOUTH" src="media/images/MOUTH/lilsmile.png">
+        <img class="avatar-picture" id="avatar-SHOES" src="media/images/SHOES/snowSneakers_front.png">
+        <img class="avatar-picture" id="avatar-PANTS" src="media/images/PANTS/LongPant.png">
+        <img class="avatar-picture" id="avatar-TOP" src="media/images/TOP/Sweatshirt.png">
+        <img class="avatar-picture" id="avatar-HAIR" src="media/images/HAIR/bowlcut.png">
+      </div>
+      <?php // clothing choices // ?>
       <div class="col-xs-12 col-md-9 col-lg-9">
 
         <!-- Tab panes -->
@@ -107,9 +129,14 @@
               $files = scandir($mediaFolder);
 
               if ($files) {
+                // add a way to remove the piece first
+                echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-remove'><img class='pixelated' src='' alt='Remove' width='$partsSize' height='$partsSize'></button> ";
+
                 foreach ($files as $imageName) {
                   if ($imageName != "." && $imageName != "..") {
-                    echo "<img class='pixelated' src='$mediaFolder/$imageName' alt='$imageName' width='$partsSize' height='$partsSize'> ";
+                    $imageNameParts = explode(".", $imageName);
+
+                    echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-{$imageNameParts[0]}'><img class='pixelated' src='$mediaFolder/$imageName' alt='$tabName: {$imageNameParts[0]}' width='$partsSize' height='$partsSize'></button> ";
                   }
                 }
               }

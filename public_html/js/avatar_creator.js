@@ -8,7 +8,7 @@ $(document).ready(function() {
 
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   */
-  $('ul.tabs li').click(function() {
+  /*$('ul.tabs li').click(function() {
     var tab_id = $(this).attr('data-tab');
 
     $('ul.tabs li').removeClass('current');
@@ -16,6 +16,26 @@ $(document).ready(function() {
 
     $(this).addClass('current');
     $("#" + tab_id).addClass('current');
-  })
+  })*/
+
+  $('button').click(function() {
+    var idSplit = $(this).attr("id").split("-");
+
+    if (idSplit.length > 3 && idSplit[0] === "avatar" && idSplit[1] === "button") {
+      var avatarPartID = "#avatar-" + idSplit[2];
+
+      if (idSplit[3] !== "remove") {
+        var imageFile = "media/images/" + idSplit[2] + "/" + idSplit[3] + ".png";
+        $(avatarPartID).removeClass("hide");
+        $(avatarPartID).attr("src", imageFile);
+      }
+      else {
+        $(avatarPartID).addClass("hide");
+      }
+
+      $(this).parent().children().removeClass("active");
+      $(this).addClass("active");
+    }
+  });
 
 })
