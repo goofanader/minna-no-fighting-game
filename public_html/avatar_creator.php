@@ -95,19 +95,8 @@
         </ul>
       </div>
     </nav>
-    <div class="row">
-      <?php // avatar picture // ?>
-      <div class="col-xs-12 col-md-3 col-lg-3">
-        <img class="avatar-picture" id="avatar-BODY" src='media/images/BODY/front.png'>
-        <img class="avatar-picture" id="avatar-EYES" src="media/images/EYES/line eyes.png">
-        <img class="avatar-picture" id="avatar-MOUTH" src="media/images/MOUTH/lilsmile.png">
-        <img class="avatar-picture" id="avatar-SHOES" src="media/images/SHOES/snowSneakers_front.png">
-        <img class="avatar-picture" id="avatar-PANTS" src="media/images/PANTS/LongPant.png">
-        <img class="avatar-picture" id="avatar-TOP" src="media/images/TOP/Sweatshirt.png">
-        <img class="avatar-picture" id="avatar-HAIR" src="media/images/HAIR/bowlcut.png">
-      </div>
       <?php // clothing choices // ?>
-      <div class="col-xs-12 col-md-9 col-lg-9">
+      <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 
         <!-- Tab panes -->
         <div class="tab-content">
@@ -149,6 +138,17 @@
           ?>
         </div>
       </div>
+      <div class="row">
+        <?php // avatar picture // ?>
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+          <img class="avatar-picture" id="avatar-BODY" src='media/images/BODY/front.png'>
+          <img class="avatar-picture" id="avatar-EYES" src="media/images/EYES/line eyes.png">
+          <img class="avatar-picture" id="avatar-MOUTH" src="media/images/MOUTH/lilsmile.png">
+          <img class="avatar-picture" id="avatar-SHOES" src="media/images/SHOES/snowSneakers_front.png">
+          <img class="avatar-picture" id="avatar-PANTS" src="media/images/PANTS/LongPant.png">
+          <img class="avatar-picture" id="avatar-TOP" src="media/images/TOP/Sweatshirt.png">
+          <img class="avatar-picture" id="avatar-HAIR" src="media/images/HAIR/bowlcut.png">
+        </div>
     </div>
   </div>
 </body>
