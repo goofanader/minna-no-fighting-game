@@ -1,3 +1,6 @@
+local Gamestate = require "libraries/hump.gamestate"
+local Class = require "libraries/hump.class"
+
 function love.load()
 end
 
