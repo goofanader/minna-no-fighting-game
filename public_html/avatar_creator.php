@@ -96,58 +96,60 @@
       </div>
     </nav>
       <?php // clothing choices // ?>
-      <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 
-        <!-- Tab panes -->
-        <div class="tab-content">
-          <?php
-          for ($i = 0; $i < count($tabs); $i++) {
-            if ($i == 0) {
-              $class_info = " in active";
-            }
-            else {
-              $class_info = "";
-            }
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <?php
+            for ($i = 0; $i < count($tabs); $i++) {
+              if ($i == 0) {
+                $class_info = " in active";
+              }
+              else {
+                $class_info = "";
+              }
 
-            $tabName = $tabs[$i][0];
-            $info = $tabs[$i][2];
-            $mediaFolder = "media/images/$tabName";
+              $tabName = $tabs[$i][0];
+              $info = $tabs[$i][2];
+              $mediaFolder = "media/images/$tabName";
 
-            echo "<div role='tabpanel' class='tab-pane fade$class_info' id='$tabName'>";
-            try {
-              $files = scandir($mediaFolder);
+              echo "<div role='tabpanel' class='tab-pane fade$class_info' id='$tabName'>";
+              try {
+                $files = scandir($mediaFolder);
 
-              if ($files) {
-                // add a way to remove the piece first
-                echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-remove'><img class='pixelated' src='' alt='Remove' width='$partsSize' height='$partsSize'></button> ";
+                if ($files) {
+                  // add a way to remove the piece first
+                  echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-remove'><img class='pixelated' src='' alt='Remove' width='$partsSize' height='$partsSize'></button> ";
 
-                foreach ($files as $imageName) {
-                  if ($imageName != "." && $imageName != "..") {
-                    $imageNameParts = explode(".", $imageName);
+                  foreach ($files as $imageName) {
+                    if ($imageName != "." && $imageName != ".." && $imageName[0] != ".") {
+                      $imageNameParts = explode(".", $imageName);
 
-                    echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-{$imageNameParts[0]}'><img class='pixelated' src='$mediaFolder/$imageName' alt='$tabName: {$imageNameParts[0]}' width='$partsSize' height='$partsSize'></button> ";
+                      echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-{$imageNameParts[0]}'><img class='pixelated' src='$mediaFolder/$imageName' alt='$tabName: {$imageNameParts[0]}' width='$partsSize' height='$partsSize'></button> ";
+                    }
                   }
                 }
+              } catch (Exception $e) {
+
               }
-            } catch (Exception $e) {
 
+              echo "</div>\n";
             }
-
-            echo "</div>\n";
-          }
-          ?>
+            ?>
+          </div>
         </div>
-      </div>
-      <div class="row">
         <?php // avatar picture // ?>
+        <!--<div class="hidden-xs hidden-sm col-md-3 col-lg-3">-->
         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
           <img class="avatar-picture" id="avatar-BODY" src='media/images/BODY/front.png'>
-          <img class="avatar-picture" id="avatar-EYES" src="media/images/EYES/line eyes.png">
-          <img class="avatar-picture" id="avatar-MOUTH" src="media/images/MOUTH/lilsmile.png">
-          <img class="avatar-picture" id="avatar-SHOES" src="media/images/SHOES/snowSneakers_front.png">
+          <img class="avatar-picture" id="avatar-EYES" src="media/images/EYES/happyeyes.png">
+          <img class="avatar-picture" id="avatar-MOUTH" src="media/images/MOUTH/smile_small.png">
+          <img class="avatar-picture" id="avatar-SHOES" src="media/images/SHOES/boots.png">
           <img class="avatar-picture" id="avatar-PANTS" src="media/images/PANTS/LongPant.png">
           <img class="avatar-picture" id="avatar-TOP" src="media/images/TOP/Sweatshirt.png">
           <img class="avatar-picture" id="avatar-HAIR" src="media/images/HAIR/bowlcut.png">
+          <img class="avatar-picture" id="avatar-HEADPIECE" src="media/images/HEADPIECE/mouseears.png">
         </div>
     </div>
   </div>
