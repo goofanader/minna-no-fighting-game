@@ -26,3 +26,7 @@ function GamePlay:keyreleased(key, code)
     Gamestate.switch(MainMenu)
   end
 end
+
+function GamePlay:keypressed(key, isrepeat)
+  player1:keypressed(key, isrepeat)
+end
