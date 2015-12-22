@@ -12,6 +12,7 @@ function Player:init(pos, imagefile)
   self.hitstun = anim8.newAnimation(g('1-2',3),0.1)
   self.idle = anim8.newAnimation(g('3-8',3,'1-6',4),0.1)
   self.animation = self.idle
+  self.flipH = 0
 end
 
 function Player:update(dt)
@@ -24,10 +25,28 @@ end
 
 function Player:keypressed(key, isrepeat)
   if key == "right" then
+    if self.flipH == 1 then
+      self.running:flipH()
+      self.punch:flipH()
+      self.hitstun:flipH()
+      self.idle:flipH()
+      self.flipH = 0
+    end
+    self.animation = self.running
+  end
+  if key == "left" then
+    if self.flipH == 0 then
+      self.running:flipH()
+      self.punch:flipH()
+      self.hitstun:flipH()
+      self.idle:flipH()
+      self.flipH = 1
+    end
     self.animation = self.running
   end
   if key == "z" then
     self.animation = self.punch
+    self.animation:gotoFrame(1)
   end
   if key == "x" then
     self.animation = self.hitstun
@@ -35,7 +54,7 @@ function Player:keypressed(key, isrepeat)
 end
 
 function Player:keyreleased(key, isrepeat)
-  if key == "right" then
+  --if key == "right" then
     self.animation = self.idle
-  end
+  --end
 end
