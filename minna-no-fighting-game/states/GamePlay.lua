@@ -24,6 +24,8 @@ end
 function GamePlay:keyreleased(key, code)
   if key == 'return' then
     Gamestate.switch(MainMenu)
+  else
+    player1:keyreleased(key, isrepeat)
   end
 end
 
