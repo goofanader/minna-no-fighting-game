@@ -3,10 +3,13 @@ local anim8 = require "libraries/anim8"
 
 Player = Class{}
 
-function Player:init(pos, imagefile)
+local lastPressed
+
+function Player:init(pos, imagefile, button)
   self.img = love.graphics.newImage(imagefile)
   self.pos = pos
-  local g = anim8.newGrid(32,32,self.img:getWidth(),self.img:getHeight())
+  self.button = button
+  local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-8',1),0.1)
   self.punch = anim8.newAnimation(g('1-8',2),0.1)
   self.hitstun = anim8.newAnimation(g('1-2',3),0.1)
@@ -44,17 +47,18 @@ function Player:keypressed(key, isrepeat)
     end
     self.animation = self.running
   end
-  if key == "z" then
+  if key == self.button then
     self.animation = self.punch
     self.animation:gotoFrame(1)
   end
   if key == "x" then
     self.animation = self.hitstun
   end
+  lastPressed = key
 end
 
 function Player:keyreleased(key, isrepeat)
-  --if key == "right" then
+  if key == lastPressed then
     self.animation = self.idle
-  --end
+  end
 end

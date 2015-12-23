@@ -2,6 +2,7 @@ local Gamestate = require "libraries/hump.gamestate"
 local Class = require "libraries/hump.class"
 
 require "states/MainMenu"
+require "constants"
 
 function love.load()
   WINDOW_WIDTH = love.graphics.getWidth()
@@ -18,7 +19,7 @@ function love.update(dt)
 end
 
 function love.keypressed(key, isrepeat)
-  if key == "q" or key == "escape" then
+  if key == "escape" then
     love.event.quit()
   end
 end

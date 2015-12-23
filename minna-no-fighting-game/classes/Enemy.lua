@@ -6,7 +6,7 @@ Enemy = Class{}
 function Enemy:init(pos, imagefile)
   self.img = love.graphics.newImage(imagefile)
   self.pos = pos
-  local g = anim8.newGrid(32,32,self.img:getWidth(),self.img:getHeight())
+  local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-8',1),0.1)
   self.punch = anim8.newAnimation(g('1-8',2),0.1)
   self.hitstun = anim8.newAnimation(g('1-2',3),0.1)
@@ -20,5 +20,5 @@ function Enemy:update(dt)
 end
 
 function Enemy:draw()
-  self.animation:draw(self.img, self.pos, 50)
+  self.animation:draw(self.img, self.pos, 100)
 end
