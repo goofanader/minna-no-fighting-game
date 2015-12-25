@@ -40,14 +40,18 @@ function ButtonSelect:update(dt)
 end
 
 function ButtonSelect:keypressed(key, code)
+  pressFlag = false
   if selection > 1 then
     for i = 1,selection-1 do
       if key == buttons[i] then
         pressed[i] = true
+        pressFlag = true
       end
     end
   end
-  lastPressed = key
+  if not pressFlag then
+    lastPressed = key
+  end
 end
 
 function ButtonSelect:keyreleased(key, code)
@@ -55,7 +59,7 @@ function ButtonSelect:keyreleased(key, code)
     if lastPressed == 'return' and selection > 1 then
       numberOfPlayers = selection-1
       for i=1, numberOfPlayers do
-        players[i] = Player(50*i,'assets/sprites/animal.png',buttons[i])
+        players[i] = Player(25*i,'assets/sprites/animal.png',buttons[i])
       end
       numberOfPlayers = selection-1
       Gamestate.switch(GamePlay)

@@ -19,6 +19,12 @@ function Player:init(pos, imagefile, button)
 end
 
 function Player:update(dt)
+  if love.keyboard.isDown('right') then
+    self.pos = self.pos + 1
+  elseif love.keyboard.isDown('left') then
+    self.pos = self.pos - 1
+  end
+  
   self.animation:update(dt)
 end
 
