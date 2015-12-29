@@ -7,7 +7,9 @@ require "constants"
 function love.load()
   WINDOW_WIDTH = love.graphics.getWidth()
   WINDOW_HEIGHT = love.graphics.getHeight()
-  
+
+  love.graphics.setDefaultFilter("nearest", "nearest")
+
   Gamestate.registerEvents()
   Gamestate.switch(MainMenu)
 end
