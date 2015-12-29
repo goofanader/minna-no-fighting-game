@@ -8,14 +8,14 @@ GamePlay = {}
 function GamePlay:enter()
   --player1 = Player(50,'assets/sprites/animal.png')
   enemies = {}
-  numberOfEnemies = 12
+  numberOfEnemies = 5
   for i=1,numberOfEnemies do
-    enemies[i] = Enemy(30*i,'assets/sprites/animal.png')
+    enemies[i] = Enemy(WINDOW_WIDTH-30*i,'assets/sprites/animal.png')
   end
 end
 
 function GamePlay:draw()
-  love.graphics.print("You're playing a game!\nPress x for hitstun, selected buttons for punch, and left & right to move!", 10, 10)
+  love.graphics.print("You're playing a game! Press each button!\nThe Hitstun animation represents charging.", 10, 10)
   for i=1,numberOfPlayers do
     players[i]:draw()
   end
@@ -38,15 +38,8 @@ function GamePlay:keyreleased(key, code)
     Gamestate.switch(MainMenu)
     players = {}
     enemies = {}
-  else
-    for i=1,numberOfPlayers do
-      players[i]:keyreleased(key, isrepeat)
-    end
   end
 end
 
 function GamePlay:keypressed(key, isrepeat)
-  for i=1,numberOfPlayers do
-      players[i]:keypressed(key, isrepeat)
-  end
 end

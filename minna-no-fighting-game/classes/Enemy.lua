@@ -28,7 +28,7 @@ end
 
 function Enemy:draw()
   if self.alive then
-    self.animation:draw(self.img, self.pos, 100)
+    self.animation:draw(self.img, self.pos, HORIZONTAL_PLANE)
   end
 end
 

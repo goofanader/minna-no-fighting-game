@@ -14,6 +14,7 @@ local pressFlag
 
 function ButtonSelect:enter()
   selection = 1
+  pressed = {}
 end
 
 function ButtonSelect:draw()
@@ -65,8 +66,11 @@ function ButtonSelect:keyreleased(key, code)
       Gamestate.switch(GamePlay)
     end
   elseif key == 'backspace' then
+    pressed[selection-1] = false
     if selection > 1 then
       selection = selection - 1
+    else
+      Gamestate.switch(MainMenu)
     end
   else
     pressFlag = false
