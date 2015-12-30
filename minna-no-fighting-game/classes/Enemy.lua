@@ -21,9 +21,10 @@ function Enemy:init(pos, imagefile)
   local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-8',1),0.1)
   self.punch1 = anim8.newAnimation(g('1-8',2),0.05,'pauseAtEnd')
-  self.punch2 = anim8.newAnimation(g('1-7',3),0.05,'pauseAtEnd')
-  self.hitstun = anim8.newAnimation(g('1-2',4),0.1)
-  self.idle = anim8.newAnimation(g('3-8',4,'1-6',5),0.1)
+  self.punch2 = anim8.newAnimation(g('1-8',3),0.05,'pauseAtEnd')
+  self.punch3 = anim8.newAnimation(g('1-8',4,'1-8',5,1,6),0.05,'pauseAtEnd')
+  self.hitstun = anim8.newAnimation(g('2-3',6),0.1)
+  self.idle = anim8.newAnimation(g('4-8',6,'1-7',7),0.1)
   self.animation = self.idle
   self.flip = false
   self.state = "idle"
@@ -42,9 +43,9 @@ function Enemy:update(dt)
     self.closestPlayer = nil
     local distance = 100000000
     for i=1,numberOfPlayers do
-      if math.abs(players[i].pos - self.pos) < distance then
+      if math.abs(players[i].pos.x - self.pos.x) < distance then
         self.closestPlayer = players[i]
-        distance = math.abs(self.closestPlayer.pos - self.pos)
+        distance = math.abs(self.closestPlayer.pos.x - self.pos.x)
       end
     end
     
@@ -58,12 +59,12 @@ function Enemy:update(dt)
 
   if self.state == "move" then
     if self.closestPlayer then
-      if self.closestPlayer.pos < self.pos-SPRITE_SIZE then
-        self.pos = self.pos - 1
+      if self.closestPlayer.pos.x < self.pos.x-SPRITE_SIZE then
+        self.pos.x = self.pos.x - 1
         self:faceDirection('left')
         self.animation = self.running
-      elseif self.closestPlayer.pos > self.pos+SPRITE_SIZE then
-        self.pos = self.pos + 1
+      elseif self.closestPlayer.pos.x > self.pos.x+SPRITE_SIZE then
+        self.pos.x = self.pos.x + 1
         self:faceDirection('right')
         self.animation = self.running
       else
@@ -79,7 +80,7 @@ function Enemy:draw()
   love.graphics.setShader(Enemy.pixelShader)
 
   if self.alive then
-    self.animation:draw(self.img, self.pos, HORIZONTAL_PLANE)
+    self.animation:draw(self.img, self.pos.x, self.pos.y)
   end
 
   love.graphics.setShader()
