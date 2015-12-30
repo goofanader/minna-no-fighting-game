@@ -6,7 +6,7 @@
 // ...I think?
 // for now? I guess? We'll parse it as a .tab file
 
-// email key: hash of email and then hash of secret message (TBD).
+include_once("../includes/Db.php");
 
 // usage message
 function printUsage($isExiting) {
@@ -41,6 +41,9 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
   if (!is_dir($directory)) {
     printUsage(true);
   }
+
+  // get db connection
+  $db = new Db();
 
   foreach(scandir($directory) as $file) {
     echo $file . "\n";
