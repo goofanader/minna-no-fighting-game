@@ -62,32 +62,11 @@ function Enemy:update(dt)
 
   if self.state == "move" then
     if self.closestPlayer then
-      local direction
-      local dx
       if self.closestPlayer.pos.x < self.pos.x then
-        self.hitbox:move(-1,0)
-        direction = 'left'
-        dx = -1
+        self:move_with_collision(-1,0)
       else
-        self.hitbox:move(1,0)
-        direction = 'right'
-        dx = 1
+        self:move_with_collision(1,0)
       end
-      local moveBlock = false
-      for i=1,numberOfPlayers do
-        if self.hitbox:collidesWith(players[i].hitbox) then
-          moveBlock = true
-        end
-      end
-      if not moveBlock then
-        self.pos.x = self.pos.x + dx
-        self:faceDirection(direction)
-        self.animation = self.running
-      else
-        self.hitbox:move(-dx,0)
-        self.animation = self.idle
-      end
-      
     else
       self.animation = self.idle
     end
@@ -112,7 +91,7 @@ function Enemy:spawn(pos)
   self.alive = true
   self.pos = pos
   self.state = "move"
-  self.timer = love.math.random(2)+3
+  self.timer = 0.5
   self.hitbox = HC.rectangle(pos.x,pos.y,SPRITE_SIZE,SPRITE_SIZE)
   self.hitbox.owner = self
   self.hitbox.class = 'enemy'
@@ -140,4 +119,44 @@ function Enemy:faceDirection(direction)
     self.hitstun:flipH()
     self.idle:flipH()
   end
+end
+
+function Enemy:move_with_collision(dx, dy)
+  local direction
+  if dx < 0 then
+    direction = 'left'
+  else
+    direction = 'right'
+  end
+
+  local pushback = 0 --Enemy Pushback
+  for shape, delta in pairs(HC.collisions(self.hitbox)) do
+    if shape.class == 'enemy' then
+      pushback = pushback + delta.x
+    end
+  end
+  local pdx = 0
+  if pushback > 0 then
+    pdx = 0.5
+  elseif pushback < 0 then
+    pdx = -0.5
+  end
+
+  self.hitbox:move(dx+pdx,dy) --Move Hitbox
+  
+  local moveBlock = false --Check Hard Collisions
+  for i=1,numberOfPlayers do
+    if self.hitbox:collidesWith(players[i].hitbox) then
+      moveBlock = true
+    end
+  end
+  
+  if not moveBlock then --Then either move enemy
+    self.pos.x = self.pos.x + dx + pdx
+    self.animation = self.running
+  else
+    self.hitbox:move(-dx-pdx,0) --Or move hitbox back
+    self.animation = self.idle
+  end
+  self:faceDirection(direction)
 end

@@ -131,63 +131,22 @@ function Player:update(dt)
       end
       
       if self.closestEnemy then
-        local direction
-        local dx
         if self.closestEnemy.pos.x < self.pos.x then
-          self.hitbox:move(-1,0)
-          direction = 'left'
-          dx = -1
+          self:move_with_collision(-1,0)
         else
-          self.hitbox:move(1,0)
-          direction = 'right'
-          dx = 1
+          self:move_with_collision(1,0)
         end
-        local moveBlock = false
-        for shape, delta in pairs(HC.collisions(self.hitbox)) do
-          if shape.class == 'enemy' or shape.class == 'wall' then
-            moveBlock = true
-          end
-        end
-        if not moveBlock then
-          self.pos.x = self.pos.x + dx
-          self.animation = self.running
-        else
-          self.hitbox:move(-dx,0)
-          self.animation = self.idle
-        end
-        self:faceDirection(direction)
       else
         self.animation = self.idle
       end
       
     elseif self.state == 'moveAway' then
-      
       if self.closestEnemy then
-        local direction = ''
-        local dx = 0
         if self.closestEnemy.pos.x < self.pos.x then
-          self.hitbox:move(1,0)
-          direction = 'right'
-          dx = 1
+          self:move_with_collision(1,0)
         else
-          self.hitbox:move(-1,0)
-          direction = 'left'
-          dx = -1
+          self:move_with_collision(-1,0)
         end
-        local moveBlock = false
-        for shape, delta in pairs(HC.collisions(self.hitbox)) do
-          if shape.class == 'enemy' or shape.class == 'wall' then
-            moveBlock = true
-          end
-        end
-        if not moveBlock then
-          self.pos.x = self.pos.x + dx
-          self.animation = self.running
-        else
-          self.hitbox:move(-dx,0)
-          self.animation = self.idle
-        end
-        self:faceDirection(direction)
       else
         self.animation = self.idle
       end
@@ -205,6 +164,10 @@ function Player:draw()
     love.graphics.setColor(255,255,255,255)
   end
   self.hitbox:draw('line')
+  if self.deltax then
+    love.graphics.print(self.deltax,self.pos.x, self.pos.y-10)
+  end
+  
 end
 
 function Player:faceDirection(direction)
@@ -224,3 +187,44 @@ function Player:faceDirection(direction)
     self.idle:flipH()
   end
 end
+
+function Player:move_with_collision(dx, dy)
+  local direction
+  if dx < 0 then
+    direction = 'left'
+  else
+    direction = 'right'
+  end
+
+  local pushback = 0 --Player Pushback
+  for shape, delta in pairs(HC.collisions(self.hitbox)) do
+    if shape.class == 'player' then
+      pushback = pushback + delta.x
+    end
+  end
+  local pdx = 0
+  if pushback > 0 then
+    pdx = 0.5
+  elseif pushback < 0 then
+    pdx = -0.5
+  end
+
+  self.hitbox:move(dx+pdx,dy) --Move Hitbox
+  
+  local moveBlock = false --Check Hard Collisions
+  for shape, delta in pairs(HC.collisions(self.hitbox)) do
+    if shape.class == 'enemy' or shape.class == 'wall' then
+      moveBlock = true
+    end
+  end
+  
+  if not moveBlock then --Then either move player
+    self.pos.x = self.pos.x + dx + pdx
+    self.animation = self.running
+  else
+    self.hitbox:move(-dx-pdx,0) --Or move hitbox back
+    self.animation = self.idle
+  end
+  self:faceDirection(direction)
+end
+      
