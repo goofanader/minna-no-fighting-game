@@ -13,8 +13,6 @@ function love.load()
 
   love.graphics.setDefaultFilter("nearest", "nearest")
 
-  Collider = HC(100, on_collide)
-
   Gamestate.registerEvents()
   Gamestate.switch(MainMenu)
 end
@@ -23,15 +21,10 @@ function love.draw()
 end
 
 function love.update(dt)
-  Collider:update(dt)
 end
 
 function love.keypressed(key, isrepeat)
   if key == "escape" then
     love.event.quit()
   end
-end
-
-function on_collide(dt, shape_a, shape_b)
-  
 end

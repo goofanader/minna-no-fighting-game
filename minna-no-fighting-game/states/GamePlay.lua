@@ -15,6 +15,15 @@ function GamePlay:enter()
   end
   spawnTimer = 3
   
+  topHitbox = HC.rectangle(0,-32,WINDOW_WIDTH,32)
+  topHitbox.class = 'wall'
+  bottomHitbox = HC.rectangle(0,WINDOW_HEIGHT,WINDOW_WIDTH,32)
+  bottomHitbox.class = 'wall'
+  leftHitbox = HC.rectangle(-32,0,32,WINDOW_HEIGHT)
+  leftHitbox.class = 'wall'
+  rightHitbox = HC.rectangle(WINDOW_WIDTH,0,32,WINDOW_HEIGHT)
+  rightHitbox.class = 'wall'
+  
 end
 
 function GamePlay:draw()
@@ -22,7 +31,7 @@ function GamePlay:draw()
   
   for i=1,numberOfEnemies do
     enemies[i]:draw()
-    love.graphics.print(i,enemies[i].pos,HORIZONTAL_PLANE+SPRITE_SIZE)
+    love.graphics.print(i,enemies[i].pos.x,Y_POS+SPRITE_SIZE)
   end
   for i=1,numberOfPlayers do
     players[i]:draw()
@@ -42,7 +51,7 @@ function GamePlay:update(dt)
       spawnTimer = 3
       if love.math.random() > 0.1 then
         if love.math.random() > 0.5 then
-          enemies[i]:spawn(vector(WINDOW_WIDTH-SPRITE_SIZE),Y_POS)
+          enemies[i]:spawn(vector(WINDOW_WIDTH-SPRITE_SIZE,Y_POS))
         else
           enemies[i]:spawn(vector(0,Y_POS))
         end

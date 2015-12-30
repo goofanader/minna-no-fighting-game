@@ -17,6 +17,9 @@ Enemy = Class{
 function Enemy:init(pos, imagefile)
   self.img = love.graphics.newImage(imagefile)
   self.pos = pos
+  self.hitbox = HC.rectangle(pos.x,pos.y,SPRITE_SIZE,SPRITE_SIZE)
+  self.hitbox.owner = self
+  self.hitbox.class = 'enemy'
   self.alive = true
   local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-8',1),0.1)
@@ -59,17 +62,32 @@ function Enemy:update(dt)
 
   if self.state == "move" then
     if self.closestPlayer then
-      if self.closestPlayer.pos.x < self.pos.x-SPRITE_SIZE then
-        self.pos.x = self.pos.x - 1
-        self:faceDirection('left')
-        self.animation = self.running
-      elseif self.closestPlayer.pos.x > self.pos.x+SPRITE_SIZE then
-        self.pos.x = self.pos.x + 1
-        self:faceDirection('right')
+      local direction
+      local dx
+      if self.closestPlayer.pos.x < self.pos.x then
+        self.hitbox:move(-1,0)
+        direction = 'left'
+        dx = -1
+      else
+        self.hitbox:move(1,0)
+        direction = 'right'
+        dx = 1
+      end
+      local moveBlock = false
+      for i=1,numberOfPlayers do
+        if self.hitbox:collidesWith(players[i].hitbox) then
+          moveBlock = true
+        end
+      end
+      if not moveBlock then
+        self.pos.x = self.pos.x + dx
+        self:faceDirection(direction)
         self.animation = self.running
       else
+        self.hitbox:move(-dx,0)
         self.animation = self.idle
       end
+      
     else
       self.animation = self.idle
     end
@@ -84,6 +102,10 @@ function Enemy:draw()
   end
 
   love.graphics.setShader()
+  if self.hitbox then
+    self.hitbox:draw('line')
+  end
+  
 end
 
 function Enemy:spawn(pos)
@@ -91,10 +113,15 @@ function Enemy:spawn(pos)
   self.pos = pos
   self.state = "move"
   self.timer = love.math.random(2)+3
+  self.hitbox = HC.rectangle(pos.x,pos.y,SPRITE_SIZE,SPRITE_SIZE)
+  self.hitbox.owner = self
+  self.hitbox.class = 'enemy'
 end
 
 function Enemy:kill()
   self.alive = false
+  HC.remove(self.hitbox)
+  self.hitbox = nil
 end
 
 function Enemy:faceDirection(direction)

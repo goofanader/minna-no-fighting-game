@@ -9,6 +9,9 @@ function Player:init(pos, imagefile, button)
   self.img = love.graphics.newImage(imagefile)
   self.pos = pos
   self.button = button
+  self.hitbox = HC.rectangle(pos.x,pos.y,SPRITE_SIZE,SPRITE_SIZE)
+  self.hitbox.owner = self
+  self.hitbox.class = 'player'
   local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-8',1),0.1)
   self.punch1 = anim8.newAnimation(g('1-8',2),0.05,'pauseAtEnd')
@@ -23,12 +26,11 @@ function Player:init(pos, imagefile, button)
   self.releaseTime = 0
   self.charge = 0
   self.chargeFlag = false
-  self.alive = false
+  self.alive = true
 end
 
 function Player:spawn(pos)
   self.pos = pos
-  self.hitbox = Collider:addRectangle(pos.x,pos.y)
   self.alive = true
 end
 
@@ -113,11 +115,12 @@ function Player:update(dt)
     end
     
     --Act on Player State
+    
     if self.state == 'moveTowards' then
       
       --Find Nearest Enemy
       self.closestEnemy = nil
-      local distance = 100000000
+      local distance = 10000000
       for i=1,numberOfEnemies do
         if enemies[i].alive then
           if math.abs(enemies[i].pos.x - self.pos.x) < distance then
@@ -128,17 +131,31 @@ function Player:update(dt)
       end
       
       if self.closestEnemy then
-        if self.closestEnemy.pos.x < self.pos.x-SPRITE_SIZE and self.pos.x > 0 then
-          self.pos.x = self.pos.x - 1
-          self:faceDirection('left')
-          self.animation = self.running
-        elseif self.closestEnemy.pos.x > self.pos.x+SPRITE_SIZE and self.pos.x < WINDOW_WIDTH-SPRITE_SIZE then
-          self.pos.x = self.pos.x + 1
-          self:faceDirection('right')
+        local direction
+        local dx
+        if self.closestEnemy.pos.x < self.pos.x then
+          self.hitbox:move(-1,0)
+          direction = 'left'
+          dx = -1
+        else
+          self.hitbox:move(1,0)
+          direction = 'right'
+          dx = 1
+        end
+        local moveBlock = false
+        for shape, delta in pairs(HC.collisions(self.hitbox)) do
+          if shape.class == 'enemy' or shape.class == 'wall' then
+            moveBlock = true
+          end
+        end
+        if not moveBlock then
+          self.pos.x = self.pos.x + dx
           self.animation = self.running
         else
+          self.hitbox:move(-dx,0)
           self.animation = self.idle
         end
+        self:faceDirection(direction)
       else
         self.animation = self.idle
       end
@@ -146,18 +163,34 @@ function Player:update(dt)
     elseif self.state == 'moveAway' then
       
       if self.closestEnemy then
-        if self.closestEnemy.pos.x < self.pos.x and self.pos.x < WINDOW_WIDTH-SPRITE_SIZE then
-          self.pos.x = self.pos.x + 1
-          self:faceDirection('right')
-          self.animation = self.running
-        elseif self.closestEnemy.pos.x >= self.pos.x and self.pos.x > 0 then
-          self.pos.x = self.pos.x - 1
-          self:faceDirection('left')
-          self.animation = self.running
+        local direction = ''
+        local dx = 0
+        if self.closestEnemy.pos.x < self.pos.x then
+          self.hitbox:move(1,0)
+          direction = 'right'
+          dx = 1
+        else
+          self.hitbox:move(-1,0)
+          direction = 'left'
+          dx = -1
         end
+        local moveBlock = false
+        for shape, delta in pairs(HC.collisions(self.hitbox)) do
+          if shape.class == 'enemy' or shape.class == 'wall' then
+            moveBlock = true
+          end
+        end
+        if not moveBlock then
+          self.pos.x = self.pos.x + dx
+          self.animation = self.running
+        else
+          self.hitbox:move(-dx,0)
+          self.animation = self.idle
+        end
+        self:faceDirection(direction)
       else
         self.animation = self.idle
-      end 
+      end
     end
   end
   
@@ -171,6 +204,7 @@ function Player:draw()
     love.graphics.rectangle('fill', self.pos.x, self.pos.y+SPRITE_SIZE+3, self.charge, 3)
     love.graphics.setColor(255,255,255,255)
   end
+  self.hitbox:draw('line')
 end
 
 function Player:faceDirection(direction)
