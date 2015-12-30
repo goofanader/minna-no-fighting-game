@@ -9,8 +9,8 @@
 include_once("../includes/Db.php");
 
 // usage message
-function printUsage($isExiting) {
-  $usage = "usage: {$argv[0]} -d <directory of images and subdirectories to find colors>\n";
+function printUsage($isExiting, $programName) {
+  $usage = "usage: $programName <directory of images and subdirectories to find colors>\n";
 
   if ($isExiting) {
     exit($usage);
@@ -20,33 +20,35 @@ function printUsage($isExiting) {
 }
 
 // check options first
-function checkOpts() {
-  $options = getopt("d:");
-
-  if (array_key_exists("d", $options)) {
-    return $options["d"];
-  } else {
-    printUsage(true);
+function checkOpts($argv) {
+  if (count($argv) != 2) {
+    printUsage(true, $argv[0]);
   }
 
-  return null;
+  return $argv[1];
 }
 
 // if this file is called directly, start the magic
 // help from http://stackoverflow.com/questions/4545878/how-to-know-if-php-script-is-called-via-require-once
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
-  $directory = checkOpts();
+  $directory = checkOpts($argv);
 
   // check if the given thing is a valid directory
   if (!is_dir($directory)) {
-    printUsage(true);
+    echo "Not a valid directory!\n";
+    printUsage(true, $argv[0]);
   }
 
   // get db connection
   $db = new Db();
+  print_r($db->query("SHOW TABLES"));
 
   foreach(scandir($directory) as $file) {
-    echo $file . "\n";
+    if ($file[0] != ".") {
+      echo $file . "\n";
+    }
   }
+} else {
+  echo "Please call this script not from another script. kthxbai\n";
 }
  ?>
