@@ -100,7 +100,7 @@ function Enemy:draw()
   if self.alive then
     self.animation:draw(self.img, self.pos.x, self.pos.y)
   end
-
+  
   love.graphics.setShader()
   if self.hitbox then
     self.hitbox:draw('line')

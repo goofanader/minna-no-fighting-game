@@ -59,7 +59,7 @@ function ButtonSelect:keyreleased(key, code)
     if lastPressed == 'return' and selection > 1 then
       numberOfPlayers = selection-1
       for i=1, numberOfPlayers do
-        players[i] = Player(vector(25*i,Y_POS),'assets/sprites/animal.png',buttons[i])
+        players[i] = Player(vector(25*i,Y_POS+i),'assets/sprites/animal.png',buttons[i])
       end
       numberOfPlayers = selection-1
       Gamestate.switch(GamePlay)

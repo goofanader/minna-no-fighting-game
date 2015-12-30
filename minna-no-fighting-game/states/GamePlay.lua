@@ -9,9 +9,9 @@ local spawnTimer
 
 function GamePlay:enter()
   enemies = {}
-  numberOfEnemies = 5
+  numberOfEnemies = 12
   for i=1,numberOfEnemies do
-    enemies[i] = Enemy(vector(WINDOW_WIDTH-30*i,Y_POS),'assets/sprites/animal.png')
+    enemies[i] = Enemy(vector(WINDOW_WIDTH-30*i,Y_POS+i),'assets/sprites/animal.png')
   end
   spawnTimer = 3
   
@@ -51,7 +51,7 @@ function GamePlay:update(dt)
       spawnTimer = 3
       if love.math.random() > 0.1 then
         if love.math.random() > 0.5 then
-          enemies[i]:spawn(vector(WINDOW_WIDTH-SPRITE_SIZE,Y_POS))
+          enemies[i]:spawn(vector(WINDOW_WIDTH-SPRITE_SIZE,Y_POS*(love.math.random()-0.5)*12))
         else
           enemies[i]:spawn(vector(0,Y_POS))
         end

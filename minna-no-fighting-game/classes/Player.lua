@@ -94,7 +94,7 @@ function Player:update(dt)
           self.state = 'punch'
           self.animation = self.punch1
           self.animation:gotoFrame(1)
-          if self.closestEnemy then
+          if self.closestEnemy and self.closestEnemy.alive then
             self.closestEnemy:kill()
           end
         end
