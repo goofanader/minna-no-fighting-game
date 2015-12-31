@@ -7,18 +7,23 @@ local BUTTON_DELAY = 0.1 --seconds
 
 function Player:init(pos, imagefile, button)
   self.img = love.graphics.newImage(imagefile)
-  self.pos = pos
   self.button = button
+  local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
+  self.running = anim8.newAnimation(g('1-8',1),0.1)
+  self.punch1 = anim8.newAnimation(g('1-8',2),0.02,'pauseAtEnd')
+  self.punch2 = anim8.newAnimation(g('1-8',3),0.02,'pauseAtEnd')
+  self.punch3 = anim8.newAnimation(g('1-8',4,'1-8',5,1,6),0.02,'pauseAtEnd')
+  self.hitstun = anim8.newAnimation(g('2-3',6),0.1)
+  self.idle = anim8.newAnimation(g('4-8',6,'1-7',7),0.1)
+  self.animation = self.idle
+  self:spawn(pos)
+end
+
+function Player:spawn(pos)
+  self.pos = pos
   self.hitbox = HC.rectangle(pos.x,pos.y,SPRITE_SIZE,SPRITE_SIZE)
   self.hitbox.owner = self
   self.hitbox.class = 'player'
-  local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
-  self.running = anim8.newAnimation(g('1-8',1),0.1)
-  self.punch1 = anim8.newAnimation(g('1-8',2),0.05,'pauseAtEnd')
-  self.punch2 = anim8.newAnimation(g('1-8',3),0.05,'pauseAtEnd')
-  self.punch3 = anim8.newAnimation(g('1-8',4,'1-8',5,1,6),0.05,'pauseAtEnd')
-  self.hitstun = anim8.newAnimation(g('2-3',6),0.1)
-  self.idle = anim8.newAnimation(g('4-8',6,'1-7',7),0.1)
   self.animation = self.idle
   self.flip = false
   self.buttonFlag = false
@@ -26,11 +31,8 @@ function Player:init(pos, imagefile, button)
   self.releaseTime = 0
   self.charge = 0
   self.chargeFlag = false
-  self.alive = true
-end
-
-function Player:spawn(pos)
-  self.pos = pos
+  self.lag = 0
+  self.state = 'idle'
   self.alive = true
 end
 
@@ -43,30 +45,29 @@ function Player:update(dt)
         self.buttonFlag = true
         self.holdTime = 0
         
-        if self.releaseTime < BUTTON_DELAY then
+        if self.releaseTime < BUTTON_DELAY then -- CHARGE
           if self.chargeFlag or self.state == 'charge' then
-            if self.state ~= 'charge' then
-              self.state = 'charge'
-              self.animation = self.hitstun
-            end
-            self.charge = self.charge + 5
-          else
+            self:chargeUp()
+          elseif self:canMove() then
             self.chargeFlag = true
           end
         else
           self.chargeFlag = false
         end
         
-      else
+      else -- INCREMENT HOLD TIME
         self.holdTime = self.holdTime + dt
-        if self.charge > 0 then
+        if self.charge > 0 then -- DEFUSE THE CHARGE
           self.charge = self.charge - 1
+        elseif self.state == 'charge' then
+          self.state = 'idle'
         end
       end
       
-      --Button Hold Action
-      if self.holdTime > 2*BUTTON_DELAY and self.state ~= 'moveAway' and self.charge <= 0 then
-        if self.state ~= 'moveAway' then
+      --Button Hold Action -- Move away from nearest enemy
+      if self.holdTime > 2*BUTTON_DELAY and self:canMove() then
+        self.combo = 0
+        if self.state ~= 'moveAway' and self.charge <= 0 then
           self.state = 'moveAway'
           self.animation = self.idle
         end
@@ -76,47 +77,57 @@ function Player:update(dt)
       if self.buttonFlag then
         self.buttonFlag = false
         self.releaseTime = 0
+        
         if self.holdTime < BUTTON_DELAY then -- CHARGE
           if self.chargeFlag or self.state == 'charge' then
-            if self.state ~= 'charge' then
-              self.state = 'charge'
-              self.animation = self.hitstun
-            end
-            self.charge = self.charge + 5
-          else
+            self:chargeUp()
+          elseif self:canMove() then
             self.chargeFlag = true
           end
         else
           self.chargeFlag = false
         end
         
-        if self.holdTime < 2*BUTTON_DELAY and self.state ~= 'charge' then --ATTACKU
-          self.state = 'punch'
-          self.animation = self.punch1
-          self.animation:gotoFrame(1)
-          if self.closestEnemy and self.closestEnemy.alive then
-            self.closestEnemy:kill()
+        if self.holdTime < 2*BUTTON_DELAY and self:canMove() then
+          if self.state ~= 'charge' then --ATTACK
+            self.state = 'attack'
+            if self.combo == 0 or self.combo == 3 then
+              self.animation = self.punch1
+              self.combo = 1
+            elseif self.combo == 1 then
+              self.animation = self.punch2
+              self.combo = 2
+            else
+              self.animation = self.punch3
+              self.combo = 3
+            end
+            self.attackBoxFlag = false
+            self.animation:gotoFrame(1)
+            self.animation:resume()
           end
         end
         
-      else
+      else -- Increment Release Time
         self.releaseTime = self.releaseTime + dt
-        if self.charge > 0 then
+        if self.charge > 0 then -- Defuse Charge
           self.charge = self.charge - 1
+        elseif self.state == 'charge' then
+          self.state = 'idle'
         end
       end
       
-      --Button Release Hold Action?
-      if self.releaseTime > 2*BUTTON_DELAY and self.state ~= 'moveTowards' and self.charge <= 0 then
-        self.state = 'moveTowards'
-        self.animation = self.idle
+      --The Do Nothing Action -- Move towards enemy
+      if self.releaseTime > 2*BUTTON_DELAY and self:canMove() then
+        self.combo = 0
+        if self.state ~= 'moveTowards' and self.charge <= 0 then
+          self.state = 'moveTowards'
+          self.animation = self.idle
+        end
       end
-      
     end
     
     --Act on Player State
-    
-    if self.state == 'moveTowards' then
+    if self.state == 'moveTowards' then -- Not doing anything
       
       --Find Nearest Enemy
       self.closestEnemy = nil
@@ -130,6 +141,7 @@ function Player:update(dt)
         end
       end
       
+      -- Move towards nearest enemy
       if self.closestEnemy then
         if self.closestEnemy.pos.x < self.pos.x then
           self:move_with_collision(-1,0)
@@ -140,7 +152,8 @@ function Player:update(dt)
         self.animation = self.idle
       end
       
-    elseif self.state == 'moveAway' then
+    elseif self.state == 'moveAway' then -- Holding the button
+      -- Move away from last targeted enemy
       if self.closestEnemy then
         if self.closestEnemy.pos.x < self.pos.x then
           self:move_with_collision(1,0)
@@ -150,9 +163,89 @@ function Player:update(dt)
       else
         self.animation = self.idle
       end
+      
+    elseif self.state == 'attack' then -- Tapping the button, but not too fast
+      if self.combo == 1 then
+        if self.animation.position >= 2 and not self.attackBoxFlag then -- Frame Number
+          if self.flip then
+            self.punchbox = HC.rectangle(self.pos.x-5,self.pos.y,5,SPRITE_SIZE)
+          else
+            self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
+          end
+          self.punchbox.damage = 3
+          self.targetsHit = {}
+          self.attackBoxFlag = true
+        elseif self.animation.position >= 8 and self.attackBoxFlag then
+          self.attackBoxFlag = false
+          HC.remove(self.punchbox)
+          self.punchbox = nil
+          self.state = 'idle'
+          self.lag = BUTTON_DELAY
+        end
+      elseif self.combo == 2 then
+        if self.animation.position >= 2 and not self.attackBoxFlag then
+          if self.flip then
+            self.punchbox = HC.rectangle(self.pos.x-5,self.pos.y,5,SPRITE_SIZE)
+          else
+            self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
+          end
+          self.punchbox.damage = 4
+          self.targetsHit = {}
+          self.attackBoxFlag = true
+        elseif self.animation.position >= 8 and self.attackBoxFlag then
+          self.attackBoxFlag = false
+          HC.remove(self.punchbox)
+          self.punchbox = nil
+          self.state = 'idle'
+          self.lag = BUTTON_DELAY
+        end
+      elseif self.combo == 3 then
+        if self.animation.position >= 5 and not self.attackBoxFlag then
+          if self.flip then
+            self.punchbox = HC.rectangle(self.pos.x-5,self.pos.y,5,SPRITE_SIZE)
+          else
+            self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
+          end
+          self.punchbox.damage = 5
+          self.targetsHit = {}
+          self.attackBoxFlag = true
+        elseif self.animation.position >= 17 and self.attackBoxFlag then
+          self.attackBoxFlag = false
+          HC.remove(self.punchbox)
+          self.punchbox = nil
+          self.state = 'idle'
+          self.lag = BUTTON_DELAY
+        end
+      end
+      if self.attackBoxFlag then
+        for shape, delta in pairs(HC.collisions(self.punchbox)) do
+          if shape.class == 'enemy' then
+            local alreadyHit = false
+            if self.targetsHit then
+              for i,target in ipairs(self.targetsHit) do
+                if target == shape.owner then
+                  alreadyHit = true
+                end
+              end
+            end
+            if not alreadyHit then
+              shape.owner:hit(self.punchbox.damage)
+              table.insert(self.targetsHit,shape.owner)
+            end
+            if self.flip then
+              --shape.owner:move_with_collision(-1,0)
+            else
+              --shape.owner:move_with_collision(1,0)
+            end
+          end
+        end
+      end
     end
   end
   
+  if self.lag > 0 then
+    self.lag = self.lag - dt
+  end
   self.animation:update(dt)
 end
 
@@ -164,8 +257,13 @@ function Player:draw()
     love.graphics.setColor(255,255,255,255)
   end
   self.hitbox:draw('line')
-  if self.deltax then
-    love.graphics.print(self.deltax,self.pos.x, self.pos.y-10)
+  if self.punchbox then
+    love.graphics.setColor(0,255,0)
+    self.punchbox:draw('line')
+    love.graphics.setColor(255,255,255)
+  end
+  if self.currentFrame then
+    love.graphics.print(self.currentFrame,self.pos.x,self.pos.y-10)
   end
   
 end
@@ -176,6 +274,7 @@ function Player:faceDirection(direction)
     self.running:flipH()
     self.punch1:flipH()
     self.punch2:flipH()
+    self.punch3:flipH()
     self.hitstun:flipH()
     self.idle:flipH()
   elseif direction == 'left' and not self.flip then
@@ -183,6 +282,7 @@ function Player:faceDirection(direction)
     self.running:flipH()
     self.punch1:flipH()
     self.punch2:flipH()
+    self.punch3:flipH()
     self.hitstun:flipH()
     self.idle:flipH()
   end
@@ -222,9 +322,24 @@ function Player:move_with_collision(dx, dy)
     self.pos.x = self.pos.x + dx + pdx
     self.animation = self.running
   else
-    self.hitbox:move(-dx-pdx,0) --Or move hitbox back
+    self.hitbox:move(-dx-pdx,-dy) --Or move hitbox back
     self.animation = self.idle
   end
   self:faceDirection(direction)
 end
-      
+
+function Player:chargeUp()
+  if self.state ~= 'charge' then
+    self.state = 'charge'
+    self.animation = self.hitstun
+  end
+  self.charge = self.charge + 5
+end
+
+function Player:canMove()
+  if self.lag <= 0 and (self.state == 'moveTowards' or self.state == 'moveAway' or self.state == 'idle') then
+    return true
+  else
+    return false
+  end
+end

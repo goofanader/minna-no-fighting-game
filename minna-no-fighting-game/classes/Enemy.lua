@@ -14,33 +14,27 @@ Enemy = Class{
   ]])
 }
 
+local FLINCH_TIME = 0.2 --seconds
+
 function Enemy:init(pos, imagefile)
   self.img = love.graphics.newImage(imagefile)
-  self.pos = pos
-  self.hitbox = HC.rectangle(pos.x,pos.y,SPRITE_SIZE,SPRITE_SIZE)
-  self.hitbox.owner = self
-  self.hitbox.class = 'enemy'
-  self.alive = true
   local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-8',1),0.1)
-  self.punch1 = anim8.newAnimation(g('1-8',2),0.05,'pauseAtEnd')
-  self.punch2 = anim8.newAnimation(g('1-8',3),0.05,'pauseAtEnd')
-  self.punch3 = anim8.newAnimation(g('1-8',4,'1-8',5,1,6),0.05,'pauseAtEnd')
+  self.punch1 = anim8.newAnimation(g('1-8',2),0.02,'pauseAtEnd')
+  self.punch2 = anim8.newAnimation(g('1-8',3),0.02,'pauseAtEnd')
+  self.punch3 = anim8.newAnimation(g('1-8',4,'1-8',5,1,6),0.02,'pauseAtEnd')
   self.hitstun = anim8.newAnimation(g('2-3',6),0.1)
   self.idle = anim8.newAnimation(g('4-8',6,'1-7',7),0.1)
   self.animation = self.idle
   self.flip = false
-  self.state = "idle"
-  self.timer = love.math.random(2)+3
+  self:spawn(pos)
 end
 
 function Enemy:update(dt)
 
-  self.animation:update(dt)
-
   self.timer = self.timer - dt
-  if self.timer < 0 then
-    self.timer = love.math.random(2)+3
+  if self.timer < 0 and self.state ~= 'flinch' then
+    self.timer = love.math.random(2)+2
     
     --Find Nearest Player
     self.closestPlayer = nil
@@ -52,11 +46,13 @@ function Enemy:update(dt)
       end
     end
     
-    if love.math.random() > 0.5 then
-      self.state = "move"
-    else
-      self.state = "idle"
-      self.animation = self.idle
+    if love.math.random() > 0.75 then
+      if self.state == 'move' then
+        self.state = 'idle'
+        self.animation = self.idle
+      else
+        self.state = 'move'
+      end
     end
   end
 
@@ -71,6 +67,16 @@ function Enemy:update(dt)
       self.animation = self.idle
     end
   end
+  
+  if self.lag > 0 then
+    self.lag = self.lag - dt
+  elseif self.state == 'flinch' then
+    self.timer = 0
+    self.state = 'move'
+  end
+  
+  self.animation:update(dt)
+
 end
 
 function Enemy:draw()
@@ -95,6 +101,8 @@ function Enemy:spawn(pos)
   self.hitbox = HC.rectangle(pos.x,pos.y,SPRITE_SIZE,SPRITE_SIZE)
   self.hitbox.owner = self
   self.hitbox.class = 'enemy'
+  self.lag = 0
+  self.hp = 12
 end
 
 function Enemy:kill()
@@ -155,8 +163,19 @@ function Enemy:move_with_collision(dx, dy)
     self.pos.x = self.pos.x + dx + pdx
     self.animation = self.running
   else
-    self.hitbox:move(-dx-pdx,0) --Or move hitbox back
+    self.hitbox:move(-dx-pdx,-dy) --Or move hitbox back
     self.animation = self.idle
   end
   self:faceDirection(direction)
+end
+
+function Enemy:hit(damage)
+  self.hp = self.hp - damage
+  if self.hp <= 0 then
+    self:kill()
+  else
+    self.state = 'flinch'
+    self.animation = self.hitstun
+    self.lag = FLINCH_TIME
+  end
 end

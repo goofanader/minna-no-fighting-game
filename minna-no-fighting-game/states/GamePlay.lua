@@ -47,13 +47,16 @@ function GamePlay:update(dt)
   for i=1,numberOfEnemies do
     if enemies[i].alive then
       enemies[i]:update(dt)
-    elseif spawnTimer < 0 then
-      spawnTimer = 3
-      if love.math.random() > 0.1 then
-        if love.math.random() > 0.5 then
-          enemies[i]:spawn(vector(WINDOW_WIDTH-SPRITE_SIZE,Y_POS+love.math.random(12)))
-        else
-          enemies[i]:spawn(vector(0,Y_POS))
+    else
+      spawnTimer = spawnTimer - dt/numberOfEnemies
+      if spawnTimer < 0 then
+        spawnTimer = 3/numberOfPlayers
+        if love.math.random() > 0.25 then
+          if love.math.random() > 0.5 then
+            enemies[i]:spawn(vector(WINDOW_WIDTH-SPRITE_SIZE,Y_POS+love.math.random(12)))
+          else
+            enemies[i]:spawn(vector(0,Y_POS))
+          end
         end
       end
     end
