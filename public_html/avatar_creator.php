@@ -1,8 +1,10 @@
 <?php
+  include_once('includes/Db.php');
   //$hello = "hello world";
   $tabPreference = "tabs";
   $iconSize = "32";
   $partsSize = "96";
+  $db = new Db();
 ?>
 <html>
 
