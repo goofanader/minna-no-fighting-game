@@ -35,6 +35,16 @@ function getHexColorString($image, $x, $y) {
   $g = dechex(($rgb >> 8) & 0xFF);
   $b = dechex($rgb & 0xFF);
 
+  if (strlen($r) == 1) {
+      $r = "0" . $r;
+  }
+  if (strlen($g) == 1) {
+      $g = "0" . $g;
+  }
+  if (strlen($b) == 1) {
+      $b = "0" . $b;
+  }
+
   return "#".$r.$g.$b;
 }
 
@@ -48,30 +58,49 @@ function goThroughDirectory($directory, $db) {
   foreach (scandir($directory) as $file) {
     if ($file[0] != "." && $file != "ICONS") {
       $realFilePath = $directory."/".$file;
-      //echo $realFilePath."\n";
+
       // check if it's a directory, if so, call this function again
       if (is_dir($realFilePath)) {
         goThroughDirectory($realFilePath, $db);
       } else if (exif_imagetype($realFilePath) != false) {
         // determine what colors are in the file, if it's an image file
         $colors = array();
+        // should really check to make sure it's of PNG type
+        $imageResource = imagecreatefrompng($realFilePath);
+        if (!$imageResource) {
+          echo "Could not process $file.\n";
+          continue;
+        }
 
-        for ($i = 0; $i < imagesx($realFilePath); $i++) {
-          for ($j = 0; $j < imagesy($realFilePath); $j++) {
-            $newColor = getHexColorString($realFilePath, $i, $j);
-            $alpha = imagecolorsforindex($realFilePath, imagecolorat($realFilePath, $i, $j))["alpha"];
+        imageAlphaBlending($imageResource, true);
+        imageSaveAlpha($imageResource, true);
 
-            if ($newColor != "#000000" && $alpha > 0 && !array_key_exists($newColor, $colors)) {
+        $width = imagesx($imageResource);
+        $height = imagesy($imageResource);
+
+        for ($i = 1; $i < $width; $i++) {
+          for ($j = 1; $j < $height; $j++) {
+            $newColor = getHexColorString($imageResource, $i, $j);
+
+            $rgb = imagecolorat($imageResource, $i, $j);
+            $alpha = imagecolorsforindex($imageResource, $rgb);
+            $alpha = $alpha["alpha"];
+
+            if ($newColor != "#000000" && $alpha < 127 && !array_key_exists($newColor, $colors)) {
               $colors[$newColor] = $newColor;
             }
           }
         }
 
-        echo "File $file has these colors:\n";
-        $count = 1;
-        foreach ($colors as $key => $value) {
-          echo "\t$count. $key\n";
-          $count++;
+        if (!empty($colors)) {
+          echo "File $file has these colors:\n";
+          $count = 1;
+          foreach ($colors as $key) {
+            echo "\t$count. $key\n";
+            $count++;
+          }
+        } else {
+          echo "$file had no colors other than black.\n";
         }
         echo "-----------------------\n\n";
       }
