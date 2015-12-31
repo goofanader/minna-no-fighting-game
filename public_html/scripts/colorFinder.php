@@ -28,6 +28,57 @@ function checkOpts($argv) {
   return $argv[1];
 }
 
+function getHexColorString($image, $x, $y) {
+  $rgb = imagecolorat($image, $x, $y);
+
+  $r = dechex(($rgb >> 16) & 0xFF);
+  $g = dechex(($rgb >> 8) & 0xFF);
+  $b = dechex($rgb & 0xFF);
+
+  return "#".$r.$g.$b;
+}
+
+// recursive function to go through directories
+function goThroughDirectory($directory, $db) {
+  // don't handle the directory file if it's the ICONS folder
+  if ($directory == "ICONS") {
+    return;
+  }
+
+  foreach (scandir($directory) as $file) {
+    if ($file[0] != "." && $file != "ICONS") {
+      $realFilePath = $directory."/".$file;
+      //echo $realFilePath."\n";
+      // check if it's a directory, if so, call this function again
+      if (is_dir($realFilePath)) {
+        goThroughDirectory($realFilePath, $db);
+      } else if (exif_imagetype($realFilePath) != false) {
+        // determine what colors are in the file, if it's an image file
+        $colors = array();
+
+        for ($i = 0; $i < imagesx($realFilePath); $i++) {
+          for ($j = 0; $j < imagesy($realFilePath); $j++) {
+            $newColor = getHexColorString($realFilePath, $i, $j);
+            $alpha = imagecolorsforindex($realFilePath, imagecolorat($realFilePath, $i, $j))["alpha"];
+
+            if ($newColor != "#000000" && $alpha > 0 && !array_key_exists($newColor, $colors)) {
+              $colors[$newColor] = $newColor;
+            }
+          }
+        }
+
+        echo "File $file has these colors:\n";
+        $count = 1;
+        foreach ($colors as $key => $value) {
+          echo "\t$count. $key\n";
+          $count++;
+        }
+        echo "-----------------------\n\n";
+      }
+    }
+  }
+}
+
 // if this file is called directly, start the magic
 // help from http://stackoverflow.com/questions/4545878/how-to-know-if-php-script-is-called-via-require-once
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
@@ -41,13 +92,9 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
 
   // get db connection
   $db = new Db();
-  print_r($db->query("SHOW TABLES"));
+  //print_r($db->query("SHOW TABLES"));
 
-  foreach(scandir($directory) as $file) {
-    if ($file[0] != ".") {
-      echo $file . "\n";
-    }
-  }
+  goThroughDirectory($directory, $db);
 } else {
   echo "Please call this script not from another script. kthxbai\n";
 }
