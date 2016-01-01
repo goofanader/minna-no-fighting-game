@@ -7,7 +7,7 @@
 // for now? I guess? We'll parse it as a .tab file
 
 include_once("../includes/Db.php");
-define("MAX_COLORS", 5);
+include_once("../includes/constants.php");
 $imagesInDB = array();
 
 function printErrorMessage($msg, $STDERR) {
@@ -230,12 +230,8 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
       "colors" => array()
     );
 
-    for ($i = 1; $i < MAX_COLORS + 1; $i++) {
-      if (isset($row["color$i"])) {
-        $imagesInDB[$row['filename']]["colors"][] = $row["color$i"];
-      } else {
-        break;
-      }
+    for ($i = 1; (($i < MAX_COLORS + 1) && (isset($row["color$i"]))); $i++) {
+      $imagesInDB[$row['filename']]["colors"][] = $row["color$i"];
     }
   }
 

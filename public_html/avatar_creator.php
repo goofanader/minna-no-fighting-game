@@ -1,10 +1,25 @@
 <?php
   include_once('includes/Db.php');
-  //$hello = "hello world";
+  include_once('includes/constants.php');
+  //ini_set('display_errors', 1);
+  //error_reporting(~0);
+
   $tabPreference = "tabs";
   $iconSize = "32";
   $partsSize = "96";
   $db = new Db();
+
+  $imagesInDB = array();
+  $rows = $db->select("SELECT * FROM CustomizationChoices");
+  if ($rows != false) {
+    foreach ($rows as $row) {
+      $imagesInDB[$row['filename']] = array();
+
+      for ($i = 1; (($i < MAX_COLORS + 1) && (isset($row["color$i"]))); $i++) {
+        $imagesInDB[$row['filename']][] = $row["color$i"];
+      }
+    }
+  }
 ?>
 <html>
 
@@ -125,10 +140,10 @@
                   echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-remove'><img class='pixelated' src='' alt='Remove' width='$partsSize' height='$partsSize'></button> ";
 
                   foreach ($files as $imageName) {
-                    if ($imageName != "." && $imageName != ".." && $imageName[0] != ".") {
+                    if ($imageName[0] != "." && array_key_exists("$mediaFolder/$imageName", $imagesInDB)) {
                       $imageNameParts = explode(".", $imageName);
 
-                      echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-{$imageNameParts[0]}'><img class='pixelated' src='$mediaFolder/$imageName' alt='$tabName: {$imageNameParts[0]}' width='$partsSize' height='$partsSize'></button> ";
+                      echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-{$imageNameParts[0]}' data-colors='".implode(",", $imagesInDB["$mediaFolder/$imageName"])."'><img class='pixelated' src='$mediaFolder/$imageName' alt='$tabName: {$imageNameParts[0]}' width='$partsSize' height='$partsSize'></button> ";
                     }
                   }
                 }

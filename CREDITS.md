@@ -8,6 +8,8 @@
 * eyfey
 * emeraldschemer
 * goofanader
+* bluecrysto
+* Emily
 
 ## Libraries
 * [HardonCollider](http://vrld.github.io/HardonCollider/)
