@@ -18,6 +18,52 @@ $(document).ready(function() {
     $("#" + tab_id).addClass('current');
   })*/
 
+  var avatarCanvas = document.getElementById('avatar-picture');
+  var ctx = avatarCanvas.getContext('2d');
+
+  var avatarImages = {};
+  var images = {
+    BODY: 'media/images/BODY/front.png',
+    EYES: 'media/images/EYES/happyeyes.png',
+    MOUTH: 'media/images/MOUTH/smile_small.png',
+    SHOES: 'media/images/SHOES/boots.png',
+    PANTS: 'media/images/PANTS/LongPant.png',
+    TOP: 'media/images/TOP/Sweatshirt.png',
+    HAIR: 'media/images/HAIR/bowlcut.png',
+    HEADPIECE: 'media/images/HEADPIECE/mouseears.png'
+  };
+  var partsKey = [
+    'BODY',
+    'EYES',
+    'MOUTH',
+    'SHOES',
+    'PANTS',
+    'TOP',
+    'HAIR',
+    'HEADPIECE'
+  ];
+
+  function loadCanvasImages() {
+    ctx.clearRect(0, 0, avatarCanvas.width, avatarCanvas.height);
+
+    for (var i = 0; i < partsKey.length; i++) {
+      if (images[partsKey[i]] !== ""){
+        avatarImages[partsKey[i]] = createNewImage(images[partsKey[i]]);
+      }
+    }
+  }
+
+  function createNewImage(imageSrc) {
+    var newImage = new Image();
+    newImage.src = imageSrc;
+
+    newImage.onload = function() {
+      ctx.drawImage(newImage, 0, 0, avatarCanvas.width, avatarCanvas.height);
+    };
+
+    return newImage;
+  }
+
   $('button').click(function() {
     var idSplit = $(this).attr("id").split("-");
 
@@ -26,16 +72,28 @@ $(document).ready(function() {
 
       if (idSplit[3] !== "remove") {
         var imageFile = "media/images/" + idSplit[2] + "/" + idSplit[3] + ".png";
-        $(avatarPartID).removeClass("hide");
-        $(avatarPartID).attr("src", imageFile);
+        //$(avatarPartID).removeClass("hide");
+        //$(avatarPartID).attr("src", imageFile);
+        images[idSplit[2]] = imageFile;
       }
       else {
-        $(avatarPartID).addClass("hide");
+        //$(avatarPartID).addClass("hide");
+        images[idSplit[2]] = "";
       }
 
+      loadCanvasImages();
       $(this).parent().children().removeClass("active");
       $(this).addClass("active");
     }
   });
 
-})
+  function init() {
+    ctx.imageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    
+    loadCanvasImages();
+  }
+
+  init();
+});

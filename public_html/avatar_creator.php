@@ -112,8 +112,13 @@
         </ul>
       </div>
     </nav>
-      <?php // clothing choices // ?>
       <div class="row">
+      <?php // avatar picture // ?>
+      <!--<div class="hidden-xs hidden-sm col-md-3 col-lg-3">-->
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <canvas id="avatar-picture" class="pixelated" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>">Your browser does not support the HTML5 canvas tag.</canvas>
+      </div>
+        <?php // clothing choices // ?>
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 
           <!-- Tab panes -->
@@ -155,18 +160,6 @@
             }
             ?>
           </div>
-        </div>
-        <?php // avatar picture // ?>
-        <!--<div class="hidden-xs hidden-sm col-md-3 col-lg-3">-->
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <img class="avatar-picture" id="avatar-BODY" src='media/images/BODY/front.png'>
-          <img class="avatar-picture" id="avatar-EYES" src="media/images/EYES/happyeyes.png">
-          <img class="avatar-picture" id="avatar-MOUTH" src="media/images/MOUTH/smile_small.png">
-          <img class="avatar-picture" id="avatar-SHOES" src="media/images/SHOES/boots.png">
-          <img class="avatar-picture" id="avatar-PANTS" src="media/images/PANTS/LongPant.png">
-          <img class="avatar-picture" id="avatar-TOP" src="media/images/TOP/Sweatshirt.png">
-          <img class="avatar-picture" id="avatar-HAIR" src="media/images/HAIR/bowlcut.png">
-          <img class="avatar-picture" id="avatar-HEADPIECE" src="media/images/HEADPIECE/mouseears.png">
         </div>
     </div>
   </div>
