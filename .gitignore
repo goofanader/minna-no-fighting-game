@@ -52,3 +52,4 @@ public_html/css/*.css
 *.love
 *.exe
 config.ini
+!public_html/css/spectrum.css

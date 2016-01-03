@@ -4,6 +4,8 @@ $(document).ready(function() {
 
   var avatarImages = {};
   var canvases = {}, contexts = {};
+  var globalColors = {};
+
   var images = {
     BODY: 'media/images/BODY/front.png',
     EYES: 'media/images/EYES/happyeyes.png',
@@ -53,19 +55,68 @@ $(document).ready(function() {
   }
 
   function loadOneColorSet(part) {
+    if (images[part] === "") {
+      $('#partColors-' + part).html("");
+      return;
+    }
     // set up colors
     var imageColors = $('button.btn > img[src="' + images[part] + '"]').parent().data('colors').split(",");
     var innerHTML = "";
 
     if (imageColors[0] !== "#000000") {
-      innerHTML = "<h2><strike>Change</strike> Color" + (imageColors.length > 1 ? "s" : "") + "</h2>";
+      // set the global colors for the part
+      globalColors[part] = imageColors;
+
+      // create the inner HTML for the color pickers
+      innerHTML = "<h2 class='text-capitalize'>Change Color" + (imageColors.length > 1 ? "s" : "") + "</h2>";
 
       for (var j = 0; j < imageColors.length; j++) {
-        innerHTML += "<button type='button' class='btn btn-default' id='color-button-" + part + "-" + j + "' style='width: " + canvases[part].width + "; height: " + canvases[part].height + "; background-color: " + imageColors[j] + ";'></button> "
+        innerHTML += "<input type='text' class='btn btn-default' id='color-button-" + part + "-" + j + "' /> ";
       }
     }
 
     $('#partColors-' + part).html(innerHTML);
+
+    if (innerHTML !== "") {
+      // set up the color picker JQuery plugin
+      for (var j = 0; j < imageColors.length; j++) {
+        $('#color-button-' + part + "-" + j).spectrum({
+          color: imageColors[j],
+          change: function(color) {
+            // here is where we change the canvas to reflect the new color.
+            var imageData = contexts[part].getImageData(0, 0, canvases[part].width, canvases[part].height);
+            var pix = imageData.data;
+            var colorIndex = $(this).attr('id').split('-');
+            colorIndex = parseInt(colorIndex[colorIndex.length - 1]); // might be able to get it from j?
+
+            var prevColorParts = {
+              red: parseInt(globalColors[part][colorIndex].replace("#", "").substring(0,2), 16),
+              green: parseInt(globalColors[part][colorIndex].replace("#", "").substring(2,4), 16),
+              blue: parseInt(globalColors[part][colorIndex].replace("#", "").substring(4,6), 16)
+            };
+
+            // loop over each pixel and change the previous color to the new color
+            for (var i = 0, n = pix.length; i < n; i += 4) {
+              if (pix[i] === prevColorParts.red && pix[i + 1] === prevColorParts.green && pix[i + 2] == prevColorParts.blue) {
+                pix[i] = Math.floor(color._r); //red
+                pix[i + 1] = Math.floor(color._g); //green
+                pix[i + 2] = Math.floor(color._b); //blue
+              }
+            }
+
+            // make previous color the new color
+            globalColors[part][colorIndex] = getHexColorString(color._r, color._g, color._b);
+
+            // change the colors on the image
+            contexts[part].putImageData(imageData, 0, 0);
+          }
+        });
+      }
+    }
+  }
+
+  function getHexColorString(r, g, b) {
+    return "#" + Math.floor(r).toString(16) + Math.floor(g).toString(16) + Math.floor(b).toString(16);
   }
 
   $('button.btn').click(function() {

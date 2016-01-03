@@ -31,6 +31,7 @@
   <script language="javascript" type="text/javascript" src='js/libraries/jquery-2.1.4.min.js'></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+  <script src='js/libraries/spectrum.js'></script>
   <script language="javascript" type="text/javascript" src="js/avatar_creator.js"></script>
 
   <!-- Bootstrap -->
@@ -39,6 +40,7 @@
   <link rel="stylesheet" href="css/avatar_creator.css">
   <!--<link rel="stylesheet" href="css/bootstrap-horizon.css">-->
   <link rel="stylesheet" href="css/bootflat.min.css">
+  <link rel='stylesheet' href='css/spectrum.css' />
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -142,7 +144,7 @@
                   echo "</div>";
                   // HANDLE BUTTONS //
                   echo "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>";
-                  echo "<h2>".ucfirst(strtolower($tabName))." Choices</h2>";
+                  echo "<h2 class='text-capitalize'>".strtolower($tabName)." Choices</h2>";
                   // add a way to remove the piece first
                   echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-remove'><img class='pixelated' src='' alt='Remove' width='$partsSize' height='$partsSize'></button> ";
 
