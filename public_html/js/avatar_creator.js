@@ -52,7 +52,23 @@ $(document).ready(function() {
     return newImage;
   }
 
-  $('button').click(function() {
+  function loadOneColorSet(part) {
+    // set up colors
+    var imageColors = $('button.btn > img[src="' + images[part] + '"]').parent().data('colors').split(",");
+    var innerHTML = "";
+
+    if (imageColors[0] !== "#000000") {
+      innerHTML = "<h2><strike>Change</strike> Color" + (imageColors.length > 1 ? "s" : "") + "</h2>";
+
+      for (var j = 0; j < imageColors.length; j++) {
+        innerHTML += "<button type='button' class='btn btn-default' id='color-button-" + part + "-" + j + "' style='width: " + canvases[part].width + "; height: " + canvases[part].height + "; background-color: " + imageColors[j] + ";'></button> "
+      }
+    }
+
+    $('#partColors-' + part).html(innerHTML);
+  }
+
+  $('button.btn').click(function() {
     // get the parts of the id of the button clicked to determine what section the button belongs to
     var idSplit = $(this).attr("id").split("-");
 
@@ -73,6 +89,7 @@ $(document).ready(function() {
       loadOneCanvasImage(idSplit[2]);
       $(this).parent().children().removeClass("active");
       $(this).addClass("active");
+      loadOneColorSet(idSplit[2]);
     }
   });
 
@@ -84,13 +101,21 @@ $(document).ready(function() {
       canvases[part] = document.getElementById('avatar-' + part);
       contexts[part] = canvases[part].getContext('2d');
 
-      // set all the canvases to use nearest neighbor pixelation
+      // set all the canvases to use nearest neighbor interpolation
       contexts[part].mozImageSmoothingEnabled = false;
       if (typeof(contexts[part].imageSmoothingEnabled) !== 'undefined') {
         contexts[part].imageSmoothingEnabled = false;
       } else {
         contexts[part].webkitImageSmoothingEnabled = false;
       }
+
+      // set the buttons that have their parts selected
+      var $image = $('button.btn > img[src="' + images[part] + '"]');
+      var $button = $image.parent();
+      $button.addClass("active");
+
+      // set up colors
+      loadOneColorSet(part);
     }
 
     loadCanvasImages();

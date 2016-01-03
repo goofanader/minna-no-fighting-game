@@ -114,7 +114,7 @@
     </nav>
       <div class="row">
         <?php // clothing choices // ?>
-        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+        <div class="col-xs-8 col-sm-9 col-md-9 col-lg-9">
 
           <!-- Tab panes -->
           <div class="tab-content">
@@ -136,6 +136,13 @@
                 $files = scandir($mediaFolder);
 
                 if ($files) {
+                  echo "<div class='row'>";
+                  // HANDLE COLORS //
+                  echo "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='partColors-$tabName'>";
+                  echo "</div>";
+                  // HANDLE BUTTONS //
+                  echo "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>";
+                  echo "<h2>".ucfirst(strtolower($tabName))." Choices</h2>";
                   // add a way to remove the piece first
                   echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-remove'><img class='pixelated' src='' alt='Remove' width='$partsSize' height='$partsSize'></button> ";
 
@@ -146,6 +153,8 @@
                       echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-{$imageNameParts[0]}' data-colors='".implode(",", $imagesInDB["$mediaFolder/$imageName"])."'><img class='pixelated' src='$mediaFolder/$imageName' alt='$tabName: {$imageNameParts[0]}' width='$partsSize' height='$partsSize'></button> ";
                     }
                   }
+                  echo "</div>";
+                  echo "</div>";
                 }
               } catch (Exception $e) {
 
@@ -156,20 +165,20 @@
             ?>
           </div>
         </div>
-    </div>
-    <?php // avatar picture // ?>
-    <!--<div class="hidden-xs hidden-sm col-md-3 col-lg-3">-->
-    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-      <?php /*<canvas id="avatar-canvas" class="avatar-picture" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>">Your browser does not support the HTML5 canvas tag.</canvas>*/ ?>
+        <?php // avatar picture // ?>
+        <!--<div class="hidden-xs hidden-sm col-md-3 col-lg-3">-->
+        <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+          <?php /*<canvas id="avatar-canvas" class="avatar-picture" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>">Your browser does not support the HTML5 canvas tag.</canvas>*/ ?>
 
-        <canvas class="avatar-picture" id="avatar-BODY" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-        <canvas class="avatar-picture" id="avatar-EYES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-        <canvas class="avatar-picture" id="avatar-MOUTH" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-        <canvas class="avatar-picture" id="avatar-SHOES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-        <canvas class="avatar-picture" id="avatar-PANTS" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-        <canvas class="avatar-picture" id="avatar-TOP" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-        <canvas class="avatar-picture" id="avatar-HAIR" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-        <canvas class="avatar-picture" id="avatar-HEADPIECE" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            <canvas class="avatar-picture" id="avatar-BODY" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            <canvas class="avatar-picture" id="avatar-EYES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            <canvas class="avatar-picture" id="avatar-MOUTH" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            <canvas class="avatar-picture" id="avatar-SHOES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            <canvas class="avatar-picture" id="avatar-PANTS" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            <canvas class="avatar-picture" id="avatar-TOP" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            <canvas class="avatar-picture" id="avatar-HAIR" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            <canvas class="avatar-picture" id="avatar-HEADPIECE" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+        </div>
     </div>
   </div>
 </body>
