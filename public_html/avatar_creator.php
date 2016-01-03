@@ -113,11 +113,6 @@
       </div>
     </nav>
       <div class="row">
-      <?php // avatar picture // ?>
-      <!--<div class="hidden-xs hidden-sm col-md-3 col-lg-3">-->
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <canvas id="avatar-picture" class="pixelated" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>">Your browser does not support the HTML5 canvas tag.</canvas>
-      </div>
         <?php // clothing choices // ?>
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 
@@ -161,6 +156,20 @@
             ?>
           </div>
         </div>
+    </div>
+    <?php // avatar picture // ?>
+    <!--<div class="hidden-xs hidden-sm col-md-3 col-lg-3">-->
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+      <?php /*<canvas id="avatar-canvas" class="avatar-picture" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>">Your browser does not support the HTML5 canvas tag.</canvas>*/ ?>
+
+        <canvas class="avatar-picture" id="avatar-BODY" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+        <canvas class="avatar-picture" id="avatar-EYES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+        <canvas class="avatar-picture" id="avatar-MOUTH" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+        <canvas class="avatar-picture" id="avatar-SHOES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+        <canvas class="avatar-picture" id="avatar-PANTS" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+        <canvas class="avatar-picture" id="avatar-TOP" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+        <canvas class="avatar-picture" id="avatar-HAIR" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+        <canvas class="avatar-picture" id="avatar-HEADPIECE" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
     </div>
   </div>
 </body>

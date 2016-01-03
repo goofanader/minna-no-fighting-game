@@ -1,27 +1,9 @@
 $(document).ready(function() {
-  /*
-  Copyright (c) 2015 by Mohit Aneja (http://codepen.io/cssjockey/pen/jGzuK)
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-  */
-  /*$('ul.tabs li').click(function() {
-    var tab_id = $(this).attr('data-tab');
-
-    $('ul.tabs li').removeClass('current');
-    $('.tab-content').removeClass('current');
-
-    $(this).addClass('current');
-    $("#" + tab_id).addClass('current');
-  })*/
-
-  var avatarCanvas = document.getElementById('avatar-picture');
-  var ctx = avatarCanvas.getContext('2d');
+  /*var avatarCanvas = document.getElementById('avatar-picture');
+  var canvasContext = avatarCanvas.getContext('2d');*/
 
   var avatarImages = {};
+  var canvases = {}, contexts = {};
   var images = {
     BODY: 'media/images/BODY/front.png',
     EYES: 'media/images/EYES/happyeyes.png',
@@ -44,54 +26,73 @@ $(document).ready(function() {
   ];
 
   function loadCanvasImages() {
-    ctx.clearRect(0, 0, avatarCanvas.width, avatarCanvas.height);
-
     for (var i = 0; i < partsKey.length; i++) {
-      if (images[partsKey[i]] !== ""){
-        avatarImages[partsKey[i]] = createNewImage(images[partsKey[i]]);
-      }
+      var part = partsKey[i];
+
+      loadOneCanvasImage(part);
     }
   }
 
-  function createNewImage(imageSrc) {
+  function loadOneCanvasImage(part) {
+    contexts[part].clearRect(0, 0, canvases[part].width, canvases[part].height);
+
+    if (images[part] !== ""){
+      avatarImages[part] = createNewImage(images[part], contexts[part], canvases[part]);
+    }
+  }
+
+  function createNewImage(imageSrc, canvasContext, avatarCanvas) {
     var newImage = new Image();
     newImage.src = imageSrc;
 
     newImage.onload = function() {
-      ctx.drawImage(newImage, 0, 0, avatarCanvas.width, avatarCanvas.height);
+      canvasContext.drawImage(newImage, 0, 0, avatarCanvas.width, avatarCanvas.height);
     };
 
     return newImage;
   }
 
   $('button').click(function() {
+    // get the parts of the id of the button clicked to determine what section the button belongs to
     var idSplit = $(this).attr("id").split("-");
 
     if (idSplit.length > 3 && idSplit[0] === "avatar" && idSplit[1] === "button") {
       var avatarPartID = "#avatar-" + idSplit[2];
 
       if (idSplit[3] !== "remove") {
+        // replace image with new, selected one
         var imageFile = "media/images/" + idSplit[2] + "/" + idSplit[3] + ".png";
-        //$(avatarPartID).removeClass("hide");
-        //$(avatarPartID).attr("src", imageFile);
         images[idSplit[2]] = imageFile;
       }
       else {
-        //$(avatarPartID).addClass("hide");
+        // remove image
         images[idSplit[2]] = "";
       }
 
-      loadCanvasImages();
+      // reload the image and set the selected button to "active"
+      loadOneCanvasImage(idSplit[2]);
       $(this).parent().children().removeClass("active");
       $(this).addClass("active");
     }
   });
 
   function init() {
-    ctx.imageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    
+    // get all the canvases and their contexts
+    for (var i = 0; i < partsKey.length; i++) {
+      var part = partsKey[i];
+
+      canvases[part] = document.getElementById('avatar-' + part);
+      contexts[part] = canvases[part].getContext('2d');
+
+      // set all the canvases to use nearest neighbor pixelation
+      contexts[part].mozImageSmoothingEnabled = false;
+      if (typeof(contexts[part].imageSmoothingEnabled) !== 'undefined') {
+        contexts[part].imageSmoothingEnabled = false;
+      } else {
+        contexts[part].webkitImageSmoothingEnabled = false;
+      }
+    }
+
     loadCanvasImages();
   }
 
