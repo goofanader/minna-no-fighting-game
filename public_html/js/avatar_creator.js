@@ -170,6 +170,34 @@ $(document).ready(function() {
     }
 
     loadCanvasImages();
+
+    // set up the form validation
+    $('#avatarSubmitForm').validate({
+      rules: {
+        characterName: {
+          minlength: 2,
+          required: true
+        },
+        emailInput: {
+          required: true,
+          email: true
+        }
+      },
+      highlight: function(element) {
+        $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        $(element).closest('.glyphicon').removeClass('glyphicon-ok').addClass('glyphicon-remove');
+        $('button[type="submit"]').addAttr('disabled');
+      },
+      success: function(element) {
+        element.text('Looks good!').addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+        element.closest('.form-group').find('span.glyphicon').removeClass('glyphicon-remove').addClass('glyphicon-ok');
+
+        // check if both name and email are valid. if so, allow button to be clicked
+        if ($('#characterName').closest('.form-group').attr('class').indexOf('has-success') > -1 && $('#emailInput').closest('.form-group').attr('class').indexOf('has-success') > -1) {
+          $('button[type="submit"]').removeAttr('disabled');
+        }
+      }
+    });
   }
 
   init();

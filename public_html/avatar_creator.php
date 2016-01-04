@@ -30,6 +30,8 @@
 
   <script language="javascript" type="text/javascript" src='js/libraries/jquery-2.1.4.min.js'></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/libraries/jquery.validate.js"></script>
+  <script src="js/libraries/additional-methods.js"></script>
   <script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
   <script src='js/libraries/spectrum.js'></script>
   <script language="javascript" type="text/javascript" src="js/avatar_creator.js"></script>
@@ -84,8 +86,6 @@
             array("CLASS", "class choices", "Select your three classes for fighting. Determine what weapon you want.")
           );
 
-          //print_r($tabs);
-
           for ($i = 0; $i < count($tabs); $i++) {
             if ($i == 0) {
               $class_info = " class='active'";
@@ -97,18 +97,21 @@
             $tabName = $tabs[$i][0];
             $icon = $tabs[$i][1];
             $mediaFolder = "media/images/$tabName";
+            $href = "href='#$tabName'";
 
             try {
               $files = scandir($mediaFolder);
 
               if (!$files) {
                 $class_info = " class='disabled'";
+                $href = "";
               }
             } catch (Exception $e) {
                 $class_info = " class='disabled'";
+                $href = "";
             }
 
-            echo "<li role='presentation'$class_info><a href='#$tabName' aria-controls='$tabName' role='tab' data-toggle='tab'><img class='pixelated' src='media/images/ICONS/$tabName.png' alt='$icon' title='$icon' width='$iconSize' height='$iconSize' onerror='this.src=\"media/images/ICONS/no_icon.png\"'></a></li>\n";
+            echo "<li role='presentation'$class_info><a $href aria-controls='$tabName' role='tab' data-toggle='tab'><img class='pixelated' src='media/images/ICONS/$tabName.png' alt='$icon' title='$icon' width='$iconSize' height='$iconSize' onerror='this.src=\"media/images/ICONS/no_icon.png\"'></a></li>\n";
           }
           ?>
         </ul>
@@ -170,16 +173,33 @@
         <?php // avatar picture // ?>
         <!--<div class="hidden-xs hidden-sm col-md-3 col-lg-3">-->
         <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
-          <?php /*<canvas id="avatar-canvas" class="avatar-picture" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>">Your browser does not support the HTML5 canvas tag.</canvas>*/ ?>
-
-            <canvas class="avatar-picture" id="avatar-BODY" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-            <canvas class="avatar-picture" id="avatar-EYES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-            <canvas class="avatar-picture" id="avatar-MOUTH" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-            <canvas class="avatar-picture" id="avatar-SHOES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-            <canvas class="avatar-picture" id="avatar-PANTS" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-            <canvas class="avatar-picture" id="avatar-TOP" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-            <canvas class="avatar-picture" id="avatar-HAIR" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
-            <canvas class="avatar-picture" id="avatar-HEADPIECE" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+          <div class="row">
+            <div class="col-xs-12" style="height:<?php echo $partsSize; ?>; margin-bottom: 10px;">
+              <canvas class="avatar-picture" id="avatar-BODY" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+              <canvas class="avatar-picture" id="avatar-EYES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+              <canvas class="avatar-picture" id="avatar-MOUTH" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+              <canvas class="avatar-picture" id="avatar-SHOES" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+              <canvas class="avatar-picture" id="avatar-PANTS" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+              <canvas class="avatar-picture" id="avatar-TOP" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+              <canvas class="avatar-picture" id="avatar-HAIR" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+              <canvas class="avatar-picture" id="avatar-HEADPIECE" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
+            </div>
+            <div class="col-xs-12">
+              <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="avatarSubmitForm">
+                <div class="form-group">
+                  <label for="characterName">Avatar Name</label>
+                  <input type="text" class="form-control" id="characterName" placeholder="Name">
+                  <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                </div>
+                <div class="form-group">
+                  <label for="emailInput">Email</label>
+                  <input type="email" class="form-control" id="emailInput" placeholder="Email">
+                  <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                </div>
+                <button type="submit" disabled class="btn btn-primary btn-block">Save</button>
+              </form>
+            </div>
+          </div>
         </div>
     </div>
   </div>
