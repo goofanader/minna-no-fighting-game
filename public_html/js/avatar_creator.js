@@ -127,13 +127,14 @@ $(document).ready(function() {
     if (hex.length == 1) {
       return "0" + hex;
     }
-    if (hex.length == 0) {
+    if (hex.length < 1) {
       return "00";
     }
 
     return hex;
   }
 
+  // handle item getting clicked on
   $('button.btn').click(function() {
     // get the parts of the id of the button clicked to determine what section the button belongs to
     var idSplit = $(this).attr("id").split("-");
@@ -158,6 +159,48 @@ $(document).ready(function() {
       loadOneColorSet(idSplit[2]);
     }
   });
+
+  // handle form inputs and validating them
+  $('#avatarName').change(function() {
+    var minChars = 2;
+    var errText = "Name needs to be longer than " + (minChars - 1) + " letter" + (minChars - 1 !== 1 ? "s" : "") + ".";
+
+    if ($(this).val().length < minChars) {
+      $(this).siblings('.help-block').html(errText);
+      $(this).closest('.form-group').removeClass('has-success').addClass('has-error');
+    } else {
+      $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
+      $(this).siblings('.help-block').html("");
+    }
+    setSubmitButton();
+  });
+
+  $('#emailInput').change(function() {
+    var errText = "Must be a vaild email address.";
+
+    if (!validateEmail($(this).val())) {
+      $(this).siblings('.help-block').html(errText);
+      $(this).closest('.form-group').removeClass('has-success').addClass('has-error');
+    } else {
+      $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
+      $(this).siblings('.help-block').html("");
+    }
+
+    setSubmitButton();
+  });
+
+  function setSubmitButton() {
+    if ($('#avatarName').closest('.form-group').hasClass('has-success') && $('#emailInput').closest('.form-group').hasClass('has-success')) {
+      $('button[type="submit"]').removeAttr('disabled');
+    } else if (typeof $('button[type="submit"]').attr('disabled') !== typeof undefined && $('button[type="submit"]').attr('disabled') !== false) {
+      $('button[type="submit"]').attr('disabled', "");
+    }
+  }
+
+  function validateEmail(email) {
+    var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
 
   function init() {
     // get all the canvases and their contexts
@@ -185,34 +228,6 @@ $(document).ready(function() {
     }
 
     loadCanvasImages();
-
-    // set up the form validation
-    $('#avatarSubmitForm').validate({
-      rules: {
-        characterName: {
-          minlength: 2,
-          required: true
-        },
-        emailInput: {
-          required: true,
-          email: true
-        }
-      },
-      highlight: function(element) {
-        $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-        $(element).closest('.glyphicon').removeClass('glyphicon-ok').addClass('glyphicon-remove');
-        $('button[type="submit"]').addAttr('disabled');
-      },
-      success: function(element) {
-        element.text('Looks good!').addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
-        element.closest('.form-group').find('span.glyphicon').removeClass('glyphicon-remove').addClass('glyphicon-ok');
-
-        // check if both name and email are valid. if so, allow button to be clicked
-        if ($('#characterName').closest('.form-group').attr('class').indexOf('has-success') > -1 && $('#emailInput').closest('.form-group').attr('class').indexOf('has-success') > -1) {
-          $('button[type="submit"]').removeAttr('disabled');
-        }
-      }
-    });
   }
 
   init();

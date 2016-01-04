@@ -30,8 +30,8 @@
 
   <script language="javascript" type="text/javascript" src='js/libraries/jquery-2.1.4.min.js'></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="js/libraries/jquery.validate.js"></script>
-  <script src="js/libraries/additional-methods.js"></script>
+  <!--<script src="js/libraries/jquery.validate.js"></script>
+  <script src="js/libraries/additional-methods.js"></script>-->
   <script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
   <script src='js/libraries/spectrum.js'></script>
   <script language="javascript" type="text/javascript" src="js/avatar_creator.js"></script>
@@ -187,14 +187,16 @@
             <div class="col-xs-12">
               <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="avatarSubmitForm">
                 <div class="form-group">
-                  <label for="characterName">Avatar Name</label>
-                  <input type="text" class="form-control" id="characterName" placeholder="Name">
+                  <label for="avatarName" class="control-label">Avatar Name</label>
+                  <input type="text" class="form-control" id="avatarName" placeholder="Name" val="Player">
                   <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                  <span class="help-block"></span>
                 </div>
                 <div class="form-group">
-                  <label for="emailInput">Email</label>
+                  <label for="emailInput" class="control-label">Email</label>
                   <input type="email" class="form-control" id="emailInput" placeholder="Email">
                   <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                  <span class="help-block"></span>
                 </div>
                 <button type="submit" disabled class="btn btn-primary btn-block">Save</button>
               </form>
