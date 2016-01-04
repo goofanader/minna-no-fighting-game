@@ -20,41 +20,11 @@
       }
     }
   }
+
+  $webpageName = "Minna no Avatar";
+  $isAvatarCreator = true;
+  include_once('includes/header.php');
 ?>
-<html>
-
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <script language="javascript" type="text/javascript" src='js/libraries/jquery-2.1.4.min.js'></script>
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <!--<script src="js/libraries/jquery.validate.js"></script>
-  <script src="js/libraries/additional-methods.js"></script>-->
-  <script src="bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
-  <script src='js/libraries/spectrum.js'></script>
-  <script language="javascript" type="text/javascript" src="js/avatar_creator.js"></script>
-
-  <!-- Bootstrap -->
-  <!--<link rel="stylesheet" href="css/reset.css">-->
-  <link href="bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/avatar_creator.css">
-  <!--<link rel="stylesheet" href="css/bootstrap-horizon.css">-->
-  <link rel="stylesheet" href="css/bootflat.min.css">
-  <link rel='stylesheet' href='css/spectrum.css' />
-
-  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-  <title>Minna no Avatar</title>
-</head>
-
-<body>
-
   <div class="container">
     <nav class="navbar navbar-default" role="navigation">
       <div class="navbar-header">
@@ -185,26 +155,27 @@
               <canvas class="avatar-picture" id="avatar-HEADPIECE" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
             </div>
             <div class="col-xs-12">
-              <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="avatarSubmitForm">
+              <form method="post" action="<?php echo htmlspecialchars("/goofanader/thank_you.php");?>" id="avatarSubmitForm">
                 <div class="form-group">
                   <label for="avatarName" class="control-label">Avatar Name</label>
-                  <input type="text" class="form-control" id="avatarName" placeholder="Name" val="Player">
+                  <input type="text" class="form-control" id="avatarName" placeholder="Name" val="Player" name="avatarName">
                   <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                   <span class="help-block"></span>
                 </div>
                 <div class="form-group">
                   <label for="emailInput" class="control-label">Email</label>
-                  <input type="email" class="form-control" id="emailInput" placeholder="Email">
+                  <input type="email" class="form-control" id="emailInput" placeholder="Email" name="emailInput">
                   <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                   <span class="help-block"></span>
                 </div>
-                <button type="submit" disabled class="btn btn-primary btn-block">Save</button>
+                <button type="submit" disabled class="btn btn-primary btn-block" id="saveCharacterButton">Save</button>
               </form>
             </div>
           </div>
         </div>
     </div>
   </div>
-</body>
 
-</html>
+  <?php
+  include_once('includes/footer.php');
+   ?>

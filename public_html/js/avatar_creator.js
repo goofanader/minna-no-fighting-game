@@ -162,10 +162,10 @@ $(document).ready(function() {
 
   // handle form inputs and validating them
   $('#avatarName').change(function() {
-    var minChars = 2;
-    var errText = "Name needs to be longer than " + (minChars - 1) + " letter" + (minChars - 1 !== 1 ? "s" : "") + ".";
+    var minChars = 2, maxChars = 80;
+    var errText = "Name needs to be between " + minChars + "-" + maxChars + " letters.";
 
-    if ($(this).val().length < minChars) {
+    if ($(this).val().length < minChars || $(this).val().length > maxChars) {
       $(this).siblings('.help-block').html(errText);
       $(this).closest('.form-group').removeClass('has-success').addClass('has-error');
     } else {
@@ -176,12 +176,18 @@ $(document).ready(function() {
   });
 
   $('#emailInput').change(function() {
+    var maxChars = 100;
     var errText = "Must be a vaild email address.";
+    var errLongText = "Email cannot be longer than " + maxChars + " characters. Use a different email.";
 
     if (!validateEmail($(this).val())) {
       $(this).siblings('.help-block').html(errText);
       $(this).closest('.form-group').removeClass('has-success').addClass('has-error');
-    } else {
+    } else if ($(this).val().length > maxChars) {
+      $(this).siblings('.help-block').html(errLongText);
+      $(this).closest('.form-group').removeClass('has-success').addClass('has-error');
+    }
+    else {
       $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
       $(this).siblings('.help-block').html("");
     }
@@ -201,6 +207,23 @@ $(document).ready(function() {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
   }
+
+  // handle the submit button
+  $('#avatarSubmitForm').submit(function() {
+    // add the hidden form
+    var charData = {};
+    for (var i = 0; i < partsKey.length; i++) {
+      var part = partsKey[i];
+
+      charData[part] = {
+        filename: images[part],
+        colors: (images[part] !== "" ? globalColors[part] : {})
+      };
+    }
+
+    var input = $("<input>").attr("type", "hidden").attr("name", "characterData").val(JSON.stringify(charData));
+    $(this).append($(input));
+  });
 
   function init() {
     // get all the canvases and their contexts
