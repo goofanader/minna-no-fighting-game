@@ -116,7 +116,22 @@ $(document).ready(function() {
   }
 
   function getHexColorString(r, g, b) {
-    return "#" + Math.floor(r).toString(16) + Math.floor(g).toString(16) + Math.floor(b).toString(16);
+    var rStr = fixHexString(Math.floor(r).toString(16));
+    var gStr = fixHexString(Math.floor(g).toString(16));
+    var bStr = fixHexString(Math.floor(b).toString(16));
+
+    return "#" + rStr + gStr + bStr;
+  }
+
+  function fixHexString(hex) {
+    if (hex.length == 1) {
+      return "0" + hex;
+    }
+    if (hex.length == 0) {
+      return "00";
+    }
+
+    return hex;
   }
 
   $('button.btn').click(function() {
