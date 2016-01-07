@@ -162,11 +162,9 @@ $(document).ready(function() {
         // handle changed headpiece with a bald head
         var newImageFile = imageFile.replace(idSplit[3] + ".png", idSplit[3] + "under.png");
 
-        $.get(newImageFile).done(function() {
+        if (headpieceArray !== null && headpieceArray[newImageFile]) {
           images[idSplit[2]] = newImageFile;
-        }).fail(function() {
-          // do nothing - keep it as the previous file
-        });
+        }
       }
       else {
         // remove image
@@ -174,15 +172,12 @@ $(document).ready(function() {
 
         if (idSplit[2] === "HAIR" && images["HEADPIECE"] !== "") {
           // set the headpiece to fit a bald head
-          var headpieceSplit = images["HEADPIECE"].split("/");
-          var newImageFile = images["HEADPIECE"].replace(headpieceSplit[3] + ".png", headpieceSplit[3] + "under.png");
+          var newImageFile = images["HEADPIECE"].replace(".png", "under.png");
 
-          $.get(newImageFile).done(function() {
+          if (headpieceArray !== null && headpieceArray[newImageFile]) {
             images["HEADPIECE"] = newImageFile;
             loadOneCanvasImage("HEADPIECE");
-          }).fail(function() {
-            // do nothing - keep the previous image
-          });
+          }
         }
       }
 

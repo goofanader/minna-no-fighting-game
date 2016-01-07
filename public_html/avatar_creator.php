@@ -121,19 +121,32 @@
                   // add a way to remove the piece first
                   echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-remove'><img class='pixelated' src='' alt='Remove' width='$partsSize' height='$partsSize'></button> ";
 
+                  $headpieceArray = array();
+
                   foreach ($files as $imageName) {
                     if ($imageName[0] != "." && array_key_exists("$mediaFolder/$imageName", $imagesInDB)) {
                       $imageNameParts = explode(".", $imageName);
 
                       if ($tabName == "HEADPIECE" && (strpos($imageName, "under.png") !== false || strpos($imageName, "BALD.png") !== false)) {
+                        $headpieceArray["$mediaFolder/$imageName"] = true;
                         continue;
                       }
-                      
+
                       echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-{$imageNameParts[0]}' data-colors='".implode(",", $imagesInDB["$mediaFolder/$imageName"])."'><img class='pixelated' src='$mediaFolder/$imageName' alt='$tabName: {$imageNameParts[0]}' width='$partsSize' height='$partsSize'></button> ";
                     }
                   }
                   echo "</div>";
                   echo "</div>";
+
+                  if (!empty($headpieceArray)) {
+                    echo "<script>var headpieceArray = {};\n";
+
+                    foreach ($headpieceArray as $key => $value) {
+                      echo "headpieceArray['$key'] = true;\n";
+                    }
+
+                    echo "</script>";
+                  }
                 }
               } catch (Exception $e) {
 
