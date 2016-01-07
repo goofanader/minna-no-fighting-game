@@ -89,6 +89,8 @@ $(document).ready(function() {
         $('#color-button-' + part + "-" + j).spectrum({
           color: imageColors[j],
           change: function(color) {
+            // TODO: do setup in here, but move the loop and color changing to loadOneCanvasImage so it updates the image with the right colors
+            
             // here is where we change the canvas to reflect the new color.
             var imageData = contexts[part].getImageData(0, 0, canvases[part].width, canvases[part].height);
             var pix = imageData.data;
