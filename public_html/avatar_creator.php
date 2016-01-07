@@ -125,6 +125,10 @@
                     if ($imageName[0] != "." && array_key_exists("$mediaFolder/$imageName", $imagesInDB)) {
                       $imageNameParts = explode(".", $imageName);
 
+                      if ($tabName == "HEADPIECE" && (strpos($imageName, "under.png") !== false || strpos($imageName, "BALD.png") !== false)) {
+                        continue;
+                      }
+                      
                       echo "<button type='button' class='btn btn-default' id='avatar-button-$tabName-{$imageNameParts[0]}' data-colors='".implode(",", $imagesInDB["$mediaFolder/$imageName"])."'><img class='pixelated' src='$mediaFolder/$imageName' alt='$tabName: {$imageNameParts[0]}' width='$partsSize' height='$partsSize'></button> ";
                     }
                   }
@@ -154,6 +158,7 @@
               <canvas class="avatar-picture" id="avatar-HAIR" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
               <canvas class="avatar-picture" id="avatar-HEADPIECE" width="<?php echo $partsSize; ?>" height="<?php echo $partsSize; ?>"></canvas>
             </div>
+            <?php // Save Avatar, Form Submission // ?>
             <div class="col-xs-12">
               <form method="post" action="<?php echo htmlspecialchars("/goofanader/thank_you.php");?>" id="avatarSubmitForm">
                 <div class="form-group">

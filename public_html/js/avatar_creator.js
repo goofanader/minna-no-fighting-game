@@ -60,7 +60,13 @@ $(document).ready(function() {
       return;
     }
     // set up colors
-    var imageColors = $('button.btn > img[src="' + images[part] + '"]').parent().data('colors').split(",");
+    var imageToSearch = images[part];
+
+    if (part === "HEADPIECE" && images["HAIR"] === "" && images[part].indexOf("under.png") > -1) {
+      imageToSearch = images[part].replace("under.png", ".png");
+    }
+
+    var imageColors = $('button.btn > img[src="' + imageToSearch + '"]').parent().data('colors').split(",");
     var innerHTML = "";
 
     if (imageColors[0] !== "#000000") {
@@ -146,10 +152,38 @@ $(document).ready(function() {
         // replace image with new, selected one
         var imageFile = "media/images/" + idSplit[2] + "/" + idSplit[3] + ".png";
         images[idSplit[2]] = imageFile;
+
+        // handle if there's hair now
+        if (idSplit[2] === "HAIR" && images["HEADPIECE"] !== "" && images["HEADPIECE"].indexOf("under.png") > -1) {
+          images["HEADPIECE"] = images["HEADPIECE"].replace("under.png", ".png");
+          loadOneCanvasImage("HEADPIECE");
+        }
+
+        // handle changed headpiece with a bald head
+        var newImageFile = imageFile.replace(idSplit[3] + ".png", idSplit[3] + "under.png");
+
+        $.get(newImageFile).done(function() {
+          images[idSplit[2]] = newImageFile;
+        }).fail(function() {
+          // do nothing - keep it as the previous file
+        });
       }
       else {
         // remove image
         images[idSplit[2]] = "";
+
+        if (idSplit[2] === "HAIR" && images["HEADPIECE"] !== "") {
+          // set the headpiece to fit a bald head
+          var headpieceSplit = images["HEADPIECE"].split("/");
+          var newImageFile = images["HEADPIECE"].replace(headpieceSplit[3] + ".png", headpieceSplit[3] + "under.png");
+
+          $.get(newImageFile).done(function() {
+            images["HEADPIECE"] = newImageFile;
+            loadOneCanvasImage("HEADPIECE");
+          }).fail(function() {
+            // do nothing - keep the previous image
+          });
+        }
       }
 
       // reload the image and set the selected button to "active"
