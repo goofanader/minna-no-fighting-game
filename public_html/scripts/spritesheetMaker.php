@@ -146,6 +146,7 @@ if ($rows) {
 
     //$classSpritesheets = array();
     for ($i = 0; $i < count($jsonData["CLASSES"]); $i++) {
+      $currentClass = $jsonData['CLASSES'][$i];
       echo "~~~{$jsonData['CLASSES'][$i]} Class~~~\n";
       $classSpritesheet = $imageFilesStart."/BODY/CLASSES/".$jsonData["CLASSES"][$i]."/Spritesheet.png";
       $spritesheetJson = json_decode(file_get_contents(str_replace(".png", ".json", $classSpritesheet)), true);
@@ -171,11 +172,23 @@ if ($rows) {
       foreach ($spritesheetJson as $aniName => $aniData) {
         for ($j = 1; $j < count($g_SPRITE_TYPES); $j++) {
           $part = $g_SPRITE_TYPES[$j];
+          if ($jsonData[$part]["filename"] == "") {
+            // that means there's no part specified.
+            continue;
+          }
           // create the file resource for this part type
-          $strReplacement = ($aniName != "FRONT" ? "$aniName.png" : ".png");
-          $partFilename = str_replace(".png", $strReplacement, "../".$jsonData[$part]["filename"]);
-          echo "\tPart Filename: $partFilename\n";
+          $strReplacement = ($aniName != "FRONT" ? "$imageFilesStart/$part/CLASSES/$currentClass/" : "");
+
+          $partFilename = "../".$jsonData[$part]["filename"];
+          if ($strReplacement != "") {
+            $partFilename = str_replace("$imageFilesStart/$part/", $strReplacement, $partFilename);
+            $partFilename = str_replace(".png", "$aniName.png", $partFilename);
+          }
+
+          echo "\tPart Filename: $partFilename...";
+
           if (file_exists($partFilename)) {
+            echo "found\n";
             $partSpritesheet = imagecreatefrompng($partFilename);
             imageAlphaBlending($partSpritesheet, true);
             imageSaveAlpha($partSpritesheet, true);
@@ -185,10 +198,13 @@ if ($rows) {
             }
 
             //mash the file on top of the body file
-            imagecopymerge($outSpritesheet, $partSpritesheet, $aniData["startFrame"]["x"], $aniData["startFrame"]["y"], 0, 0, imagesx($partSpritesheet), imagesy($partSpritesheet), 100);
+            // TODO: somehow keep the alpha
+            imagecopy($outSpritesheet, $partSpritesheet, $aniData["startFrame"]["x"], $aniData["startFrame"]["y"], 0, 0, imagesx($partSpritesheet), imagesy($partSpritesheet));
             imagedestroy($partSpritesheet);
 
             echo "\tColored and Merged $part\n";
+          } else {
+            echo "missing\n";
           }
         }
       }
