@@ -54,12 +54,12 @@
         function createNewImage(imageSrc, canvasContext, avatarCanvas)
         {
             var newImage = new Image();
-            newImage.src = imageSrc;
 
             newImage.onload = function()
             {
                 canvasContext.drawImage(newImage, 0, 0, avatarCanvas.width, avatarCanvas.height);
             };
+            newImage.src = imageSrc;
 
             return newImage;
         }
