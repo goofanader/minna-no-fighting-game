@@ -50,10 +50,10 @@
             array("HEADPIECE", "headpiece choices", "Choose headpiece here."),
             array("TOP", "shirt choices", "Change tops here. Change tops' color palettes here."),
             array("PANTS", "pants choices", "Change bottoms here. Change bottoms' color palettes here."),
-            array("SHOES", "shoes choices", "Change footwear here. Change shoes' color palettes here."),
+            array("SHOES", "shoes choices", "Change footwear here. Change shoes' color palettes here.")/*,
             array("TAIL", "tail choices", "Choose what tail you want here. Change tails' color palettes here."),
             array("SPECIAL", "special choices", "Choose any cute things to add to your body. Change their colors here."),
-            array("CLASS", "class choices", "Select your three classes for fighting. Determine what weapon you want.")
+            array("CLASS", "class choices", "Select your three classes for fighting. Determine what weapon you want.")*/
           );
 
           for ($i = 0; $i < count($tabs); $i++) {

@@ -82,7 +82,7 @@ function goThroughDirectory($directory, $db) {
   global $imagesInDB, $STDERR;
 
   foreach (scandir($directory) as $file) {
-    if ($file[0] != "." && $file != "ICONS") {
+    if ($file[0] != "." && $file != "ICONS" && $file != "CLASSES") {
       $realFilePath = $directory."/".$file;
 
       // check if it's a directory, if so, call this function again

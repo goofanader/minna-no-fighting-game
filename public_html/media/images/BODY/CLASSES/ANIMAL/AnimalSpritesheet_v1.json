@@ -1,0 +1,42 @@
+{
+  "RUN": {
+    "startFrame": {
+      "x": 0,
+      "y": 0
+    },
+    "endFrame": {
+      "x": 224,
+      "y": 0
+    }
+  },
+  "ATTACK": {
+    "startFrame": {
+      "x": 0,
+      "y": 32
+    },
+    "endFrame": {
+      "x": 224,
+      "y": 32
+    }
+  },
+  "ATTACK2": {
+    "startFrame": {
+      "x": 0,
+      "y": 64
+    },
+    "endFrame": {
+      "x": 224,
+      "y": 64
+    }
+  },
+  "ATTACK3": {
+    "startFrame": {
+      "x": 0,
+      "y": 96
+    },
+    "endFrame": {
+      "x": 224,
+      "y": 128
+    }
+  }
+}
