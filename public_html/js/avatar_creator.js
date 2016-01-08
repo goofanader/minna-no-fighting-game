@@ -12,7 +12,7 @@
 
         var images = {
             BODY: 'media/images/BODY/front.png',
-            EYES: 'media/images/EYES/happyeyes.png',
+            EYES: 'media/images/EYES/happy.png',
             MOUTH: 'media/images/MOUTH/smile_small.png',
             SHOES: 'media/images/SHOES/boots.png',
             PANTS: 'media/images/PANTS/LongPant.png',
