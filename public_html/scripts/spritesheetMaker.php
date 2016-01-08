@@ -125,7 +125,7 @@ if ($fileColorRows) {
   }
 }
 
-$rows = $db->select("SELECT * FROM PlayerCreationQueue WHERE queueStatus = 'queued'");
+$rows = $db->select("SELECT * FROM PlayerCreationQueue WHERE queueStatus = 'queued' ORDER BY dateAdded DESC");
 
 if ($rows) {
   foreach ($rows as $row) {
@@ -225,7 +225,7 @@ if ($rows) {
       echo "\tCreated Class Spritesheet: $pngFilename\n\n";
     }
 
-    // update row in db
+    //TODO: update row in db
   }
 }
  ?>
