@@ -76,6 +76,32 @@ function hasDifferentColors($colors1, $colors2) {
   return false;
 }
 
+function makeFrontFacingSprites($spritesheet, $json, $folder) {
+  //get the frame number of the front facing sprite
+  $startX = $json["FRONT"]["startFrame"]["x"];
+  $startY = $json["FRONT"]["startFrame"]["y"];
+  echo "\tCreating front facing sprites...\n";
+
+  // do in increments of 64? starting with 32
+  for ($i = 32; $i < 257; $i += 64) {
+    // make an empty imageResource with transparency. Code from http://php.net/manual/en/function.imagecreatetruecolor.php
+    $png = imagecreatetruecolor($i, $i);
+    imagesavealpha($png, true);
+    imagealphablending($png, true);
+    //imageantialias($png, false);
+
+    $trans_colour = imagecolorallocatealpha($png, 0, 0, 0, 127);
+    imagefill($png, 0, 0, $trans_colour);
+    // end code from elsewhere
+
+    imagecopyresized($png, $spritesheet, 0, 0, $startX, $startY, $i, $i, 32, 32);
+    imagepng($png, "$folder/FRONT_$i.png", 0);
+    imagedestroy($png);
+
+    echo "\t\tCreated $folder/FRONT_$i.png.\n";
+  }
+}
+
 function colorSpritesheet($imageResource, $newColors, $origColors, $imageOut, $widthOffset, $heightOffset) {
   if (!hasDifferentColors($newColors, $origColors)) {
     return;
@@ -147,22 +173,24 @@ if ($rows) {
     //$classSpritesheets = array();
     for ($i = 0; $i < count($jsonData["CLASSES"]); $i++) {
       $currentClass = $jsonData['CLASSES'][$i];
-      echo "~~~{$jsonData['CLASSES'][$i]} Class~~~\n";
-      $classSpritesheet = $imageFilesStart."/BODY/CLASSES/".$jsonData["CLASSES"][$i]."/Spritesheet.png";
+      echo "~~~$currentClass Class~~~\n";
+      $classSpritesheet = $imageFilesStart."/BODY/CLASSES/$currentClass/Spritesheet.png";
       $spritesheetJson = json_decode(file_get_contents(str_replace(".png", ".json", $classSpritesheet)), true);
 
       // load the body file to prepare for layering
       if (!file_exists($classSpritesheet)) {
-        printErrorMessage("Could not find $classSpritesheet! Could not create ID {$row['id']}'s {$jsonData['CLASSES'][$i]} spritesheet.\n", $STDERR);
+        printErrorMessage("Could not find $classSpritesheet! Could not create ID {$row['id']}'s $currentClass spritesheet.\n", $STDERR);
         continue;
       }
       $newSpritesheet = imagecreatefrompng($classSpritesheet);
-      imageAlphaBlending($newSpritesheet, true);
-      imageSaveAlpha($newSpritesheet, true);
+      imagealphablending($newSpritesheet, true);
+      imagesavealpha($newSpritesheet, true);
+      //imageantialias($newSpritesheet, false);
 
       $outSpritesheet = imagecreatefrompng($classSpritesheet);
-      imageAlphaBlending($outSpritesheet, true);
-      imageSaveAlpha($outSpritesheet, true);
+      imagealphablending($outSpritesheet, true);
+      imagesavealpha($outSpritesheet, true);
+      //imageantialias($outSpritesheet, false);
 
       // color the body file
       colorSpritesheet($newSpritesheet, $jsonData["BODY"]["colors"], $fileColors[$jsonData["BODY"]["filename"]], $outSpritesheet, 0, 0);
@@ -190,15 +218,15 @@ if ($rows) {
           if (file_exists($partFilename)) {
             echo "found\n";
             $partSpritesheet = imagecreatefrompng($partFilename);
-            imageAlphaBlending($partSpritesheet, true);
-            imageSaveAlpha($partSpritesheet, true);
+            imagealphablending($partSpritesheet, true);
+            imagesavealpha($partSpritesheet, true);
+            //imageantialias($partSpritesheet, false);
 
             if (isset($jsonData[$part]["colors"])) {
               colorSpritesheet($partSpritesheet, $jsonData[$part]["colors"], $fileColors[$jsonData[$part]["filename"]], $partSpritesheet, 0, 0);
             }
 
             //mash the file on top of the body file
-            // TODO: somehow keep the alpha
             imagecopy($outSpritesheet, $partSpritesheet, $aniData["startFrame"]["x"], $aniData["startFrame"]["y"], 0, 0, imagesx($partSpritesheet), imagesy($partSpritesheet));
             imagedestroy($partSpritesheet);
 
@@ -219,8 +247,14 @@ if ($rows) {
       $folder .= "/{$row['characterName']}";
       if (!file_exists($folder))
         mkdir($folder);
-      $pngFilename = "$folder/"."{$jsonData["CLASSES"][$i]}.png";
+      $pngFilename = "$folder/"."$currentClass.png";
       imagepng($outSpritesheet, $pngFilename, 0);
+
+      // if it's the NONE class, save different sized copies of the front-facing sprite
+      if ($currentClass == "NONE") {
+        makeFrontFacingSprites($outSpritesheet, $spritesheetJson, $folder);
+      }
+
       imagedestroy($outSpritesheet);
       echo "\tCreated Class Spritesheet: $pngFilename\n\n";
     }
