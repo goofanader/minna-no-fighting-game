@@ -83,7 +83,10 @@ function makeFrontFacingSprites($spritesheet, $json, $folder) {
   echo "\tCreating front facing sprites...\n";
 
   // do in increments of 64? starting with 32
-  for ($i = 32; $i < 257; $i += 64) {
+  $increments = array(32, 64, 128, 196, 256);
+
+  for ($j = 0; $j < count($increments); $j++) {
+    $i = $increments[$j];
     // make an empty imageResource with transparency. Code from http://php.net/manual/en/function.imagecreatetruecolor.php
     $png = imagecreatetruecolor($i, $i);
     imagesavealpha($png, true);

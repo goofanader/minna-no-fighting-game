@@ -9,7 +9,7 @@
 * emeraldschemer
 * goofanader
 * bluecrysto
-* Emily
+* trikey
 
 ## Libraries
 * [HardonCollider](http://vrld.github.io/HardonCollider/)
