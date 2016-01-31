@@ -225,7 +225,7 @@
         });
 
         // handle form inputs and validating them
-        $('#avatarName').change(function()
+        $('#avatarName').on('input', function()
         {
             var minChars = 2,
                 maxChars = 80;
@@ -244,7 +244,7 @@
             setSubmitButton();
         });
 
-        $('#emailInput').change(function()
+        $('#emailInput').on('input', function()
         {
             var maxChars = 100;
             var errText = "Must be a vaild email address.";
@@ -271,11 +271,13 @@
 
         function setSubmitButton()
         {
-            if ($('#avatarName').closest('.form-group').hasClass('has-success') && $('#emailInput').closest('.form-group').hasClass('has-success'))
+            if ($('#avatarName').parent().hasClass('has-success') && $('#emailInput').parent().hasClass('has-success'))
             {
                 $('button[type="submit"]').removeAttr('disabled');
+            } else {
+              $('button[type="submit"]').attr('disabled', "");
             }
-            else if (typeof $('button[type="submit"]').attr('disabled') !== typeof undefined && $('button[type="submit"]').attr('disabled') !== false)
+            else
             {
                 $('button[type="submit"]').attr('disabled', "");
             }

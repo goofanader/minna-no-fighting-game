@@ -16,6 +16,7 @@
 * [hump](http://hump.readthedocs.org/en/latest/index.html)
 * [anim8](https://github.com/kikito/anim8#anim8)
 * [Spectrum, a JQuery Color Picker](https://bgrins.github.io/spectrum/)
+* [Simple JSON Encode/Decode in Pure Lua](http://regex.info/blog/lua/json)
 
 ## Other
 * CHANGELOG format help: [olivierlacan's Keep a Changelog site](http://keepachangelog.com/)

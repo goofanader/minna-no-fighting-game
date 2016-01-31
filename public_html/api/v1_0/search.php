@@ -1,4 +1,5 @@
 <?php
+define("MIN_LETTERS", 1);
 //ini_set('display_errors', 1);
 //error_reporting(~0);
 // Following function call from https://davidwalsh.name/create-zip-php
@@ -62,7 +63,7 @@ if (isset($_GET) && isset($_GET['n'])) {
   $searchFor = strtolower($_GET['n']);
 
   $db = new Db();
-  $dbSearch = $db->quote((strlen($searchFor) > 5 ? substr($searchFor, 0, 5) : $searchFor)."%");
+  $dbSearch = $db->quote((strlen($searchFor) > MIN_LETTERS ? substr($searchFor, 0, MIN_LETTERS) : $searchFor)."%");
   $rows = $db->query("SELECT * FROM PlayerCreationQueue WHERE characterName COLLATE UTF8_GENERAL_CI LIKE $dbSearch ORDER BY characterName");
 
   //header('Content-Type: text/plain');
