@@ -274,8 +274,6 @@
             if ($('#avatarName').parent().hasClass('has-success') && $('#emailInput').parent().hasClass('has-success'))
             {
                 $('button[type="submit"]').removeAttr('disabled');
-            } else {
-              $('button[type="submit"]').attr('disabled', "");
             }
             else
             {

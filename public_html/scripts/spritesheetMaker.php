@@ -235,6 +235,7 @@ if ($rows) {
           continue;
         }
 
+        // if there isn't a full spritesheet, go through each animation and put the frames in the respective places
         foreach ($spritesheetJson as $aniName => $aniData) {
           // create the file resource for this part type
           $strReplacement = ($aniName != "FRONT" ? "$imageFilesStart/$part/CLASSES/$currentClass/" : "");
