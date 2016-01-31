@@ -168,7 +168,7 @@ if ($rows) {
         "COOK"*/
       );
     }
-    $jsonData["CLASSES"][] = "NONE";
+    $jsonData["CLASSES"][] = "REGULAR";
 
     var_dump($jsonData["CLASSES"]);
     echo "\n";
@@ -200,13 +200,42 @@ if ($rows) {
       imagedestroy($newSpritesheet);
       echo "\tColored BODY\n";
 
-      foreach ($spritesheetJson as $aniName => $aniData) {
-        for ($j = 1; $j < count($g_SPRITE_TYPES); $j++) {
-          $part = $g_SPRITE_TYPES[$j];
-          if ($jsonData[$part]["filename"] == "") {
-            // that means there's no part specified.
-            continue;
+      for ($j = 1; $j < count($g_SPRITE_TYPES); $j++) {
+        $part = $g_SPRITE_TYPES[$j];
+        if ($jsonData[$part]["filename"] == "") {
+          // that means there's no part specified.
+          continue;
+        }
+
+        // first check if there's a full spritesheet of the part to use instead of the individual ones
+        $partFilename = "../".$jsonData[$part]["filename"];
+        $strReplacement = "$imageFilesStart/$part/CLASSES/$currentClass/";
+        $partFilename = str_replace("$imageFilesStart/$part/", $strReplacement, $partFilename);
+        $partFilename = str_replace(".png", "$currentClass.png", $partFilename);
+
+        echo "\tPart Spritesheet Filename: $partFilename...";
+
+        if (file_exists($partFilename)) {
+          echo "found\n";
+          $partSpritesheet = imagecreatefrompng($partFilename);
+          imagealphablending($partSpritesheet, true);
+          imagesavealpha($partSpritesheet, true);
+          //imageantialias($partSpritesheet, false);
+
+          if (isset($jsonData[$part]["colors"])) {
+            colorSpritesheet($partSpritesheet, $jsonData[$part]["colors"], $fileColors[$jsonData[$part]["filename"]], $partSpritesheet, 0, 0);
           }
+
+          //mash the file on top of the body file
+          imagecopy($outSpritesheet, $partSpritesheet, 0, 0, 0, 0, imagesx($partSpritesheet), imagesy($partSpritesheet));
+          imagedestroy($partSpritesheet);
+
+          echo "\tColored and Merged $part\n";
+
+          continue;
+        }
+
+        foreach ($spritesheetJson as $aniName => $aniData) {
           // create the file resource for this part type
           $strReplacement = ($aniName != "FRONT" ? "$imageFilesStart/$part/CLASSES/$currentClass/" : "");
 
@@ -254,7 +283,7 @@ if ($rows) {
       imagepng($outSpritesheet, $pngFilename, 0);
 
       // if it's the NONE class, save different sized copies of the front-facing sprite
-      if ($currentClass == "NONE") {
+      if ($currentClass == "REGULAR") {
         makeFrontFacingSprites($outSpritesheet, $spritesheetJson, $folder);
       }
 
