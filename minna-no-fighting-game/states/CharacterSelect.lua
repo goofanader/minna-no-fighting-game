@@ -9,6 +9,14 @@ require "classes/Player"
 local socketHttp = require "socket.http"
 local socketUrl = require "socket.url"
 
+local text
+local errText
+local foundData
+local loadedImages
+local foundList
+local players
+local selectedPlayer
+
 CharacterSelect = {}
 
 function CharacterSelect:getCharacter(searchTerm)
@@ -20,6 +28,7 @@ function CharacterSelect:getCharacter(searchTerm)
   }
   local retArr = {}
 
+  -- TODO: rather than checking if the file exists, check if it's in loadedImages yet
   if not love.filesystem.exists(CHARACTERS_FOLDER) then
     -- create the folder
     love.filesystem.createDirectory(CHARACTERS_FOLDER)
@@ -43,14 +52,21 @@ function CharacterSelect:getCharacter(searchTerm)
     end
   end
 
-  if #retArr < 1 then
+  if true or #retArr < 1 then
+    retArr = {}
+    ret = {
+      ["ANIMAL"] = "/ANIMAL.png",
+      ["NONE"] = "/NONE.png",
+      ["FRONT"] = "/FRONT_32.png"
+    }
+
     -- didn't find it locally, so download from the internet
     local b, c, h = socketHttp.request(SEARCH_API_URL .. "?n=" .. searchTerm)
 
     if c == 200 and b ~= nil and b ~= "" then
       -- we're all good, we got some data~
       local webData = jsonLib:decode(b)
-      print(inspect(webData))
+      --print(inspect(webData))
 
       for index, value in ipairs(webData) do
         local charLocation = CHARACTERS_FOLDER .. string.gsub(string.gsub(value, IMAGES_URL, ""), "/FRONT_32.png", "")
@@ -58,6 +74,8 @@ function CharacterSelect:getCharacter(searchTerm)
 
         for key, endFile in pairs(ret) do
           local imageURL = string.gsub(value, "/FRONT_32.png", endFile)
+
+          -- TODO: check that the image doesn't already exist in the folders so we don't have to ping the internet again
 
           -- download each image and put them into the save directory
           local image, status, err = socketHttp.request(imageURL)
@@ -84,14 +102,135 @@ function CharacterSelect:getCharacter(searchTerm)
   return retArr
 end
 
+function CharacterSelect:buildGUI()
+  --local searchFrame = loveframes.Create("panel")
+  --searchFrame:SetName("Search")
+  --searchFrame:SetSize(WINDOW_WIDTH, WINDOW_HEIGHT / 2.0)
+  --searchFrame:SetDraggable(false):ShowCloseButton(false)
+  local offset = WINDOW_WIDTH - (scale * ORIG_WIDTH) + 20
+
+  --## The Search Text ##--
+  local searchText = loveframes.Create('text')
+  searchText:SetDefaultColor(255, 255, 255, 255):SetText("Search: ")
+  searchText:SetPos(offset, WINDOW_HEIGHT / 2.0 - searchText:GetHeight(), false)
+
+  --## The Text Input for Search ##--
+  local searchInput = loveframes.Create('textinput')
+  searchInput:SetPos(offset + searchText:GetWidth(), searchText:GetY() - (searchText:GetHeight() / 2.0), false)
+  searchInput:SetWidth(WINDOW_WIDTH - searchInput:GetX() - offset)
+
+  searchInput.OnEnter = function(object)
+    local text = object:GetText()
+    object:Clear()
+    -- TODO: send this to a thread so the rest of the program can run while data is coming
+    foundData = self:getCharacter(socketUrl.escape(trim(text)))
+    foundList:Clear()
+
+    -- add the remove button
+    local removeButton = loveframes.Create("button")
+    removeButton:SetText("Remove Player")
+    removeButton.OnClick = function(buttonObject)
+      players[selectedPlayer]["imagesDir"] = nil
+      players[selectedPlayer]["images"] = nil
+      players[selectedPlayer]["name"] = nil
+      players[selectedPlayer]["button"]:SetImage(nil):SetText("Player "..selectedPlayer)
+    end
+    foundList:AddItem(removeButton)
+
+    -- load any new images
+    for index, characterData in ipairs(foundData) do
+      local arrKey = string.gsub(characterData["FRONT"], "/FRONT_32.png", "")
+      local charName = split(arrKey, "/")
+      charName = charName[#charName]
+
+      if loadedImages[arrKey] == nil then
+        loadedImages[arrKey] = love.graphics.newImage(characterData["FRONT"])
+      end
+
+      --## Add the found image to the list ##--
+      local charImageButton = loveframes.Create("imagebutton")
+      charImageButton:SetImage(loadedImages[arrKey])
+      charImageButton:Center()
+      charImageButton:SetText(charName)
+      charImageButton:SizeToImage()
+
+      charImageButton.OnClick = function(buttonObject)
+        -- change the currently selected player slot to this character
+        players[selectedPlayer]["imageDir"] = arrKey
+        players[selectedPlayer]["images"] = {["front"] = buttonObject:GetImage()}
+        players[selectedPlayer]["name"] = buttonObject:GetText()
+        players[selectedPlayer]["button"]:SetImage(buttonObject:GetImage()):SizeToImage():SetText(buttonObject:GetText())
+      end
+
+      foundList:AddItem(charImageButton)
+    end
+
+    errText = " "..#foundData.." FOUND."
+  end
+
+  --## List Space for Found Items ##--
+  foundList = loveframes.Create("list")
+  foundList:SetPos(offset, 0)
+  foundList:SetSize(WINDOW_WIDTH - foundList:GetX() - offset, searchInput:GetY() - 20)
+  foundList:SetDisplayType("vertical"):EnableHorizontalStacking(true):SetAutoScroll(false)
+  foundList:SetPadding(32):SetSpacing(32)
+
+  --## List Space for Players ##--
+  playerList = loveframes.Create("list")
+  playerList:SetPos(offset, searchInput:GetY() + searchInput:GetHeight() + 20)
+  playerList:SetSize(WINDOW_WIDTH - playerList:GetX() - offset, WINDOW_HEIGHT - playerList:GetY())
+  playerList:SetDisplayType("vertical"):EnableHorizontalStacking(true):SetAutoScroll(false)
+  playerList:SetPadding(32):SetSpacing(32)
+
+  for i = 1, MAX_PLAYERS do
+    players[i] = {}
+    players[i]["button"] = loveframes.Create("imagebutton")
+    players[i]["button"]:SetText("Player "..i):Center()
+    players[i]["button"]:SetProperty("isDown", false)
+    if i == selectedPlayer then
+      players[i]["button"]:SetProperty("isDown", true)
+    end
+    players[i]["button"]:SetProperty("playerIndex", i)
+
+    players[i]["button"].OnClick = function(object)
+      local index = object:GetProperty("playerIndex")
+      selectedPlayer = index
+
+      for j = 1, MAX_PLAYERS do
+        players[j]["button"]:SetProperty("isDown", false)
+      end
+      object:SetProperty("isDown", true)
+    end
+
+    playerList:AddItem(players[i]["button"])
+  end
+end
+
+function CharacterSelect:init()
+  loadedImages = {}
+  players = {}
+  selectedPlayer = 1
+
+  --[[local charactersDir = love.filesystem.getDirectoryItems(CHARACTERS_FOLDER)
+
+  for index, playerID in ipairs(charactersDir) do
+    local playerDir = love.filesystem.getDirectoryItems(CHARACTERS_FOLDER.."/"..playerID)
+
+    for playerIDIndex, charName in ipairs(playerDir) do
+      local newImage = love.graphics.newImage(CHARACTERS_FOLDER.."/"..playerID.."/"..charName.."/FRONT_32.png")
+      loadedImages[CHARACTERS_FOLDER.."/"..playerID.."/"..charName] = newImage
+    end
+  end]]
+
+  self:buildGUI()
+end
+
 function CharacterSelect:enter()
   text = ""
   errText = ""
   foundData = {}
-  --local foundData = self:getCharacter("p")
-  --print(inspect(foundData))
+  --[[loadedImages = {}
 
-  loadedImages = {}
   local charactersDir = love.filesystem.getDirectoryItems(CHARACTERS_FOLDER)
 
   for index, playerID in ipairs(charactersDir) do
@@ -101,36 +240,53 @@ function CharacterSelect:enter()
       local newImage = love.graphics.newImage(CHARACTERS_FOLDER.."/"..playerID.."/"..charName.."/FRONT_32.png")
       loadedImages[CHARACTERS_FOLDER.."/"..playerID.."/"..charName] = newImage
     end
-  end
+  end]]
 end
 
 function CharacterSelect:draw()
+  love.graphics.push()
+  love.graphics.translate(translation.x, translation.y)
+  love.graphics.scale(scale)
+
+  --[[love.graphics.setDefaultFilter("linear", "linear")
   love.graphics.print("Enter your search:"..errText)
   love.graphics.print(text, 10, 10)
 
-  local addX = 0
+  love.graphics.setDefaultFilter("nearest", "nearest")]]
+  local offset = (ORIG_WIDTH - 64) / (#foundData * 1.0)
+  local addX = offset - 16
   local addY = 32
-  local offset = 5
 
-  for key, image in pairs(loadedImages) do
+  --[[for index, characterData in ipairs(foundData) do
+    local image = loadedImages[string.gsub(characterData["FRONT"], "/FRONT_32.png", "")]
     love.graphics.draw(image, addX, addY)
     addX = addX + image:getWidth() + offset
 
-    if addX >= love.window.getWidth() then
-      addX = 0
+    if addX >= ORIG_WIDTH then
+      addX = offset
       addY = addY + image:getHeight() + offset
     end
-  end
+  end]]
+
+  --love.graphics.setDefaultFilter("linear", "linear")
+  love.graphics.pop()
+
+  loveframes.draw()
+  --love.graphics.setDefaultFilter("nearest", "nearest")
 end
 
 function CharacterSelect:update(dt)
+  loveframes.update(dt)
 end
 
 function CharacterSelect:textinput(t)
-  text = text .. t
+  loveframes.textinput(t)
+  --text = text .. t
 end
 
-function CharacterSelect:keypressed(key)
+function CharacterSelect:keypressed(key, isrepeat)
+  loveframes.keypressed(key, isrepeat)
+
   if key == "backspace" then
     -- get the byte offset to the last UTF-8 character in the string.
     local byteoffset = utf8.offset(text, -1)
@@ -142,7 +298,8 @@ function CharacterSelect:keypressed(key)
     end
   end
 
-  if key == "return" then
+  --[[if key == "return" then
+    -- TODO: send this to a thread so the rest of the program can run while data is coming
     foundData = self:getCharacter(socketUrl.escape(trim(text)))
     --print(inspect(foundData))
 
@@ -150,12 +307,24 @@ function CharacterSelect:keypressed(key)
     for index, characterData in ipairs(foundData) do
       local arrKey = string.gsub(characterData["FRONT"], "/FRONT_32.png", "")
 
-      if loadedImages[arrKey] == nil then
+      --if loadedImages[arrKey] == nil then
         loadedImages[arrKey] = love.graphics.newImage(characterData["FRONT"])
-      end
+      --end
     end
 
     errText = " "..#foundData.." FOUND."
     text = ""
-  end
+  end]]
+end
+
+function CharacterSelect:keyreleased(key)
+	loveframes.keyreleased(key)
+end
+
+function CharacterSelect:mousepressed(x, y, button)
+	loveframes.mousepressed(x, y, button)
+end
+
+function CharacterSelect:mousereleased(x, y, button)
+	loveframes.mousereleased(x, y, button)
 end
