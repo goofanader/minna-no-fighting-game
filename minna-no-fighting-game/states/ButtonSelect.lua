@@ -12,9 +12,13 @@ local buttons = {}
 local pressed = {}
 local pressFlag
 
-function ButtonSelect:enter()
+function ButtonSelect:enter(players)
   selection = 1
   pressed = {}
+
+  for i = 1, #players do
+    player = players[i]
+  end
 end
 
 function ButtonSelect:draw()
@@ -23,14 +27,14 @@ function ButtonSelect:draw()
   else
     love.graphics.print("All Players Joined! Press ENTER to start game!",10,10)
   end
-  
+
   for i=1, MAX_PLAYERS do
     if pressed[i] then
       love.graphics.setColor(0,255,0,255)
     elseif selection > i then
       love.graphics.setColor(0,0,255,255)
     end
-    
+
     love.graphics.rectangle('fill', WINDOW_WIDTH/MAX_PLAYERS*(i-0.5) , WINDOW_HEIGHT/2 , 10 , 10)
     love.graphics.setColor(255,255,255,255)
   end
@@ -59,7 +63,7 @@ function ButtonSelect:keyreleased(key, code)
     if lastPressed == 'return' and selection > 1 then
       numberOfPlayers = selection-1
       for i=1, numberOfPlayers do
-        players[i] = Player(vector(25*i,Y_POS+i),'assets/sprites/animal.png',buttons[i])
+        players[i] = Player(vector(25*i,Y_POS+i),'assets/sprites/animal.png',buttons[i], "Player "..i, i)
       end
       numberOfPlayers = selection-1
       Gamestate.switch(GamePlay)

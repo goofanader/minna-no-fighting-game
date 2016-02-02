@@ -1,7 +1,7 @@
 local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
-Enemy = Class{
+Enemy = Class {
   -- shader code from here: https://love2d.org/forums/viewtopic.php?t=32605&p=174896#p171718
   pixelShader = love.graphics.newShader([[
     vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
@@ -35,7 +35,7 @@ function Enemy:update(dt)
   self.timer = self.timer - dt
   if self.timer < 0 and self.state ~= 'flinch' then
     self.timer = love.math.random(2)+2
-    
+
     --Find Nearest Player
     self.closestPlayer = nil
     local distance = 100000000
@@ -45,7 +45,7 @@ function Enemy:update(dt)
         distance = math.abs(self.closestPlayer.pos.x - self.pos.x)
       end
     end
-    
+
     if love.math.random() > 0.75 then
       if self.state == 'move' then
         self.state = 'idle'
@@ -67,14 +67,14 @@ function Enemy:update(dt)
       self.animation = self.idle
     end
   end
-  
+
   if self.lag > 0 then
     self.lag = self.lag - dt
   elseif self.state == 'flinch' then
     self.timer = 0
     self.state = 'move'
   end
-  
+
   self.animation:update(dt)
 
 end
@@ -85,12 +85,12 @@ function Enemy:draw()
   if self.alive then
     self.animation:draw(self.img, self.pos.x, self.pos.y)
   end
-  
+
   love.graphics.setShader()
-  if self.hitbox then
+  if isDrawingHitbox and self.hitbox then
     self.hitbox:draw('line')
   end
-  
+
 end
 
 function Enemy:spawn(pos)
@@ -151,14 +151,14 @@ function Enemy:move_with_collision(dx, dy)
   end
 
   self.hitbox:move(dx+pdx,dy) --Move Hitbox
-  
+
   local moveBlock = false --Check Hard Collisions
   for i=1,numberOfPlayers do
     if self.hitbox:collidesWith(players[i].hitbox) then
       moveBlock = true
     end
   end
-  
+
   if not moveBlock then --Then either move enemy
     self.pos.x = self.pos.x + dx + pdx
     self.animation = self.running

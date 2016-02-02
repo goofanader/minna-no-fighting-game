@@ -15,6 +15,7 @@ function love.load()
   scale = 1
   translation = vector(0, 0)
   isFullscreen = true
+  isDrawingHitbox = false
 
   love.graphics.setDefaultFilter("nearest", "nearest")
 

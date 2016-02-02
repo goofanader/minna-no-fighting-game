@@ -13,8 +13,10 @@ local text
 local errText
 local foundData
 local loadedImages
+local goButton
 local foundList
 local players
+local numPlayers
 local selectedPlayer
 
 CharacterSelect = {}
@@ -108,6 +110,23 @@ function CharacterSelect:buildGUI()
   --searchFrame:SetSize(WINDOW_WIDTH, WINDOW_HEIGHT / 2.0)
   --searchFrame:SetDraggable(false):ShowCloseButton(false)
   local offset = WINDOW_WIDTH - (scale * ORIG_WIDTH) + 20
+  local padding = 20
+
+  --## The GO! Button ##--
+  goButton = loveframes.Create('button')
+  goButton:SetText("GO!")
+  goButton:SetWidth(goButton:GetWidth() + (offset * 2))
+  goButton:SetPos(WINDOW_WIDTH - offset - goButton:GetWidth(), 0):SetHeight(WINDOW_HEIGHT)
+  if numPlayers == 0 then
+    goButton:SetEnabled(false)
+  end
+  goButton.OnClick = function(object)
+    -- prepare the characters for the button select screen
+
+
+    -- change gamestate
+    Gamestate.switch(ButtonSelect)
+  end
 
   --## The Search Text ##--
   local searchText = loveframes.Create('text')
@@ -117,7 +136,7 @@ function CharacterSelect:buildGUI()
   --## The Text Input for Search ##--
   local searchInput = loveframes.Create('textinput')
   searchInput:SetPos(offset + searchText:GetWidth(), searchText:GetY() - (searchText:GetHeight() / 2.0), false)
-  searchInput:SetWidth(WINDOW_WIDTH - searchInput:GetX() - offset)
+  searchInput:SetWidth(WINDOW_WIDTH - searchInput:GetX() - offset - goButton:GetWidth() - padding)
 
   searchInput.OnEnter = function(object)
     local text = object:GetText()
@@ -130,10 +149,19 @@ function CharacterSelect:buildGUI()
     local removeButton = loveframes.Create("button")
     removeButton:SetText("Remove Player")
     removeButton.OnClick = function(buttonObject)
+      if players[selectedPlayer]["name"] ~= nil then
+        numPlayers = numPlayers - 1
+      end
+
       players[selectedPlayer]["imagesDir"] = nil
       players[selectedPlayer]["images"] = nil
       players[selectedPlayer]["name"] = nil
       players[selectedPlayer]["button"]:SetImage(nil):SetText("Player "..selectedPlayer)
+
+      -- set the goButton to disabled if no more players
+      if numPlayers == 0 then
+        goButton:SetEnabled(false)
+      end
     end
     foundList:AddItem(removeButton)
 
@@ -155,11 +183,18 @@ function CharacterSelect:buildGUI()
       charImageButton:SizeToImage()
 
       charImageButton.OnClick = function(buttonObject)
+        if players[selectedPlayer]["name"] == nil then
+          numPlayers = numPlayers + 1
+        end
+
         -- change the currently selected player slot to this character
         players[selectedPlayer]["imageDir"] = arrKey
         players[selectedPlayer]["images"] = {["front"] = buttonObject:GetImage()}
         players[selectedPlayer]["name"] = buttonObject:GetText()
         players[selectedPlayer]["button"]:SetImage(buttonObject:GetImage()):SizeToImage():SetText(buttonObject:GetText())
+
+        -- change the gobutton to enabled
+        goButton:SetEnabled(true)
       end
 
       foundList:AddItem(charImageButton)
@@ -171,14 +206,14 @@ function CharacterSelect:buildGUI()
   --## List Space for Found Items ##--
   foundList = loveframes.Create("list")
   foundList:SetPos(offset, 0)
-  foundList:SetSize(WINDOW_WIDTH - foundList:GetX() - offset, searchInput:GetY() - 20)
+  foundList:SetSize(WINDOW_WIDTH - foundList:GetX() - offset - goButton:GetWidth() - padding, searchInput:GetY() - 20)
   foundList:SetDisplayType("vertical"):EnableHorizontalStacking(true):SetAutoScroll(false)
   foundList:SetPadding(32):SetSpacing(32)
 
   --## List Space for Players ##--
   playerList = loveframes.Create("list")
   playerList:SetPos(offset, searchInput:GetY() + searchInput:GetHeight() + 20)
-  playerList:SetSize(WINDOW_WIDTH - playerList:GetX() - offset, WINDOW_HEIGHT - playerList:GetY())
+  playerList:SetSize(WINDOW_WIDTH - playerList:GetX() - offset - goButton:GetWidth() - padding, WINDOW_HEIGHT - playerList:GetY())
   playerList:SetDisplayType("vertical"):EnableHorizontalStacking(true):SetAutoScroll(false)
   playerList:SetPadding(32):SetSpacing(32)
 
@@ -210,6 +245,7 @@ function CharacterSelect:init()
   loadedImages = {}
   players = {}
   selectedPlayer = 1
+  numPlayers = 0
 
   --[[local charactersDir = love.filesystem.getDirectoryItems(CHARACTERS_FOLDER)
 
