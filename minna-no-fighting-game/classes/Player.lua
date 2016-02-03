@@ -1,32 +1,45 @@
 local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
+require "classes/PlayerClass/ANIMAL"
+require "classes/PlayerClass/REGULAR"
+
 Player = Class{}
 
 local BUTTON_DELAY = 0.1 --seconds
 
-function Player:init(pos, imagefile, button, name, id)
-  self.img = love.graphics.newImage(imagefile)
+function Player:init(pos, imagefilesLocation, button, name, id)
+  self.classes = self:getClasses(imagefilesLocation)
   self.button = button
   self.name = name
   self.id = id
-  local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
+  --[[local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-8',1),0.1)
   self.punch1 = anim8.newAnimation(g('1-8',2),0.02,'pauseAtEnd')
   self.punch2 = anim8.newAnimation(g('1-8',3),0.02,'pauseAtEnd')
   self.punch3 = anim8.newAnimation(g('1-8',4,'1-8',5,1,6),0.02,'pauseAtEnd')
   self.hitstun = anim8.newAnimation(g('2-3',6),0.1)
   self.idle = anim8.newAnimation(g('4-8',6,'1-7',7),0.1)
-  self.animation = self.idle
+  self.animation = self.idle]]
   self:spawn(pos)
 end
 
+function Player:getClasses(imagesLocation)
+  -- hardcoding the two classes we have right now...
+  local classInfo = {}
+  classInfo[NO_RANGE] = RegularPlayerClass(imagesLocation)
+  classInfo[CLOSE_RANGE] = AnimalPlayerClass(imagesLocation)
+
+  return classInfo
+end
+
 function Player:spawn(pos)
-  self.pos = pos
-  self.hitbox = HC.rectangle(pos.x,pos.y,SPRITE_SIZE,SPRITE_SIZE)
+  self.pos = pos or vector(0, 0)
+  self.hitbox = HC.rectangle(self.pos.x, self.pos.y, SPRITE_SIZE, SPRITE_SIZE)
   self.hitbox.owner = self
   self.hitbox.class = 'player'
-  self.animation = self.idle
+  self.currClass = self.classes[NO_RANGE]
+  self.animation = self.currClass.idle
   self.flip = false
   self.buttonFlag = false
   self.holdTime = 0
@@ -49,7 +62,7 @@ function Player:update(dt)
 
         if self.releaseTime < BUTTON_DELAY then -- CHARGE
           if self.chargeFlag or self.state == 'charge' then
-            self:chargeUp()
+            --self:chargeUp()
           elseif self:canMove() then
             self.chargeFlag = true
           end
@@ -71,7 +84,8 @@ function Player:update(dt)
         self.combo = 0
         if self.state ~= 'moveAway' and self.charge <= 0 then
           self.state = 'moveAway'
-          self.animation = self.idle
+          self.currClass = self.classes[NO_RANGE]
+          self.animation = self.currClass.idle
         end
       end
 
@@ -82,7 +96,7 @@ function Player:update(dt)
 
         if self.holdTime < BUTTON_DELAY then -- CHARGE
           if self.chargeFlag or self.state == 'charge' then
-            self:chargeUp()
+            --self:chargeUp()
           elseif self:canMove() then
             self.chargeFlag = true
           end
@@ -94,13 +108,16 @@ function Player:update(dt)
           if self.state ~= 'charge' then --ATTACK
             self.state = 'attack'
             if self.combo == 0 or self.combo == 3 then
-              self.animation = self.punch1
+              self.currClass = self.classes[CLOSE_RANGE]
+              self.animation = self.currClass.punch1
               self.combo = 1
             elseif self.combo == 1 then
-              self.animation = self.punch2
+              self.currClass = self.classes[CLOSE_RANGE]
+              self.animation = self.currClass.punch2
               self.combo = 2
             else
-              self.animation = self.punch3
+              self.currClass = self.classes[CLOSE_RANGE]
+              self.animation = self.currClass.punch3
               self.combo = 3
             end
             self.attackBoxFlag = false
@@ -123,7 +140,8 @@ function Player:update(dt)
         self.combo = 0
         if self.state ~= 'moveTowards' and self.charge <= 0 then
           self.state = 'moveTowards'
-          self.animation = self.idle
+          self.currClass = self.classes[NO_RANGE]
+          self.animation = self.currClass.idle
         end
       end
     end
@@ -134,6 +152,7 @@ function Player:update(dt)
       --Find Nearest Enemy
       self.closestEnemy = nil
       local distance = 10000000
+
       for i=1,numberOfEnemies do
         if enemies[i].alive then
           if math.abs(enemies[i].pos.x - self.pos.x) < distance then
@@ -151,7 +170,8 @@ function Player:update(dt)
           self:move_with_collision(1,0)
         end
       else
-        self.animation = self.idle
+        self.currClass = self.classes[NO_RANGE]
+        self.animation = self.currClass.idle
       end
 
     elseif self.state == 'moveAway' then -- Holding the button
@@ -163,7 +183,8 @@ function Player:update(dt)
           self:move_with_collision(-1,0)
         end
       else
-        self.animation = self.idle
+        self.currClass = self.classes[NO_RANGE]
+        self.animation = self.currClass.idle
       end
 
     elseif self.state == 'attack' then -- Tapping the button, but not too fast
@@ -177,7 +198,7 @@ function Player:update(dt)
           self.punchbox.damage = 3
           self.targetsHit = {}
           self.attackBoxFlag = true
-        elseif self.animation.position >= 8 and self.attackBoxFlag then
+        elseif self.animation.position >= 7 and self.attackBoxFlag then
           self.attackBoxFlag = false
           HC.remove(self.punchbox)
           self.punchbox = nil
@@ -202,7 +223,7 @@ function Player:update(dt)
           self.lag = BUTTON_DELAY
         end
       elseif self.combo == 3 then
-        if self.animation.position >= 5 and not self.attackBoxFlag then
+        if self.animation.position >= 1 and not self.attackBoxFlag then
           if self.flip then
             self.punchbox = HC.rectangle(self.pos.x-5,self.pos.y,5,SPRITE_SIZE)
           else
@@ -211,7 +232,7 @@ function Player:update(dt)
           self.punchbox.damage = 5
           self.targetsHit = {}
           self.attackBoxFlag = true
-        elseif self.animation.position >= 17 and self.attackBoxFlag then
+        elseif self.animation.position >= 7 and self.attackBoxFlag then
           self.attackBoxFlag = false
           HC.remove(self.punchbox)
           self.punchbox = nil
@@ -252,12 +273,12 @@ function Player:update(dt)
 end
 
 function Player:draw()
-  self.animation:draw(self.img, self.pos.x, self.pos.y)
-  if self.charge > 0 then
+  self.animation:draw(self.currClass.spritesheet, self.pos.x, self.pos.y)
+  --[[if self.charge > 0 then
     love.graphics.setColor(0,255,0,255)
     love.graphics.rectangle('fill', self.pos.x, self.pos.y+SPRITE_SIZE+3, self.charge, 3)
     love.graphics.setColor(255,255,255,255)
-  end
+  end]]
   if isDrawingHitbox then self.hitbox:draw('line') end
 
   if isDrawingHitbox and self.punchbox then
@@ -274,20 +295,20 @@ end
 function Player:faceDirection(direction)
   if direction == 'right' and self.flip then
     self.flip = false
-    self.running:flipH()
-    self.punch1:flipH()
-    self.punch2:flipH()
-    self.punch3:flipH()
-    self.hitstun:flipH()
-    self.idle:flipH()
+    self.classes[CLOSE_RANGE].running:flipH()
+    self.classes[CLOSE_RANGE].punch1:flipH()
+    self.classes[CLOSE_RANGE].punch2:flipH()
+    self.classes[CLOSE_RANGE].punch3:flipH()
+    self.classes[NO_RANGE].hitstun:flipH()
+    self.classes[NO_RANGE].idle:flipH()
   elseif direction == 'left' and not self.flip then
     self.flip = true
-    self.running:flipH()
-    self.punch1:flipH()
-    self.punch2:flipH()
-    self.punch3:flipH()
-    self.hitstun:flipH()
-    self.idle:flipH()
+    self.classes[CLOSE_RANGE].running:flipH()
+    self.classes[CLOSE_RANGE].punch1:flipH()
+    self.classes[CLOSE_RANGE].punch2:flipH()
+    self.classes[CLOSE_RANGE].punch3:flipH()
+    self.classes[NO_RANGE].hitstun:flipH()
+    self.classes[NO_RANGE].idle:flipH()
   end
 end
 
@@ -323,10 +344,12 @@ function Player:move_with_collision(dx, dy)
 
   if not moveBlock then --Then either move player
     self.pos.x = self.pos.x + dx + pdx
-    self.animation = self.running
+    self.currClass = self.classes[CLOSE_RANGE]
+    self.animation = self.currClass.running
   else
     self.hitbox:move(-dx-pdx,-dy) --Or move hitbox back
-    self.animation = self.idle
+    self.currClass = self.classes[NO_RANGE]
+    self.animation = self.currClass.idle
   end
   self:faceDirection(direction)
 end
@@ -334,7 +357,8 @@ end
 function Player:chargeUp()
   if self.state ~= 'charge' then
     self.state = 'charge'
-    self.animation = self.hitstun
+    self.currClass = self.classes[NO_RANGE]
+    self.animation = self.currClass.hitstun
   end
   self.charge = self.charge + 5
 end

@@ -8,10 +8,13 @@ GamePlay = {}
 local spawnTimer
 local WINDOW_WIDTH = ORIG_WIDTH
 local WINDOW_HEIGHT = ORIG_HEIGHT
+--local players
 
-function GamePlay:enter()
+function GamePlay:enter(prevState, playerList)
+  players = playerList
   enemies = {}
-  numberOfEnemies = 12
+  numberOfEnemies = #players
+  
   for i=1,numberOfEnemies do
     enemies[i] = Enemy(vector(WINDOW_WIDTH-30*i,Y_POS+love.math.random(12)),'assets/sprites/animal.png')
   end

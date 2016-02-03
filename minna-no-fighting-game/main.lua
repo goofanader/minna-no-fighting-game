@@ -1,5 +1,6 @@
 local Gamestate = require "libraries/hump.gamestate"
 local Class = require "libraries/hump.class"
+inspect = require("libraries/inspect")
 
 vector = require "libraries/hump.vector"
 HC = require "libraries/HC" --collision detection
@@ -15,7 +16,7 @@ function love.load()
   scale = 1
   translation = vector(0, 0)
   isFullscreen = true
-  isDrawingHitbox = false
+  isDrawingHitbox = true
 
   love.graphics.setDefaultFilter("nearest", "nearest")
 

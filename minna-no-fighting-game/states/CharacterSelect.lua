@@ -25,7 +25,7 @@ function CharacterSelect:getCharacter(searchTerm)
   --print(CHARACTERS_FOLDER)
   local ret = {
     ["ANIMAL"] = "/ANIMAL.png",
-    ["NONE"] = "/NONE.png",
+    ["REGULAR"] = "/REGULAR.png",
     ["FRONT"] = "/FRONT_32.png"
   }
   local retArr = {}
@@ -58,7 +58,7 @@ function CharacterSelect:getCharacter(searchTerm)
     retArr = {}
     ret = {
       ["ANIMAL"] = "/ANIMAL.png",
-      ["NONE"] = "/NONE.png",
+      ["REGULAR"] = "/REGULAR.png",
       ["FRONT"] = "/FRONT_32.png"
     }
 
@@ -122,10 +122,18 @@ function CharacterSelect:buildGUI()
   end
   goButton.OnClick = function(object)
     -- prepare the characters for the button select screen
-
+    local newPlayers = {}
+    for i = 1, #players do
+      local player = players[i]
+      
+      if player["imageDir"] ~= nil then
+        local newPlayer = Player(nil, player["imageDir"], nil, player["name"], player["button"]:GetProperty("playerIndex"))
+        table.insert(newPlayers, newPlayer)
+      end
+    end
 
     -- change gamestate
-    Gamestate.switch(ButtonSelect)
+    Gamestate.switch(ButtonSelect, newPlayers)
   end
 
   --## The Search Text ##--
@@ -153,7 +161,7 @@ function CharacterSelect:buildGUI()
         numPlayers = numPlayers - 1
       end
 
-      players[selectedPlayer]["imagesDir"] = nil
+      players[selectedPlayer]["imageDir"] = nil
       players[selectedPlayer]["images"] = nil
       players[selectedPlayer]["name"] = nil
       players[selectedPlayer]["button"]:SetImage(nil):SetText("Player "..selectedPlayer)

@@ -5,37 +5,36 @@ require "classes/Player"
 
 ButtonSelect = {}
 
-players = {}
+local players = {}
 numberOfPlayers = 0
 local selection
 local buttons = {}
 local pressed = {}
 local pressFlag
 
-function ButtonSelect:enter(players)
+function ButtonSelect:enter(prevState, playersInfo)
   selection = 1
   pressed = {}
 
-  for i = 1, #players do
-    player = players[i]
-  end
+  players = playersInfo
+  numberOfPlayers = #playersInfo
 end
 
 function ButtonSelect:draw()
-  if selection <= MAX_PLAYERS then
+  if selection <= numberOfPlayers then
     love.graphics.print("Player "..selection..", please press and release your button!",10,10)
   else
     love.graphics.print("All Players Joined! Press ENTER to start game!",10,10)
   end
 
-  for i=1, MAX_PLAYERS do
+  for i=1, numberOfPlayers do
     if pressed[i] then
       love.graphics.setColor(0,255,0,255)
     elseif selection > i then
       love.graphics.setColor(0,0,255,255)
     end
 
-    love.graphics.rectangle('fill', WINDOW_WIDTH/MAX_PLAYERS*(i-0.5) , WINDOW_HEIGHT/2 , 10 , 10)
+    love.graphics.rectangle('fill', WINDOW_WIDTH/numberOfPlayers*(i-0.5) , WINDOW_HEIGHT/2 , 10 , 10)
     love.graphics.setColor(255,255,255,255)
   end
 end
@@ -63,10 +62,12 @@ function ButtonSelect:keyreleased(key, code)
     if lastPressed == 'return' and selection > 1 then
       numberOfPlayers = selection-1
       for i=1, numberOfPlayers do
-        players[i] = Player(vector(25*i,Y_POS+i),'assets/sprites/animal.png',buttons[i], "Player "..i, i)
+        players[i].pos = vector(25 * i, Y_POS + i)-- = Player(vector(25*i,Y_POS+i),'assets/sprites/animal.png',buttons[i], "Player "..i, i)
+        players[i].hitbox = HC.rectangle(players[i].pos.x, players[i].pos.y, SPRITE_SIZE, SPRITE_SIZE)
+        players[i].button = buttons[i]
       end
       numberOfPlayers = selection-1
-      Gamestate.switch(GamePlay)
+      Gamestate.switch(GamePlay, players)
     end
   elseif key == 'backspace' then
     pressed[selection-1] = false
@@ -86,7 +87,7 @@ function ButtonSelect:keyreleased(key, code)
         end
       end
     end
-    if selection <= MAX_PLAYERS and key == lastPressed and not pressFlag then
+    if selection <= numberOfPlayers and key == lastPressed and not pressFlag then
       buttons[selection] = key
       selection = selection + 1
     end
