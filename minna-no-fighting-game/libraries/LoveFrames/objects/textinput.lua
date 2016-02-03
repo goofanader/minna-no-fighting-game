@@ -302,7 +302,8 @@ function newobject:draw()
 		stencilfunc = function() love.graphics.rectangle("fill", x, y, width - 16, height - 16) end
 	end
 	
-	love.graphics.setStencil(stencilfunc)
+	love.graphics.stencil(stencilfunc)
+	love.graphics.setStencilTest("greater", 0)
 	
 	if draw then
 		draw(self)
@@ -310,7 +311,7 @@ function newobject:draw()
 		drawfunc(self)
 	end
 	
-	love.graphics.setStencil()
+	love.graphics.setStencilTest()
 	
 	for k, v in ipairs(internals) do
 		v:draw()
@@ -354,7 +355,7 @@ function newobject:mousepressed(x, y, button)
 	local inputobject = loveframes.inputobject
 	
 	if hover then
-		if button == "l" then
+		if button == 1 then
 			if inputobject ~= self then
 				loveframes.inputobject = self
 			end

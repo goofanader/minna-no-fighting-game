@@ -10,6 +10,10 @@ require "constants"
 require "states/MainMenu"
 require "states/CharacterSelect"
 
+function loadFonts()
+  --open_sans_bold = love.graphics.newFont(yui.Theme.open_sans_bold, 14)
+end
+
 function love.load()
   WINDOW_WIDTH = love.graphics.getWidth()
   WINDOW_HEIGHT = love.graphics.getHeight()
@@ -19,6 +23,8 @@ function love.load()
   isDrawingHitbox = true
 
   love.graphics.setDefaultFilter("nearest", "nearest")
+
+  loadFonts()
 
   Gamestate.registerEvents()
   Gamestate.switch(MainMenu)

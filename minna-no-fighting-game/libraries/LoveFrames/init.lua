@@ -237,11 +237,22 @@ function loveframes.mousereleased(x, y, button)
 	base:mousereleased(x, y, button)
 	
 	-- reset the hover object
-	if button == "l" then
+	if button == 1 then
 		loveframes.downobject = false
 		loveframes.selectedobject = false
 	end
 	
+end
+
+--[[---------------------------------------------------------
+	- func: wheelmoved(x, y)
+	- desc: called when the player moves a mouse wheel
+--]]---------------------------------------------------------
+function loveframes.wheelmoved(x, y)
+
+	local base = loveframes.base
+	base:wheelmoved(x, y)
+
 end
 
 --[[---------------------------------------------------------

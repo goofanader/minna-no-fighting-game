@@ -15,6 +15,7 @@ local foundData
 local loadedImages
 local goButton
 local foundList
+local view
 local players
 local numPlayers
 local selectedPlayer
@@ -125,7 +126,7 @@ function CharacterSelect:buildGUI()
     local newPlayers = {}
     for i = 1, #players do
       local player = players[i]
-      
+
       if player["imageDir"] ~= nil then
         local newPlayer = Player(nil, player["imageDir"], nil, player["name"], player["button"]:GetProperty("playerIndex"))
         table.insert(newPlayers, newPlayer)
@@ -247,6 +248,48 @@ function CharacterSelect:buildGUI()
 
     playerList:AddItem(players[i]["button"])
   end
+
+  --## The Yaoui Version ##--
+  --[[yui.debug_draw = true
+  --## Go Button ##--
+  local goText = love.graphics.newText(open_sans_bold, "GO!")
+  local goButtonInner = yui.Button({text = "GO!", w = goText:getWidth() + (offset * 2), h = WINDOW_HEIGHT, onClick = function(self)
+      -- prepare the characters for the button select screen
+      --[[local newPlayers = {}
+      for i = 1, #players do
+        local player = players[i]
+
+        if player["imageDir"] ~= nil then
+          local newPlayer = Player(nil, player["imageDir"], nil, player["name"], player["button"]:GetProperty("playerIndex"))
+          table.insert(newPlayers, newPlayer)
+        end
+      end
+
+      -- change gamestate
+      Gamestate.switch(ButtonSelect, newPlayers)] ]
+    end
+  })
+  --goButtonInner.w = goText:getWidth() + (offset * 2)
+  --goButtonInner.h = WINDOW_HEIGHT
+  print(inspect(goButtonInner))
+  goButton = yui.View(WINDOW_WIDTH - (goText:getWidth() + (offset * 2)), 0, goText:getWidth() + (offset * 2), WINDOW_HEIGHT, {
+    --[[margin_right = offset,
+    margin_left = padding / 2.0,
+    margin_top = padding,
+    margin_bottom = padding,] ]
+    yui.Stack({
+      goButtonInner
+    })
+  })
+
+  --[[foundList = yui.View(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, {
+    --margin_top = padding,
+    margin_bottom = padding,
+    margin_left = offset,
+    margin_right = offset
+  }
+
+  )]]
 end
 
 function CharacterSelect:init()
@@ -316,11 +359,14 @@ function CharacterSelect:draw()
   love.graphics.pop()
 
   loveframes.draw()
+  --goButton:draw()
   --love.graphics.setDefaultFilter("nearest", "nearest")
 end
 
 function CharacterSelect:update(dt)
   loveframes.update(dt)
+  --[[yui.update({goButton})
+  goButton:update(dt)]]
 end
 
 function CharacterSelect:textinput(t)
