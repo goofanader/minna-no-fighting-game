@@ -193,7 +193,7 @@
                     // handle changed headpiece with a bald head
                     var newImageFile = imageFile.replace(idSplit[3] + ".png", idSplit[3] + "under.png");
 
-                    if (headpieceArray !== null && headpieceArray[newImageFile])
+                    if (images["HAIR"] === "" && headpieceArray !== null && headpieceArray[newImageFile])
                     {
                         images[idSplit[2]] = newImageFile;
                     }
