@@ -62,8 +62,8 @@ function ButtonSelect:keyreleased(key, code)
     if lastPressed == 'return' and selection > 1 then
       numberOfPlayers = selection-1
       for i=1, numberOfPlayers do
-        players[i].pos = vector(25 * i, Y_POS + i)-- = Player(vector(25*i,Y_POS+i),'assets/sprites/animal.png',buttons[i], "Player "..i, i)
-        players[i].hitbox = HC.rectangle(players[i].pos.x, players[i].pos.y, SPRITE_SIZE, SPRITE_SIZE)
+        --moved spawn to GamePlay.lua
+        --hitbox creation deleted, part of spawn function instead
         players[i].button = buttons[i]
       end
       numberOfPlayers = selection-1

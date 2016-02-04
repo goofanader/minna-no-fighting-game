@@ -12,9 +12,12 @@ local WINDOW_HEIGHT = ORIG_HEIGHT
 
 function GamePlay:enter(prevState, playerList)
   players = playerList
+  numberOfPlayers = #players
   enemies = {}
   numberOfEnemies = #players
-  
+  for i=1,numberOfPlayers do
+    players[i]:spawn(vector(25 * i, Y_POS + i))
+  end
   for i=1,numberOfEnemies do
     enemies[i] = Enemy(vector(WINDOW_WIDTH-30*i,Y_POS+love.math.random(12)),'assets/sprites/animal.png')
   end
@@ -32,7 +35,7 @@ function GamePlay:enter(prevState, playerList)
 end
 
 function GamePlay:draw()
-  love.graphics.print("You're playing a game! Press each button!\nThe Hitstun animation represents charging.", 10, 10)
+  love.graphics.print("You're playing a game! Press each button!", 10, 10)
 
   love.graphics.push()
   love.graphics.translate(translation.x, translation.y)

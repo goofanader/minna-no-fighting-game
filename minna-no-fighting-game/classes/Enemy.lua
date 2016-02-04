@@ -15,6 +15,7 @@ Enemy = Class {
 }
 
 local FLINCH_TIME = 0.2 --seconds
+local ATTACK_DELAY = 0.3 --seconds
 
 function Enemy:init(pos, imagefile)
   self.img = love.graphics.newImage(imagefile)
@@ -58,13 +59,123 @@ function Enemy:update(dt)
 
   if self.state == "move" then
     if self.closestPlayer then
-      if self.closestPlayer.pos.x < self.pos.x then
-        self:move_with_collision(-1,0)
+      if math.abs(self.closestPlayer.pos.x - self.pos.x) > SPRITE_SIZE+1 then
+        if self.closestPlayer.pos.x < self.pos.x then
+          self:move_with_collision(-1,0)
+        else
+          self:move_with_collision(1,0)
+        end
       else
-        self:move_with_collision(1,0)
+        if love.math.random() > 0.95 then --Chance to Attack when in range
+          self.state = 'attack'
+          self.combo = 1
+          self.animation = self.punch1
+          self.attackBoxFlag = false
+          self.attackLag = false
+          self.animation:gotoFrame(1)
+          self.animation:resume()
+        else
+          self.animation = self.idle
+        end
       end
+      
     else
       self.animation = self.idle
+    end
+  elseif self.state == 'attack' then
+    if self.lag <= 0 then
+      if self.attackLag then -- What happens when finishes a punch
+        if self.combo == 2 then
+          self.animation = self.punch2
+        elseif self.combo == 3 then
+          self.animation = self.punch3
+        elseif self.combo == 1 then
+          self.state = 'move'
+        end
+        self.animation:gotoFrame(1)
+        self.animation:resume()
+        self.attackLag = false
+      else
+        if self.combo == 1 then -- Contents of each punch
+          if self.animation.position >= 2 and not self.attackBoxFlag then -- Frame Number
+            if self.flip then
+              self.punchbox = HC.rectangle(self.pos.x-5,self.pos.y,5,SPRITE_SIZE)
+            else
+              self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
+            end
+            self.punchbox.damage = 3
+            self.targetsHit = {}
+            self.attackBoxFlag = true
+          elseif self.animation.position >= 7 and self.attackBoxFlag then
+            self.attackBoxFlag = false
+            HC.remove(self.punchbox)
+            self.punchbox = nil
+            self.lag = ATTACK_DELAY
+            self.attackLag = true
+            self.combo = 2
+          end
+        elseif self.combo == 2 then
+          if self.animation.position >= 2 and not self.attackBoxFlag then
+            if self.flip then
+              self.punchbox = HC.rectangle(self.pos.x-5,self.pos.y,5,SPRITE_SIZE)
+            else
+              self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
+            end
+            self.punchbox.damage = 4
+            self.targetsHit = {}
+            self.attackBoxFlag = true
+          elseif self.animation.position >= 8 and self.attackBoxFlag then
+            self.attackBoxFlag = false
+            HC.remove(self.punchbox)
+            self.punchbox = nil
+            self.lag = ATTACK_DELAY
+            self.attackLag = true
+            self.combo = 3
+          end
+        elseif self.combo == 3 then
+          if self.animation.position >= 1 and not self.attackBoxFlag then
+            if self.flip then
+              self.punchbox = HC.rectangle(self.pos.x-5,self.pos.y,5,SPRITE_SIZE)
+            else
+              self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
+            end
+            self.punchbox.damage = 5
+            self.targetsHit = {}
+            self.attackBoxFlag = true
+          elseif self.animation.position >= 7 and self.attackBoxFlag then
+            self.attackBoxFlag = false
+            HC.remove(self.punchbox)
+            self.punchbox = nil
+            self.lag = 2*ATTACK_DELAY
+            self.attackLag = true
+            self.combo = 1
+          end
+        end
+      end
+    end
+    
+    if self.attackBoxFlag then -- Punch Hitbox Detection Stuff
+      for shape, delta in pairs(HC.collisions(self.punchbox)) do
+        if shape.class == 'player' then
+          local alreadyHit = false
+          if self.targetsHit then
+            for i,target in ipairs(self.targetsHit) do
+              if target == shape.owner then
+                alreadyHit = true
+              end
+            end
+          end
+          if not alreadyHit then
+            shape.owner:hit(self.punchbox.damage)
+            table.insert(self.targetsHit,shape.owner)
+          end
+          if self.flip then --TODO: Fix knockback here OR put it in the hit() function
+            --shape.owner:move_with_collision(-1,0)
+          else
+            --shape.owner:move_with_collision(1,0)
+          end
+        end
+      end
     end
   end
 
@@ -89,6 +200,12 @@ function Enemy:draw()
   love.graphics.setShader()
   if isDrawingHitbox and self.hitbox then
     self.hitbox:draw('line')
+  end
+
+  if isDrawingHitbox and self.punchbox then
+    love.graphics.setColor(0,255,0)
+    self.punchbox:draw('line')
+    love.graphics.setColor(255,255,255)
   end
 
 end
@@ -117,6 +234,7 @@ function Enemy:faceDirection(direction)
     self.running:flipH()
     self.punch1:flipH()
     self.punch2:flipH()
+    self.punch3:flipH()
     self.hitstun:flipH()
     self.idle:flipH()
   elseif direction == 'left' and not self.flip then
@@ -124,6 +242,7 @@ function Enemy:faceDirection(direction)
     self.running:flipH()
     self.punch1:flipH()
     self.punch2:flipH()
+    self.punch3:flipH()
     self.hitstun:flipH()
     self.idle:flipH()
   end

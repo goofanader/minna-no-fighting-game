@@ -7,6 +7,7 @@ require "classes/PlayerClass/REGULAR"
 Player = Class{}
 
 local BUTTON_DELAY = 0.1 --seconds
+local FLINCH_TIME = 0.2 --seconds
 
 function Player:init(pos, imagefilesLocation, button, name, id)
   self.classes = self:getClasses(imagefilesLocation)
@@ -268,7 +269,10 @@ function Player:update(dt)
 
   if self.lag > 0 then
     self.lag = self.lag - dt
+  elseif self.state == 'flinch' then
+    self.state = 'idle'
   end
+  
   self.animation:update(dt)
 end
 
@@ -368,5 +372,17 @@ function Player:canMove()
     return true
   else
     return false
+  end
+end
+
+function Player:hit(damage)
+  --self.hp = self.hp - damage
+  if false then --TODO: Put Party HP Here
+    self:kill()
+  else
+    self.state = 'flinch'
+    self.currClass = self.classes[NO_RANGE]
+    self.animation = self.currClass.hitstun
+    self.lag = FLINCH_TIME
   end
 end
