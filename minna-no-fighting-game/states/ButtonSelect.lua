@@ -43,7 +43,6 @@ function ButtonSelect:update(dt)
 end
 
 function ButtonSelect:isButton(otherButton, button, joystick)
-  print(inspect(otherButton))
   if joystick ~= nil then
     -- it's a joystick
     return otherButton.type == JOYSTICK and otherButton.joystick == joystick and otherButton.button == button
