@@ -54,7 +54,6 @@ function ButtonSelect:isButton(otherButton, button, joystick)
 end
 
 function ButtonSelect:joystickpressed(joystick, button)
-  print("joystick hello")
   pressFlag = false
   if selection > 1 then
     for i = 1,selection-1 do
@@ -70,7 +69,6 @@ function ButtonSelect:joystickpressed(joystick, button)
 end
 
 function ButtonSelect:joystickreleased(joystick, button)
-  print("joystick up")
   pressFlag = false
   if selection > 1 then
     for i = 1,selection-1 do
@@ -88,7 +86,6 @@ function ButtonSelect:joystickreleased(joystick, button)
 end
 
 function ButtonSelect:keypressed(key, code)
-  print("keyboard hello")
   pressFlag = false
   if selection > 1 then
     for i = 1,selection-1 do
@@ -104,7 +101,6 @@ function ButtonSelect:keypressed(key, code)
 end
 
 function ButtonSelect:keyreleased(key, code)
-  print("keyboard up")
   if key == 'return' then
     if lastPressed.type == KEYBOARD and lastPressed.button == 'return' and selection > 1 then
       numberOfPlayers = selection-1
