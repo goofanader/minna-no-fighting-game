@@ -2,6 +2,7 @@ local Gamestate = require "libraries/hump.gamestate"
 
 require "classes/Player"
 require "classes/Enemy"
+require "classes/BossClasses/AndrewLee"
 
 GamePlay = {}
 
@@ -14,14 +15,17 @@ function GamePlay:enter(prevState, playerList)
   players = playerList
   numberOfPlayers = #players
   enemies = {}
-  numberOfEnemies = #players
+  numberOfEnemies = numberOfPlayers
   for i=1,numberOfPlayers do
     players[i]:spawn(vector(25 * i, Y_POS + i))
   end
-  for i=1,numberOfEnemies do
+  
+  CurrentBoss = AndrewLee()
+  
+  --[[for i=1,numberOfEnemies do
     enemies[i] = Enemy(vector(WINDOW_WIDTH-30*i,Y_POS+love.math.random(12)),'assets/sprites/animal.png')
   end
-  spawnTimer = 3
+  spawnTimer = 3]]
 
   topHitbox = HC.rectangle(0,-32,WINDOW_WIDTH,32)
   topHitbox.class = 'wall'
@@ -35,28 +39,36 @@ function GamePlay:enter(prevState, playerList)
 end
 
 function GamePlay:draw()
-  love.graphics.print("You're playing a game! Press each button!", 10, 10)
+  love.graphics.print("You're playing a game! Press your button!", 10, 10)
 
   love.graphics.push()
   love.graphics.translate(translation.x, translation.y)
   love.graphics.scale(scale)
-  for i=1,numberOfEnemies do
+  --[[for i=1,numberOfEnemies do
     enemies[i]:draw()
     love.graphics.print(i,enemies[i].pos.x,Y_POS+SPRITE_SIZE)
-  end
+  end]]
   for i=1,numberOfPlayers do
     players[i]:draw()
   end
+  if CurrentBoss then
+    CurrentBoss:draw()
+  end
+  
   love.graphics.pop()
 end
 
 function GamePlay:update(dt)
-  spawnTimer = spawnTimer - dt
+  --spawnTimer = spawnTimer - dt
 
   for i=1,numberOfPlayers do
     players[i]:update(dt)
   end
-  for i=1,numberOfEnemies do
+  if CurrentBoss then
+    CurrentBoss:update(dt)
+  end
+  
+  --[[for i=1,numberOfEnemies do
     if enemies[i].alive then
       enemies[i]:update(dt)
     else
@@ -72,7 +84,7 @@ function GamePlay:update(dt)
         end
       end
     end
-  end
+  end]]
 
 end
 

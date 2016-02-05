@@ -165,10 +165,12 @@ function Player:update(dt)
       local distance = 10000000
 
       for i=1,numberOfEnemies do
-        if enemies[i].alive then
-          if math.abs(enemies[i].pos.x - self.pos.x) < distance then
-            self.closestEnemy = enemies[i]
-            distance = math.abs(self.closestEnemy.pos.x - self.pos.x)
+        if enemies[i] then
+          if enemies[i].alive then
+            if math.abs(enemies[i].pos.x - self.pos.x) < distance then
+              self.closestEnemy = enemies[i]
+              distance = math.abs(self.closestEnemy.pos.x - self.pos.x)
+            end
           end
         end
       end
