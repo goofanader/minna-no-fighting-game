@@ -161,8 +161,11 @@ function Player:update(dt)
     if self.state == 'moveTowards' then -- Not doing anything
 
       --Find Nearest Enemy
-      self.closestEnemy = nil
-      local distance = 10000000
+      local distance = 1000000
+      if CurrentBoss then
+        self.closestEnemy = CurrentBoss
+        local distance = math.abs(CurrentBoss.pos.x - self.pos.x)
+      end
 
       for i=1,numberOfEnemies do
         if enemies[i] then
@@ -255,7 +258,7 @@ function Player:update(dt)
       end
       if self.attackBoxFlag then
         for shape, delta in pairs(HC.collisions(self.punchbox)) do
-          if shape.class == 'enemy' then
+          if shape.class == 'enemy' or shape.class == 'boss' then
             local alreadyHit = false
             if self.targetsHit then
               for i,target in ipairs(self.targetsHit) do
