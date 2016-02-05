@@ -52,11 +52,21 @@ function Player:spawn(pos)
   self.alive = true
 end
 
+function Player:isButtonDown()
+  if self.button.type == KEYBOARD then
+    -- handle keyboard is down
+    return love.keyboard.isDown(self.button.button)
+  else
+    -- handle joystick button is down
+    return self.button.joystick:isDown(self.button.button)
+  end
+end
+
 function Player:update(dt)
 
   if self.alive then
     --Button Press Actions
-    if love.keyboard.isDown(self.button) then
+    if self:isButtonDown() then
       if not self.buttonFlag then
         self.buttonFlag = true
         self.holdTime = 0
@@ -272,7 +282,7 @@ function Player:update(dt)
   elseif self.state == 'flinch' then
     self.state = 'idle'
   end
-  
+
   self.animation:update(dt)
 end
 
