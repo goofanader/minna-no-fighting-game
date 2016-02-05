@@ -164,7 +164,7 @@ function Player:update(dt)
       local distance = 1000000
       if CurrentBoss then
         self.closestEnemy = CurrentBoss
-        local distance = math.abs(CurrentBoss.pos.x - self.pos.x)
+        distance = math.abs(CurrentBoss.pos.x - self.pos.x)
       end
 
       for i=1,numberOfEnemies do
