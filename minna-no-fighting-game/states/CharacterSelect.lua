@@ -74,6 +74,7 @@ function CharacterSelect:getCharacter(searchTerm)
       for index, value in ipairs(webData) do
         local charLocation = CHARACTERS_FOLDER .. string.gsub(string.gsub(value, IMAGES_URL, ""), "/FRONT_32.png", "")
         local newRet = {}
+        local doesCharacterExist = true
 
         for key, endFile in pairs(ret) do
           local imageURL = string.gsub(value, "/FRONT_32.png", endFile)
@@ -90,14 +91,14 @@ function CharacterSelect:getCharacter(searchTerm)
 
             --print(charLocation..endFile)
             love.filesystem.write(charLocation .. endFile, image)
+            newRet[key] = charLocation .. endFile
           else
             print("Could not save and download " .. charLocation..endFile.."!")
+            doesCharacterExist = false
           end
-
-          newRet[key] = charLocation .. endFile
         end
 
-        table.insert(retArr, newRet)
+        if doesCharacterExist then table.insert(retArr, newRet) end
       end
     end
   end
