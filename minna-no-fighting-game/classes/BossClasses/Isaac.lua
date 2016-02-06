@@ -4,11 +4,12 @@ local anim8 = require "libraries/anim8"
 require "classes/BossClasses/Boss"
 Isaac = Class {__includes = Boss}
 
-local SPEED = 0.25
+local SPEED = 0.75
 local ATTACK_COOLDOWN = 5 --seconds
 local SUMMON_COOLDOWN = 5 --seconds
 local ITEM_FLOAT_TIME = 1 --seconds
-local ITEM_SPEED = 10
+local ITEM_SPEED = 2
+local DAMAGE = 5
 
 function Isaac:init(minionCount)
   local HP = 200*minionCount
@@ -16,8 +17,8 @@ function Isaac:init(minionCount)
   
   self.img = love.graphics.newImage('assets/sprites/bosses/isaac_cameron/isaac.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
-  self.idle = anim8.newAnimation(g('2-3',1),1)
-  self.walking = anim8.newAnimation(g('4-6',1,1,2),0.75)
+  self.idle = anim8.newAnimation(g('2-3',1),0.75)
+  self.walking = anim8.newAnimation(g('4-6',1,1,2),0.1)
   self.pointing = anim8.newAnimation(g('2-3',2),0.75)
   self.itemImages = {love.graphics.newImage('assets/sprites/bosses/isaac_cameron/book1.png'),
     love.graphics.newImage('assets/sprites/bosses/isaac_cameron/book2.png'),
@@ -35,6 +36,7 @@ function Isaac:spawn(pos)
   self.hitbox.owner = self
   self.hitbox.class = 'boss'
   self:faceDirection('left')
+  self.vel = vector(0,0)
   self.summonTimer = 0 --seconds
   self.attackTimer = love.math.random(ATTACK_COOLDOWN)+ATTACK_COOLDOWN --seconds
   self.lag = 0
@@ -93,6 +95,7 @@ function Isaac:update(dt)
       item.timer = item.timer - dt
     elseif not item.fired then
       item.vel = (players[love.math.random(numberOfPlayers)].pos - item.pos):normalized()*ITEM_SPEED
+      --item.omega = (love.math.random()-0.5)/10
       item.fired = true
     end
     
@@ -113,11 +116,11 @@ function Isaac:update(dt)
             end
           end
           if not alreadyHit then
-            shape.owner:hit(ITEM_DAMAGE)
+            shape.owner:hit(DAMAGE)
             --TODO: Knockback here OR put it in the hit() function
             table.insert(item.targetsHit,shape.owner)
           end
-        elseif shape.class == 'wall' and delta > item.img:getWidth()/2 then
+        elseif shape.class == 'wall' and ( delta.x > item.img:getWidth()/2 or delta.y > item.img:getWidth()/2 ) then
           HC.remove(item.hitbox)
           table.remove(self.items,index)
         end
@@ -128,11 +131,11 @@ function Isaac:update(dt)
 end
 
 function Isaac:move(dt)  
-  self.animation = self.running
+  self.animation = self.walking
   
   local DIST_FROM_EDGE = 50
   
-  self.vel.x = self.flip*SPEED*math.ceil(self.attackTimer/(ATTACK_COOLDOWN*2)*8)
+  self.vel.x = self.flip*SPEED
   self.pos = self.pos + self.vel
   self.hitbox:move(self.vel.x,self.vel.y)
   
@@ -146,31 +149,37 @@ end
 function Isaac:attack()
   for i=1, math.ceil(numberOfPlayers*1.25) do
     local item = {}
-    item.img = itemImages[love.math.random(#itemImages)]
+    item.img = self.itemImages[love.math.random(#self.itemImages)]
     item.pos = self.pos + vector(love.math.random(-100,100),love.math.random(-10,10))
+    local DIST_FROM_EDGE = 50
+    if item.pos.x < DIST_FROM_EDGE then
+      item.pos.x = DIST_FROM_EDGE
+    elseif item.pos.x > ORIG_WIDTH-DIST_FROM_EDGE then
+      item.pos.x = ORIG_WIDTH-DIST_FROM_EDGE
+    end
     item.vel = vector(0,-0.5)
-    item.theta = 0 --angular position
+    item.theta = 0 --love.math.random()*2*math.pi --angular position
     item.omega = 0 --angular velocity
     item.timer = ITEM_FLOAT_TIME
     item.fired = false
     item.hitbox = HC.rectangle(item.pos.x,item.pos.y,item.img:getWidth(),item.img:getHeight())
+    item.hitbox:setRotation(item.theta)
     item.hitbox.class = 'projectile'
     item.targetsHit = {}
     table.insert(self.items,item)
   end
 end
 
-
 function Isaac:faceDirection(direction)
   if direction == 'right' and self.flip == -1 then
-    self.running:flipH()
-    self.resting:flipH()
-    self.summoning:flipH()
+    self.idle:flipH()
+    self.walking:flipH()
+    self.pointing:flipH()
     self.flip = 1
   elseif direction == 'left' and self.flip == 1 then
     self.flip = -1
-    self.running:flipH()
-    self.resting:flipH()
-    self.summoning:flipH()
+    self.idle:flipH()
+    self.walking:flipH()
+    self.pointing:flipH()
   end
 end
