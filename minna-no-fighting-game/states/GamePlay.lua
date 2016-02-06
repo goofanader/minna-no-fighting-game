@@ -2,6 +2,7 @@ local Gamestate = require "libraries/hump.gamestate"
 
 require "classes/Player"
 require "classes/Enemy"
+require "states/GameOver"
 
 GamePlay = {}
 
@@ -30,11 +31,11 @@ function GamePlay:enter(prevState, playerList)
   playerHP = 400*numberOfPlayers
   playerMaxHP = playerHP
 
-  Bosses = {AndrewLee(numberOfEnemies),
+  Bosses = {
     Isaac(numberOfEnemies),
     Annaliese(numberOfEnemies),
+    AndrewLee(numberOfEnemies),
     Phyllis(numberOfEnemies)
-
     }
 
   BossNumber = 1
@@ -106,11 +107,14 @@ function GamePlay:update(dt)
       CurrentBoss.songAudio:rewind()
       CurrentBoss.songAudio:play()
     else
-      --TODO: Win Screen!
-      Gamestate.switch(MainMenu)
+      Gamestate.switch(GameOver, true) --WIN SCREEN
       players = {}
       enemies = {}
     end
+  elseif playerHP <= 0 then
+    Gamestate.switch(GameOver, false) --LOSE SCREEN
+    players = {}
+    enemies = {}
   end
 
   for i=1,numberOfPlayers do
