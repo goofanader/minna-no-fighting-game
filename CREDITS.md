@@ -26,5 +26,5 @@
 ## Special Thanks
 * Curtis: music finder
 * Scott: video acquirer
-* Cory and friend: music creators
+* Cory and Ryan Davis: music creators
 * All the Minna officers that participated in letting their likeness be used for this game!!
