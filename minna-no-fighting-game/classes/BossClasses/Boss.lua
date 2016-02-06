@@ -30,6 +30,8 @@ function Boss:hit(damage)
   self.hp = self.hp - damage
   if self.hp <= 0 then
     self.alive = false
+    HC.remove(self.hitbox)
+    self.hitbox = nil
   end
 end
 
