@@ -5,6 +5,7 @@ Boss = Class {}
 
 function Boss:init(hp, minionCount)
   self.alive = false
+  self.spawned = false
   self.hp = hp
   self.maxHP = hp
   self.minionCount = minionCount
@@ -28,8 +29,7 @@ end
 function Boss:hit(damage)
   self.hp = self.hp - damage
   if self.hp <= 0 then
-    --self:kill()
-    self.hp = 0
+    self.alive = false
   end
 end
 
@@ -38,5 +38,13 @@ function Boss:summonMinions()
     if not enemies[i].alive then
       enemies[i]:spawn(vector(love.math.random(ORIG_WIDTH),-SPRITE_SIZE))
     end
+  end
+end
+
+function Boss:isDefeated()
+  if not self.alive and self.spawned then
+    return true
+  else
+    return false
   end
 end

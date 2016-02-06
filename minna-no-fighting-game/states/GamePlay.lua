@@ -3,6 +3,7 @@ local Gamestate = require "libraries/hump.gamestate"
 require "classes/Player"
 require "classes/Enemy"
 require "classes/BossClasses/AndrewLee"
+require "classes/BossClasses/Phyllis"
 
 GamePlay = {}
 
@@ -20,7 +21,9 @@ function GamePlay:enter(prevState, playerList)
     players[i]:spawn(vector(25 * i, Y_POS + i))
   end
   
-  CurrentBoss = AndrewLee(numberOfEnemies)
+  Bosses = {Phyllis(numberOfEnemies),AndrewLee(numberOfEnemies)}
+  BossNumber = 1
+  CurrentBoss = Bosses[BossNumber]
 
   topHitbox = HC.rectangle(0,-32,WINDOW_WIDTH,32)
   topHitbox.class = 'wall'
@@ -57,6 +60,18 @@ function GamePlay:update(dt)
   if CurrentBoss then
     CurrentBoss:update(dt)
   end
+  if CurrentBoss:isDefeated() then
+    if BossNumber < #Bosses then
+      BossNumber = BossNumber + 1
+      CurrentBoss = Bosses[BossNumber]
+    else
+      --TODO: Win Screen!
+      Gamestate.switch(MainMenu)
+      players = {}
+      enemies = {}
+    end
+  end
+  
 end
 
 function GamePlay:keyreleased(key, code)

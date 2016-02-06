@@ -14,7 +14,7 @@ local SLIDER_SCALE = 0.75 --How big the images are
 local SLIDER_DAMAGE = 1
 
 function AndrewLee:init(minionCount)
-  local HP = 100
+  local HP = 200*minionCount
   Boss.init(self, HP, minionCount)
   self.idle = love.graphics.newImage('assets/sprites/bosses/andrew_lee/andrew_lee_idle.png')
   self.hand = love.graphics.newImage('assets/sprites/bosses/andrew_lee/andrew_lee_idle_hand.png')
@@ -22,9 +22,9 @@ function AndrewLee:init(minionCount)
   for i=1,9 do
     self.sliderpics[i] = love.graphics.newImage('assets/sprites/bosses/andrew_lee/slidingImages/' .. i .. '.jpg')
   end
+  self.sliders = {}
   self.imageTrail = love.graphics.newImage('assets/sprites/bosses/andrew_lee/imageTrail.png')
-  self.spawned = false
-  self.alive = false
+
   self.frame = self.idle
   self.flip = 1
 end
@@ -40,7 +40,6 @@ function AndrewLee:spawn(pos)
   self.summonTimer = 0 --seconds
   self.specialTimer = SPECIAL_COOLDOWN*2 --seconds
   self.sliderTimer = 0
-  self.sliders = {}
   self.lag = 0
 end
 
