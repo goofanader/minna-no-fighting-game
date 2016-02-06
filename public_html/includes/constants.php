@@ -8,9 +8,9 @@ $g_SPRITE_TYPES = array(
   "MOUTH",
   "HAIR",
   "HEADPIECE",
-  "TOP",
   "PANTS",
-  "SHOES"/*,
+  "SHOES",
+  "TOP"/*,
   "TAIL",
   "SPECIAL"*/
 );

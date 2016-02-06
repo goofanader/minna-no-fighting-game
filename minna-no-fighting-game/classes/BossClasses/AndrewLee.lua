@@ -2,7 +2,7 @@ local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
 require "classes/BossClasses/Boss"
-AndrewLee = Class {__includes = Boss}
+AndrewLee = Class {__includes = Boss, slideSound = love.sound.newSoundData(BOSSES_FOLDER .. "/andrew_lee/sliding_sound.wav")}
 
 local HORIZ_SPEED = 1
 local VERT_SPEED = 0.5
@@ -185,6 +185,10 @@ function AndrewLee:specialAttack(dt)
     slider.targetsHit = {}
     table.insert(self.sliders,slider)
     self.sliderTimer = love.math.random()*SLIDER_COOLDOWN + SLIDER_COOLDOWN
+
+    local sound = love.audio.newSource(AndrewLee.slideSound, "static")
+    sound:setVolume(.6)
+    sound:play()
   end
 
   if self.specialTimer < -(5 + 5*self.hp/self.maxHP) then
