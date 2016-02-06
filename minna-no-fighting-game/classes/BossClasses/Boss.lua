@@ -26,6 +26,7 @@ function Boss:init(hp, minionCount, name, monologue, songFilename, stage)
   self.minionCount = minionCount
   self.name = name
   self.monologue = monologue
+  self.pos = vector(0,0)
 
   for i=1,minionCount do
     enemies[i] = Enemy(vector(0,Y_POS+love.math.random(12)),'assets/sprites/animal.png')
