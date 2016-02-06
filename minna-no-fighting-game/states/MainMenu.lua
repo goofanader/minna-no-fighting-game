@@ -12,6 +12,7 @@ local selection
 local lastPressed
 local images
 local imageLocation = BACKGROUNDS_FOLDER .. "/MainMenu"
+local song
 
 function MainMenu:init()
   -- load up all the images for the main menu
@@ -26,10 +27,15 @@ function MainMenu:init()
   for index, name in ipairs(chars) do
     table.insert(images[2], {love.graphics.newImage(imageLocation.."/shadows_"..name..".png"), love.graphics.newImage(imageLocation.."/character_"..name..".png")})
   end
+
+  song = love.audio.newSource(MUSIC_FOLDER .. "/mainmenu.mp3")
+  song:setLooping(true)
 end
 
 function MainMenu:enter()
   selection = 1
+  song:rewind()
+  song:play()
 end
 
 function MainMenu:draw()
@@ -94,5 +100,6 @@ function MainMenu:keyreleased(key)
 end
 
 function MainMenu:mousepressed(x, y, button)
+  song:stop()
   Gamestate.switch(CharacterSelect)
 end

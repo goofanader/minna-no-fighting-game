@@ -13,15 +13,6 @@ local WINDOW_HEIGHT = ORIG_HEIGHT
 local backgrounds
 
 function GamePlay:init(prevState, playerList)
-  local backgroundsFolder = BACKGROUNDS_FOLDER .. "/Subway/"
-  backgrounds = {}
-
-  backgrounds["bg"] = love.graphics.newImage(backgroundsFolder .. "/bg.png")
-  backgrounds["fg"] = {}
-  backgrounds["fg"]["benches"] = love.graphics.newImage(backgroundsFolder.."/fg_benches.png")
-  backgrounds["fg"]["trees"] = {}
-  backgrounds["fg"]["trees"]["left"] = love.graphics.newImage(backgroundsFolder.."/fg_tree_left.png")
-  backgrounds["fg"]["trees"]["right"] = love.graphics.newImage(backgroundsFolder.."/fg_tree_right.png")
 end
 
 function GamePlay:enter(prevState, playerList)
@@ -40,9 +31,9 @@ function GamePlay:enter(prevState, playerList)
     Isaac(numberOfEnemies),
     Annaliese(numberOfEnemies),
     Phyllis(numberOfEnemies)
-    
+
     }
-  
+
   BossNumber = 1
   CurrentBoss = Bosses[BossNumber]
 
@@ -55,6 +46,8 @@ function GamePlay:enter(prevState, playerList)
   rightHitbox = HC.rectangle(WINDOW_WIDTH,0,32,WINDOW_HEIGHT)
   rightHitbox.class = 'wall'
 
+  CurrentBoss.songAudio:rewind()
+  CurrentBoss.songAudio:play()
 end
 
 function GamePlay:draw()
@@ -64,19 +57,18 @@ function GamePlay:draw()
   love.graphics.translate(translation.x, translation.y)
   love.graphics.scale(scale)
 
-  love.graphics.draw(backgrounds["bg"])
+  if CurrentBoss then
+    CurrentBoss:drawStageBG()
+  end
 
   for i=1,numberOfPlayers do
     players[i]:draw()
   end
   if CurrentBoss then
     CurrentBoss:draw()
+    CurrentBoss:drawStageFG()
   end
 
-  love.graphics.draw(backgrounds["fg"]["benches"])
-  love.graphics.draw(backgrounds["fg"]["trees"]["left"])
-  love.graphics.draw(backgrounds["fg"]["trees"]["right"])
-  
   --Player HP Bar
   local EDGE_BUFFER = 15
   local BORDER = 5
@@ -90,21 +82,23 @@ function GamePlay:draw()
   love.graphics.rectangle('fill', x+BORDER, y+BORDER, (width-BORDER*2)*playerHP/playerMaxHP, height-BORDER*2)
   love.graphics.setColor(255,255,255)
   love.graphics.print('MINNA', x+EDGE_BUFFER, y+EDGE_BUFFER/2, 0, 1, 1)
-  
+
   love.graphics.pop()
 end
 
 function GamePlay:update(dt)
-  for i=1,numberOfPlayers do
-    players[i]:update(dt)
-  end
   if CurrentBoss then
     CurrentBoss:update(dt)
   end
   if CurrentBoss:isDefeated() then
+    CurrentBoss.songAudio:stop()
+
     if BossNumber < #Bosses then
       BossNumber = BossNumber + 1
       CurrentBoss = Bosses[BossNumber]
+
+      CurrentBoss.songAudio:rewind()
+      CurrentBoss.songAudio:play()
     else
       --TODO: Win Screen!
       Gamestate.switch(MainMenu)
@@ -113,6 +107,11 @@ function GamePlay:update(dt)
     end
   end
 
+  for i=1,numberOfPlayers do
+    if players and players[i] then
+      players[i]:update(dt)
+    end
+  end
 end
 
 function GamePlay:keyreleased(key, code)

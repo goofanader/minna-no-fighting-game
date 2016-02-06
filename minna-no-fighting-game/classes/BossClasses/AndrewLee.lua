@@ -17,7 +17,7 @@ function AndrewLee:init(minionCount)
   local HP = 200*minionCount
   local name = 'Omega Andrew Lee'
   local monologue = 'Hey there!'
-  Boss.init(self, HP, minionCount, name, monologue)
+  Boss.init(self, HP, minionCount, name, monologue, BOSSES_FOLDER .. "/andrew_lee/Trammell Starks - Good Times.mp3", SUBWAY)
   self.idle = love.graphics.newImage('assets/sprites/bosses/andrew_lee/andrew_lee_idle.png')
   self.hand = love.graphics.newImage('assets/sprites/bosses/andrew_lee/andrew_lee_idle_hand.png')
   self.sliderpics = {}
@@ -45,15 +45,8 @@ function AndrewLee:spawn(pos)
   self.lag = 0
 end
 
-function AndrewLee:draw()
-  Boss.draw(self)
-  if self.alive then
-    love.graphics.draw(self.frame,self.pos.x-self.flip*BOSS_SIZE,self.pos.y,0,self.flip,1)
-  end
-  if isDrawingHitbox and self.hitbox then
-    self.hitbox:draw('line')
-    love.graphics.print(self.hp,self.pos.x,self.pos.y+BOSS_SIZE)
-  end
+function AndrewLee:drawStageFG()
+  Boss.drawStageFG(self)
 
   for index, slider in ipairs(self.sliders) do
     love.graphics.draw(slider.img,slider.pos.x,slider.pos.y,0,SLIDER_SCALE,SLIDER_SCALE)
@@ -78,6 +71,17 @@ function AndrewLee:draw()
       slider.hitbox:draw('line')
       love.graphics.setColor(255,255,255)
     end
+  end
+end
+
+function AndrewLee:draw()
+  Boss.draw(self)
+  if self.alive then
+    love.graphics.draw(self.frame,self.pos.x-self.flip*BOSS_SIZE,self.pos.y,0,self.flip,1)
+  end
+  if isDrawingHitbox and self.hitbox then
+    self.hitbox:draw('line')
+    love.graphics.print(self.hp,self.pos.x,self.pos.y+BOSS_SIZE)
   end
 end
 

@@ -14,8 +14,8 @@ function Phyllis:init(minionCount)
   local HP = 200*minionCount
   local name = 'Phyrris'
   local monologue = 'Hey there!'
-  Boss.init(self, HP, minionCount, name, monologue)
-  
+  Boss.init(self, HP, minionCount, name, monologue, MUSIC_FOLDER .. "/NoMode - CUPMEN__a_song_for_cup_ramen_ CC.mp3", SUBWAY)
+
   self.img = love.graphics.newImage('assets/sprites/bosses/phyllis_douglas/phyllis.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-6',2),0.1)
@@ -54,7 +54,7 @@ end
 
 function Phyllis:update(dt)
   Boss.update(self, dt)
-  
+
   if not self.alive and not self.spawned then
     self:spawn(vector(ORIG_WIDTH-100,Y_POS))
   elseif self.alive then
@@ -72,21 +72,21 @@ function Phyllis:update(dt)
       end
     end
   end
-  
+
   self.animation:update(dt)
-  
+
 end
 
-function Phyllis:attack(dt)  
-  
+function Phyllis:attack(dt)
+
   self.animation = self.running
-  
+
   local DIST_FROM_EDGE = 50
-  
+
   self.vel.x = self.flip*SPEED*math.ceil(self.attackTimer/(ATTACK_TIME*2)*8)
   self.pos = self.pos + self.vel
   self.hitbox:move(self.vel.x,self.vel.y)
-  
+
   for shape, delta in pairs(HC.collisions(self.hitbox)) do
     if shape.class == 'player' then
       local alreadyHit = false
@@ -104,7 +104,7 @@ function Phyllis:attack(dt)
       end
     end
   end
-  
+
   if self.pos.x < DIST_FROM_EDGE-BOSS_SIZE/2 then
     self:faceDirection('right')
     self.targetsHit = {}
@@ -112,7 +112,7 @@ function Phyllis:attack(dt)
     self:faceDirection('left')
     self.targetsHit = {}
   end
-  
+
   self.attackTimer = self.attackTimer - dt
   if self.attackTimer < 0 then
     self.lag = love.math.random(REST_TIME)+REST_TIME --seconds

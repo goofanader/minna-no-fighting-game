@@ -15,8 +15,13 @@ NO_RANGE = "NONE"
 
 CORRECT_SLASH = love.system.getOS() == "Windows" and "\\" or "/"
 
+-- stage names
+THE_SILO = 1
+SUBWAY = 2
+
 ASSETS_FOLDER = "assets"
 BACKGROUNDS_FOLDER = ASSETS_FOLDER .. "/backgrounds"
+MUSIC_FOLDER = ASSETS_FOLDER .. "/music"
 SPRITES_FOLDER = ASSETS_FOLDER .. "/sprites"
 BOSSES_FOLDER = SPRITES_FOLDER .. "/bosses"
 BOSS_CLASS_FOLDER = "classes/BossClasses"

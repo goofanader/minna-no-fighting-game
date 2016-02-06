@@ -15,8 +15,8 @@ function Isaac:init(minionCount)
   local HP = 200*minionCount
   local name = 'The Cat King'
   local monologue = 'Hey there!'
-  Boss.init(self, HP, minionCount, name, monologue)
-  
+  Boss.init(self, HP, minionCount, name, monologue, MUSIC_FOLDER .. "/YZYX - Neon Genesis Evangelion - Cruel Angel's Thesis (Game Boy version) (Probably Copyrighted).mp3", THE_SILO)
+
   self.img = love.graphics.newImage('assets/sprites/bosses/isaac_cameron/isaac.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
   self.idle = anim8.newAnimation(g('2-3',1),0.75)
@@ -65,7 +65,7 @@ end
 
 function Isaac:update(dt)
   Boss.update(self, dt)
-  
+
   if not self.alive and not self.spawned then
     self:spawn(vector(ORIG_WIDTH-100,Y_POS))
   elseif self.alive then
@@ -89,9 +89,9 @@ function Isaac:update(dt)
       end
     end
   end
-  
+
   self.animation:update(dt)
-  
+
   for index, item in ipairs(self.items) do
     if item.timer > 0 then
       item.timer = item.timer - dt
@@ -100,12 +100,12 @@ function Isaac:update(dt)
       --item.omega = (love.math.random()-0.5)/10
       item.fired = true
     end
-    
+
     item.pos = item.pos + item.vel
     item.theta = item.theta + item.omega --rotational velocity
     item.hitbox:move(item.vel.x,item.vel.y)
     item.hitbox:rotate(item.omega)
-    
+
     if item.fired then
       for shape, delta in pairs(HC.collisions(item.hitbox)) do
         if shape.class == 'player' then
@@ -129,18 +129,18 @@ function Isaac:update(dt)
       end
     end
   end
-  
+
 end
 
-function Isaac:move(dt)  
+function Isaac:move(dt)
   self.animation = self.walking
-  
+
   local DIST_FROM_EDGE = 50
-  
+
   self.vel.x = self.flip*SPEED
   self.pos = self.pos + self.vel
   self.hitbox:move(self.vel.x,self.vel.y)
-  
+
   if self.pos.x < DIST_FROM_EDGE-BOSS_SIZE/2 then
     self:faceDirection('right')
   elseif self.pos.x > ORIG_WIDTH-DIST_FROM_EDGE-BOSS_SIZE/2 then

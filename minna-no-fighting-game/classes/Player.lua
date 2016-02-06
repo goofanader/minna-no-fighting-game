@@ -207,7 +207,7 @@ function Player:update(dt)
           else
             self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
           end
-          self.punchbox.damage = 3
+          self.punchbox.damage = self.classes[CLOSE_RANGE].damageValues.punch1
           self.targetsHit = {}
           self.attackBoxFlag = true
         elseif self.animation.position >= 7 and self.attackBoxFlag then
@@ -224,7 +224,7 @@ function Player:update(dt)
           else
             self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
           end
-          self.punchbox.damage = 4
+          self.punchbox.damage = self.classes[CLOSE_RANGE].damageValues.punch2
           self.targetsHit = {}
           self.attackBoxFlag = true
         elseif self.animation.position >= 8 and self.attackBoxFlag then
@@ -241,7 +241,7 @@ function Player:update(dt)
           else
             self.punchbox = HC.rectangle(self.pos.x+SPRITE_SIZE,self.pos.y,5,SPRITE_SIZE)
           end
-          self.punchbox.damage = 5
+          self.punchbox.damage = self.classes[CLOSE_RANGE].damageValues.punch3
           self.targetsHit = {}
           self.attackBoxFlag = true
         elseif self.animation.position >= 7 and self.attackBoxFlag then

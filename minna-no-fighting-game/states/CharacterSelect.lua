@@ -19,6 +19,7 @@ local view
 local players
 local numPlayers
 local selectedPlayer
+local song
 
 CharacterSelect = {}
 
@@ -135,7 +136,7 @@ function CharacterSelect:buildGUI()
     end
 
     -- change gamestate
-    Gamestate.switch(ButtonSelect, newPlayers)
+    Gamestate.switch(ButtonSelect, newPlayers, song)
   end
 
   --## The Search Text ##--
@@ -249,48 +250,6 @@ function CharacterSelect:buildGUI()
 
     playerList:AddItem(players[i]["button"])
   end
-
-  --## The Yaoui Version ##--
-  --[[yui.debug_draw = true
-  --## Go Button ##--
-  local goText = love.graphics.newText(open_sans_bold, "GO!")
-  local goButtonInner = yui.Button({text = "GO!", w = goText:getWidth() + (offset * 2), h = WINDOW_HEIGHT, onClick = function(self)
-      -- prepare the characters for the button select screen
-      --[[local newPlayers = {}
-      for i = 1, #players do
-        local player = players[i]
-
-        if player["imageDir"] ~= nil then
-          local newPlayer = Player(nil, player["imageDir"], nil, player["name"], player["button"]:GetProperty("playerIndex"))
-          table.insert(newPlayers, newPlayer)
-        end
-      end
-
-      -- change gamestate
-      Gamestate.switch(ButtonSelect, newPlayers)] ]
-    end
-  })
-  --goButtonInner.w = goText:getWidth() + (offset * 2)
-  --goButtonInner.h = WINDOW_HEIGHT
-  print(inspect(goButtonInner))
-  goButton = yui.View(WINDOW_WIDTH - (goText:getWidth() + (offset * 2)), 0, goText:getWidth() + (offset * 2), WINDOW_HEIGHT, {
-    --[[margin_right = offset,
-    margin_left = padding / 2.0,
-    margin_top = padding,
-    margin_bottom = padding,] ]
-    yui.Stack({
-      goButtonInner
-    })
-  })
-
-  --[[foundList = yui.View(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, {
-    --margin_top = padding,
-    margin_bottom = padding,
-    margin_left = offset,
-    margin_right = offset
-  }
-
-  )]]
 end
 
 function CharacterSelect:init()
@@ -311,6 +270,9 @@ function CharacterSelect:init()
   end]]
 
   self:buildGUI()
+
+  song = love.audio.newSource(MUSIC_FOLDER .."/Eric Skiff - Chibi Ninja CC.mp3")
+  song:setLooping(true)
 end
 
 function CharacterSelect:enter()
@@ -329,6 +291,8 @@ function CharacterSelect:enter()
       loadedImages[CHARACTERS_FOLDER.."/"..playerID.."/"..charName] = newImage
     end
   end]]
+  song:rewind()
+  song:play()
 end
 
 function CharacterSelect:draw()

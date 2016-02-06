@@ -11,8 +11,7 @@ require "states/MainMenu"
 require "states/CharacterSelect"
 
 function loadFonts()
-  --open_sans_bold = love.graphics.newFont(yui.Theme.open_sans_bold, 14)
-  fightingFont = love.graphics.newImageFont(ASSETS_FOLDER .. "/fonts/3D Font.png", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.'/,\":()_-?!1234567890$ ", 5)
+  fightingFont = love.graphics.newImageFont(ASSETS_FOLDER .. "/fonts/3D Font.png", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.'/,\":()_-?!1234567890$ ")
 end
 
 function requireLuaFiles(directory)

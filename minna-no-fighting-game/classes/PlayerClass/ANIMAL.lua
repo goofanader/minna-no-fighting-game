@@ -11,4 +11,6 @@ function AnimalPlayerClass:init(imageLocation)
   self.punch1 = anim8.newAnimation(self.grid('1-7', 2), 0.02, 'pauseAtEnd')
   self.punch2 = anim8.newAnimation(self.grid('1-8', 3), 0.02, 'pauseAtEnd')
   self.punch3 = anim8.newAnimation(self.grid('4-5', 4, '4-8', 5), 0.02, 'pauseAtEnd')
+
+  self.damageValues = {punch1 = 3, punch2 = 4, punch3 = 5}
 end

@@ -1,9 +1,24 @@
 local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
-Boss = Class {}
+Boss = Class {
+  stages = {
+    [THE_SILO] = {
+      bg = {love.graphics.newImage(BACKGROUNDS_FOLDER .. "/TheSilo/bg.png"), love.graphics.newImage(BACKGROUNDS_FOLDER .. "/TheSilo/bg_podium.png")},
+      fg = {love.graphics.newImage(BACKGROUNDS_FOLDER .. "/TheSilo/fg.png")}
+    },
+    [SUBWAY] = {
+      bg = {love.graphics.newImage(BACKGROUNDS_FOLDER .. "/Subway/bg.png")},
+      fg = {
+        love.graphics.newImage(BACKGROUNDS_FOLDER .. "/Subway/fg_benches.png"),
+        love.graphics.newImage(BACKGROUNDS_FOLDER .. "/Subway/fg_tree_left.png"),
+        love.graphics.newImage(BACKGROUNDS_FOLDER .. "/Subway/fg_tree_right.png")
+      }
+    }
+  }
+}
 
-function Boss:init(hp, minionCount, name, monologue)
+function Boss:init(hp, minionCount, name, monologue, songFilename, stage)
   self.alive = false
   self.spawned = false
   self.hp = hp
@@ -11,8 +26,27 @@ function Boss:init(hp, minionCount, name, monologue)
   self.minionCount = minionCount
   self.name = name
   self.monologue = monologue
+
   for i=1,minionCount do
     enemies[i] = Enemy(vector(0,Y_POS+love.math.random(12)),'assets/sprites/animal.png')
+  end
+
+  self.songFilename = songFilename or MUSIC_FOLDER .. "/mathgrant - Dr_Craftys_Better_Fortress.mp3"
+  self.songAudio = love.audio.newSource(self.songFilename)
+  self.songAudio:setLooping(true)
+
+  self.stage = stage ~= nil and Boss.stages[stage] or Boss.stages[THE_SILO]
+end
+
+function Boss:drawStageBG()
+  for i, value in ipairs(self.stage.bg) do
+    love.graphics.draw(value)
+  end
+end
+
+function Boss:drawStageFG()
+  for i, value in ipairs(self.stage.fg) do
+    love.graphics.draw(value)
   end
 end
 
@@ -20,7 +54,7 @@ function Boss:draw()
   for i=1,self.minionCount do
     enemies[i]:draw()
   end
-  
+
   --HP BAR!
   local EDGE_BUFFER = 15
   local BORDER = 5

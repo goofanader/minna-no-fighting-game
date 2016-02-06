@@ -16,8 +16,8 @@ function Annaliese:init(minionCount)
   local HP = 150*minionCount
   local name = 'Annaliese'
   local monologue = 'Hey there!'
-  Boss.init(self, HP, minionCount, name, monologue)
-  
+  Boss.init(self, HP, minionCount, name, monologue, nil, THE_SILO)
+
   self.img = love.graphics.newImage('assets/sprites/bosses/annaliese/annaliese.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
   self.idle = anim8.newAnimation(g('2-3',1),0.75)
@@ -65,7 +65,7 @@ end
 
 function Annaliese:update(dt)
   Boss.update(self, dt)
-  
+
   if not self.alive and not self.spawned then
     self:spawn(vector(ORIG_WIDTH-100,Y_POS))
   elseif self.alive then
@@ -86,20 +86,20 @@ function Annaliese:update(dt)
       end
     end
   end
-  
+
   self.animation:update(dt)
-  
+
   for index, meteor in ipairs(self.meteors) do
-    
+
     meteor.pos = meteor.pos + meteor.vel
     meteor.hitbox:move(meteor.vel.x,meteor.vel.y)
     meteor.animation:update(dt)
-    
+
     if meteor.pos.y > ORIG_HEIGHT+BOSS_SIZE then
       HC.remove(meteor.hitbox)
       table.remove(self.meteors,index)
     end
-    
+
     for shape, delta in pairs(HC.collisions(meteor.hitbox)) do
       if shape.class == 'player' then
         local alreadyHit = false
@@ -118,18 +118,18 @@ function Annaliese:update(dt)
       end
     end
   end
-  
+
 end
 
-function Annaliese:move(dt)  
+function Annaliese:move(dt)
   self.animation = self.moving
-  
+
   local DIST_FROM_EDGE = 50
-  
+
   self.vel.x = self.flip*SPEED
   self.pos = self.pos + self.vel
   self.hitbox:move(self.vel.x,self.vel.y)
-  
+
   if self.pos.x < DIST_FROM_EDGE-BOSS_SIZE/2 then
     self:faceDirection('right')
   elseif self.pos.x > ORIG_WIDTH-DIST_FROM_EDGE-BOSS_SIZE/2 then
@@ -140,7 +140,7 @@ end
 function Annaliese:specialAttack(dt)
   self.meteorTimer = self.meteorTimer - dt
   self.animation = self.attacking
-  
+
   if self.meteorTimer <= 0 then
     local meteor = {}
     meteor.animation = self.meteorAnimation:clone()

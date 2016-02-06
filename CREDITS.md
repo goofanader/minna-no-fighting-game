@@ -9,7 +9,6 @@
 * emeraldschemer
 * goofanader
 * bluecrysto
-* trikey
 
 ## Libraries
 * [HardonCollider](http://hc.readthedocs.org/en/latest/)

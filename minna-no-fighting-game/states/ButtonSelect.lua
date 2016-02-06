@@ -11,11 +11,12 @@ local selection
 local buttons = {}
 local pressed = {}
 local pressFlag
+local song
 
 local WINDOW_WIDTH = ORIG_WIDTH
 local WINDOW_HEIGHT = ORIG_HEIGHT
 
-function ButtonSelect:enter(prevState, playersInfo)
+function ButtonSelect:enter(prevState, playersInfo, prevSong)
   selection = 1
   pressed = {}
 
@@ -25,14 +26,16 @@ function ButtonSelect:enter(prevState, playersInfo)
   for i = 1, numberOfPlayers do
     players[i].pos = vector(ORIG_WIDTH/#players*(i-0.5)-SPRITE_SIZE/2 , ORIG_HEIGHT/2)
   end
+  
+  song = prevSong
 end
 
 function ButtonSelect:draw()
-  
+
   if selection <= numberOfPlayers then
-    love.graphics.printf( players[selection].name..", please press and release your button!", 10, 10, ORIG_WIDTH/2, 'center', 0, 6, 6)
+    love.graphics.printf( players[selection].name..", please press and release your button!", 10, 10, ORIG_WIDTH/2, 'center')
   else
-    love.graphics.printf("All Players Joined! Press ENTER to start game!", 10, 10, ORIG_WIDTH/2, 'center', 0, 6, 6)
+    love.graphics.printf("All Players Joined! Press ENTER to start game!", 10, 10, ORIG_WIDTH/2, 'center')
   end
 
   love.graphics.push()
@@ -119,6 +122,7 @@ function ButtonSelect:keyreleased(key, code)
         players[i].button = buttons[i]
       end
       numberOfPlayers = selection-1
+      song:stop()
       Gamestate.switch(GamePlay, players)
     end
   elseif key == 'backspace' then
