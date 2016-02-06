@@ -2,7 +2,10 @@ local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
 require "classes/BossClasses/Boss"
-AndrewLee = Class {__includes = Boss, slideSound = love.sound.newSoundData(BOSSES_FOLDER .. "/andrew_lee/sliding_sound.wav")}
+AndrewLee = Class {
+  __includes = Boss,
+  slideSound = love.sound.newSoundData(BOSSES_FOLDER .. "/andrew_lee/sliding_sound.wav")
+}
 
 local HORIZ_SPEED = 1
 local VERT_SPEED = 0.5

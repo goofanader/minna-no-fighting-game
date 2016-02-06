@@ -2,7 +2,9 @@ local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
 require "classes/BossClasses/Boss"
-Phyllis = Class {__includes = Boss}
+Phyllis = Class {__includes = Boss,
+  runningSound = love.sound.newSoundData(BOSSES_FOLDER .. "/phyllis_douglas/run.wav")
+}
 
 local SPEED = 0.25
 local ATTACK_TIME = 6 --seconds
@@ -24,6 +26,8 @@ function Phyllis:init(minionCount)
   self.animation = self.running
 
   self.flip = 1
+
+  self.runningSound = love.audio.newSource(Phyllis.runningSound, "static")
 end
 
 function Phyllis:spawn(pos)
@@ -75,6 +79,12 @@ function Phyllis:update(dt)
 
   self.animation:update(dt)
 
+  if self.animation == self.running and not self.runningSound:isPlaying() then
+    self.runningSound:play()
+  elseif self.animation ~= self.running and self.runningSound:isPlaying() then
+    self.runningSound:stop()
+    self.runningSound:rewind()
+  end
 end
 
 function Phyllis:attack(dt)

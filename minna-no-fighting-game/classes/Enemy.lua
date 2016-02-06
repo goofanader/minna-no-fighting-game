@@ -11,22 +11,29 @@ Enemy = Class {
 
       return vec4(vec3(gray, gray, gray), pixel.a);
     }
-  ]])
+  ]]),
+  img = love.graphics.newImage('assets/sprites/animal.png')
 }
+Enemy.g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,Enemy.img:getWidth(),Enemy.img:getHeight())
+Enemy.running = anim8.newAnimation(Enemy.g('1-8',1),0.1)
+Enemy.punch1 = anim8.newAnimation(Enemy.g('1-8',2),0.02,'pauseAtEnd')
+Enemy.punch2 = anim8.newAnimation(Enemy.g('1-8',3),0.02,'pauseAtEnd')
+Enemy.punch3 = anim8.newAnimation(Enemy.g('1-8',4,'1-8',5,1,6),0.02,'pauseAtEnd')
+Enemy.hitstun = anim8.newAnimation(Enemy.g('2-3',6),0.1)
+Enemy.idle = anim8.newAnimation(Enemy.g('4-8',6,'1-7',7),0.1)
 
 local FLINCH_TIME = 0.2 --seconds
 local ATTACK_DELAY = 0.3 --seconds
 
 function Enemy:init(pos, imagefile)
   self.ground = pos.y
-  self.img = love.graphics.newImage(imagefile)
-  local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
-  self.running = anim8.newAnimation(g('1-8',1),0.1)
-  self.punch1 = anim8.newAnimation(g('1-8',2),0.02,'pauseAtEnd')
-  self.punch2 = anim8.newAnimation(g('1-8',3),0.02,'pauseAtEnd')
-  self.punch3 = anim8.newAnimation(g('1-8',4,'1-8',5,1,6),0.02,'pauseAtEnd')
-  self.hitstun = anim8.newAnimation(g('2-3',6),0.1)
-  self.idle = anim8.newAnimation(g('4-8',6,'1-7',7),0.1)
+  self.img = Enemy.img
+  self.running = Enemy.running
+  self.punch1 = Enemy.punch1
+  self.punch2 = Enemy.punch2
+  self.punch3 = Enemy.punch3
+  self.hitstun = Enemy.hitstun
+  self.idle = Enemy.idle
   self.animation = self.idle
   self.flip = false
 end
@@ -68,9 +75,9 @@ function Enemy:update(dt)
         self.vel = self.vel + vector(0,0.5) --acceleration to ground
         self.animation = self.hitstun
       end
-      
+
     else
-    
+
       if self.state == "move" then
         if self.closestPlayer then
           if math.abs(self.closestPlayer.pos.x - self.pos.x) > SPRITE_SIZE+1 then
@@ -92,7 +99,7 @@ function Enemy:update(dt)
               self.animation = self.idle
             end
           end
-          
+
         else
           self.animation = self.idle
         end
@@ -167,7 +174,7 @@ function Enemy:update(dt)
             end
           end
         end
-        
+
         if self.attackBoxFlag then -- Punch Hitbox Detection Stuff
           for shape, delta in pairs(HC.collisions(self.punchbox)) do
             if shape.class == 'player' then

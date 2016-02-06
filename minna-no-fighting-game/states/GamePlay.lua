@@ -28,7 +28,7 @@ function GamePlay:enter(prevState, playerList)
     players[i]:spawn(vector(25 * i, Y_POS + i))
   end
 
-  playerHP = 400*numberOfPlayers
+  playerHP = 800*numberOfPlayers
   playerMaxHP = playerHP
 
   Bosses = {
@@ -36,7 +36,7 @@ function GamePlay:enter(prevState, playerList)
     Annaliese(numberOfEnemies),
     AndrewLee(numberOfEnemies),
     Phyllis(numberOfEnemies)
-    }
+  }
 
   BossNumber = 1
   CurrentBoss = Bosses[BossNumber]
@@ -107,14 +107,10 @@ function GamePlay:update(dt)
       CurrentBoss.songAudio:rewind()
       CurrentBoss.songAudio:play()
     else
-      Gamestate.switch(GameOver, true) --WIN SCREEN
-      players = {}
-      enemies = {}
+      self:goToGameOver(true) --WIN SCREEN
     end
   elseif playerHP <= 0 then
-    Gamestate.switch(GameOver, false) --LOSE SCREEN
-    players = {}
-    enemies = {}
+    self:goToGameOver(false) --LOSE SCREEN
   end
 
   for i=1,numberOfPlayers do
@@ -133,6 +129,23 @@ end
 function GamePlay:keypressed(key, isrepeat)
 end
 
+function GamePlay:goToGameOver(hasWon)
+  CurrentBoss.songAudio:stop()
+
+  for i, player in ipairs(players) do
+    if player.runningSound:isPlaying() then
+      player.runningSound:stop()
+    end
+    if player.hitSound:isPlaying() then
+      player.hitSound:stop()
+    end
+  end
+  players = {}
+  enemies = {}
+
+  Gamestate.switch(GameOver, hasWon)
+end
+
 function GamePlay:goToMenu()
   CurrentBoss.songAudio:stop()
 
@@ -146,5 +159,6 @@ function GamePlay:goToMenu()
   end
   players = {}
   enemies = {}
+  
   Gamestate.switch(MainMenu)
 end

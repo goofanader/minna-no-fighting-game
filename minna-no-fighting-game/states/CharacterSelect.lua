@@ -183,9 +183,9 @@ function CharacterSelect:buildGUI()
       local charName = split(arrKey, "/")
       charName = charName[#charName]
 
-      if loadedImages[arrKey] == nil then
+      --if loadedImages[arrKey] == nil then
         loadedImages[arrKey] = love.graphics.newImage(characterData["FRONT"])
-      end
+      --end
 
       --## Add the found image to the list ##--
       local charImageButton = loveframes.Create("imagebutton")

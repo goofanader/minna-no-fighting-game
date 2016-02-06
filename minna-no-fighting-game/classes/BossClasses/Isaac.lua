@@ -12,7 +12,7 @@ local ITEM_SPEED = 3
 local DAMAGE = 10
 
 function Isaac:init(minionCount)
-  local HP = 200*minionCount
+  local HP = 150*minionCount
   local name = 'The Cat King'
   local monologue = 'Hey there!'
   Boss.init(self, HP, minionCount, name, monologue, MUSIC_FOLDER .. "/YZYX - Neon Genesis Evangelion - Cruel Angel's Thesis (Game Boy version) (Probably Copyrighted).mp3", THE_SILO)

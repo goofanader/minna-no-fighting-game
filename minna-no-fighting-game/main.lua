@@ -1,14 +1,5 @@
-local Gamestate = require "libraries/hump.gamestate"
-local Class = require "libraries/hump.class"
+local Gamestate, Class
 inspect = require("libraries/inspect")
-
-vector = require "libraries/hump.vector"
-HC = require "libraries/HC" --collision detection
-loveframes = require("libraries.LoveFrames")
-
-require "constants"
-require "states/MainMenu"
-require "states/CharacterSelect"
 
 function loadFonts()
   fightingFont = love.graphics.newImageFont(ASSETS_FOLDER .. "/fonts/3D Font.png", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.'/,\":()_-?!1234567890$ ")
@@ -48,14 +39,24 @@ function requireLuaFiles(directory)
 end
 
 function love.load()
+  love.graphics.setDefaultFilter("nearest", "nearest")
+
+  Gamestate = require "libraries/hump.gamestate"
+  Class = require "libraries/hump.class"
+  vector = require "libraries/hump.vector"
+  HC = require "libraries/HC" --collision detection
+  loveframes = require("libraries.LoveFrames")
+
+  require "constants"
+  require "states/MainMenu"
+  require "states/CharacterSelect"
+
   WINDOW_WIDTH = love.graphics.getWidth()
   WINDOW_HEIGHT = love.graphics.getHeight()
   scale = 1
   translation = vector(0, 0)
   isFullscreen = true
   isDrawingHitbox = false
-
-  love.graphics.setDefaultFilter("nearest", "nearest")
 
   loadFonts()
   requireLuaFiles(BOSS_CLASS_FOLDER)

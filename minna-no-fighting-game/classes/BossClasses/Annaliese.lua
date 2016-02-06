@@ -2,7 +2,7 @@ local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
 require "classes/BossClasses/Boss"
-Annaliese = Class {__includes = Boss}
+Annaliese = Class {__includes = Boss, meteor_sound = love.sound.newSoundData(BOSSES_FOLDER .. "/annaliese/meteor_sound2.wav")}
 
 local SPEED = 3
 local SPECIAL_COOLDOWN = 5 --seconds
@@ -153,6 +153,9 @@ function Annaliese:specialAttack(dt)
     meteor.targetsHit = {}
     table.insert(self.meteors,meteor)
     self.meteorTimer = love.math.random()*METEOR_COOLDOWN*3+METEOR_COOLDOWN
+
+    local sound = love.audio.newSource(Annaliese.meteor_sound, "static")
+    sound:play()
   end
 
   if self.specialTimer < -SPECIAL_DURATION then

@@ -29,7 +29,7 @@ function Boss:init(hp, minionCount, name, monologue, songFilename, stage)
   self.pos = vector(0,0)
 
   for i=1,minionCount do
-    enemies[i] = Enemy(vector(0,Y_POS+love.math.random(12)),'assets/sprites/animal.png')
+    enemies[i] = Enemy(vector(0,Y_POS+love.math.random(12)))
   end
 
   self.songFilename = songFilename or MUSIC_FOLDER .. "/mathgrant - Dr_Craftys_Better_Fortress.mp3"
