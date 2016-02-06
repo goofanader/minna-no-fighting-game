@@ -4,10 +4,28 @@ local anim8 = require "libraries/anim8"
 require "classes/PlayerClass/ANIMAL"
 require "classes/PlayerClass/REGULAR"
 
-Player = Class{}
+Player = Class{
+  runSound = love.sound.newSoundData(SOUNDS_FOLDER .. "/step_full.wav"),
+  punch1SFX = love.sound.newSoundData(SOUNDS_FOLDER .. "/punch1.wav"),
+  punch2SFX = love.sound.newSoundData(SOUNDS_FOLDER .. "/punch2.wav"),
+  punch3SFX = love.sound.newSoundData(SOUNDS_FOLDER .. "/punch3.wav"),
+  gotHitSFX = love.sound.newSoundData(SOUNDS_FOLDER .. "/got_hit.wav")
+}
 
 local BUTTON_DELAY = 0.1 --seconds
 local FLINCH_TIME = 0.2 --seconds
+
+function Player:playSound(sound, isRepeating, volume)
+  local newSound = love.audio.newSource(sound, "static")
+  local vol = volume or 1.0
+  local isLooping = isRepeating ~= nil and isRepeating or false
+
+  newSound:setVolume(vol)
+  newSound:setLooping(isLooping)
+  newSound:play()
+
+  if isLooping then return newSound else return false end
+end
 
 function Player:init(pos, imagefilesLocation, button, name, id)
   self.classes = self:getClasses(imagefilesLocation)
@@ -19,6 +37,14 @@ function Player:init(pos, imagefilesLocation, button, name, id)
   self.id = id
   self.lag = 0
   --self:spawn(pos)
+
+  self.runningSound = self:playSound(Player.runSound, true)
+  self.runningSound:stop()
+  self.runningSound:rewind()
+
+  self.hitSound = self:playSound(Player.gotHitSFX, true)
+  self.hitSound:stop()
+  print(inspect(self.hitSound))
 end
 
 function Player:getClasses(imagesLocation)
@@ -93,6 +119,14 @@ function Player:update(dt)
           self.state = 'moveAway'
           self.currClass = self.classes[NO_RANGE]
           self.animation = self.currClass.idle
+
+          if self.runningSound:isPlaying() then
+            self.runningSound:stop()
+            self.runningSound:rewind()
+          end
+          if self.hitSound:isPlaying() then
+            self.hitSound:stop()
+          end
         end
       end
 
@@ -118,18 +152,29 @@ function Player:update(dt)
               self.currClass = self.classes[CLOSE_RANGE]
               self.animation = self.currClass.punch1
               self.combo = 1
+              self:playSound(Player.punch1SFX)
             elseif self.combo == 1 then
               self.currClass = self.classes[CLOSE_RANGE]
               self.animation = self.currClass.punch2
               self.combo = 2
+              self:playSound(Player.punch2SFX)
             else
               self.currClass = self.classes[CLOSE_RANGE]
               self.animation = self.currClass.punch3
               self.combo = 3
+              self:playSound(Player.punch3SFX)
             end
             self.attackBoxFlag = false
             self.animation:gotoFrame(1)
             self.animation:resume()
+
+            if self.runningSound:isPlaying() then
+              self.runningSound:stop()
+              self.runningSound:rewind()
+            end
+            if self.hitSound:isPlaying() then
+              self.hitSound:stop()
+            end
           end
         end
 
@@ -149,6 +194,14 @@ function Player:update(dt)
           self.state = 'moveTowards'
           self.currClass = self.classes[NO_RANGE]
           self.animation = self.currClass.idle
+
+          if self.runningSound:isPlaying() then
+            self.runningSound:stop()
+            self.runningSound:rewind()
+          end
+          if self.hitSound:isPlaying() then
+            self.hitSound:stop()
+          end
         end
       end
     end
@@ -184,6 +237,14 @@ function Player:update(dt)
       else
         self.currClass = self.classes[NO_RANGE]
         self.animation = self.currClass.idle
+
+        if self.runningSound:isPlaying() then
+          self.runningSound:stop()
+          self.runningSound:rewind()
+        end
+        if self.hitSound:isPlaying() then
+          self.hitSound:stop()
+        end
       end
 
     elseif self.state == 'moveAway' then -- Holding the button
@@ -197,6 +258,14 @@ function Player:update(dt)
       else
         self.currClass = self.classes[NO_RANGE]
         self.animation = self.currClass.idle
+
+        if self.runningSound:isPlaying() then
+          self.runningSound:stop()
+          self.runningSound:rewind()
+        end
+        if self.hitSound:isPlaying() then
+          self.hitSound:stop()
+        end
       end
 
     elseif self.state == 'attack' then -- Tapping the button, but not too fast
@@ -285,6 +354,12 @@ function Player:update(dt)
   end
 
   self.animation:update(dt)
+
+  if self.animation == self.classes[NO_RANGE].hitstun and not self.hitSound:isPlaying() then
+    self.hitSound:play()
+  elseif self.animation ~= self.classes[NO_RANGE].hitstun and self.hitSound:isPlaying() then
+    self.hitSound:stop()
+  end
 end
 
 function Player:draw()
@@ -358,10 +433,21 @@ function Player:move_with_collision(dx, dy)
     self.pos.x = self.pos.x + dx + pdx
     self.currClass = self.classes[CLOSE_RANGE]
     self.animation = self.currClass.running
+    if not self.runningSound:isPlaying() then
+      self.runningSound:play()
+    end
   else
     self.hitbox:move(-dx-pdx,-dy) --Or move hitbox back
     self.currClass = self.classes[NO_RANGE]
     self.animation = self.currClass.idle
+
+    if self.runningSound:isPlaying() then
+      self.runningSound:stop()
+      self.runningSound:rewind()
+    end
+  end
+  if self.hitSound:isPlaying() then
+    self.hitSound:stop()
   end
   self:faceDirection(direction)
 end
@@ -371,6 +457,15 @@ function Player:chargeUp()
     self.state = 'charge'
     self.currClass = self.classes[NO_RANGE]
     self.animation = self.currClass.hitstun
+
+    if self.runningSound:isPlaying() then
+      self.runningSound:stop()
+      self.runningSound:rewind()
+    end
+
+    if not self.hitSound:isPlaying() then
+      self.hitSound:play()
+    end
   end
   self.charge = self.charge + 5
 end
@@ -400,8 +495,18 @@ function Player:selected(bool)
   if bool then
     self.currClass = self.classes[CLOSE_RANGE]
     self.animation = self.currClass.running
+    if not self.runningSound:isPlaying() then
+      self.runningSound:play()
+    end
   else
     self.currClass = self.classes[NO_RANGE]
     self.animation = self.currClass.idle
+    if self.runningSound:isPlaying() then
+      self.runningSound:stop()
+      self.runningSound:rewind()
+    end
+  end
+  if self.hitSound:isPlaying() then
+    self.hitSound:stop()
   end
 end
