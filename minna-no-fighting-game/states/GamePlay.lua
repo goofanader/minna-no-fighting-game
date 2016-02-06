@@ -2,8 +2,12 @@ local Gamestate = require "libraries/hump.gamestate"
 
 require "classes/Player"
 require "classes/Enemy"
+<<<<<<< HEAD
 require "classes/BossClasses/AndrewLee"
 require "classes/BossClasses/Phyllis"
+=======
+--require "classes/BossClasses/AndrewLee"
+>>>>>>> origin/master
 
 GamePlay = {}
 
@@ -20,10 +24,15 @@ function GamePlay:enter(prevState, playerList)
   for i=1,numberOfPlayers do
     players[i]:spawn(vector(25 * i, Y_POS + i))
   end
+<<<<<<< HEAD
   
   Bosses = {Phyllis(numberOfEnemies),AndrewLee(numberOfEnemies)}
   BossNumber = 1
   CurrentBoss = Bosses[BossNumber]
+=======
+
+  CurrentBoss = AndrewLee(numberOfEnemies)
+>>>>>>> origin/master
 
   topHitbox = HC.rectangle(0,-32,WINDOW_WIDTH,32)
   topHitbox.class = 'wall'
@@ -42,14 +51,14 @@ function GamePlay:draw()
   love.graphics.push()
   love.graphics.translate(translation.x, translation.y)
   love.graphics.scale(scale)
-  
+
   for i=1,numberOfPlayers do
     players[i]:draw()
   end
   if CurrentBoss then
     CurrentBoss:draw()
   end
-  
+
   love.graphics.pop()
 end
 
