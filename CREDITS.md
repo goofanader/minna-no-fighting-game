@@ -12,7 +12,7 @@
 * trikey
 
 ## Libraries
-* [HardonCollider](http://vrld.github.io/HardonCollider/)
+* [HardonCollider](http://hc.readthedocs.org/en/latest/)
 * [hump](http://hump.readthedocs.org/en/latest/index.html)
 * [anim8](https://github.com/kikito/anim8#anim8)
 * [Spectrum, a JQuery Color Picker](https://bgrins.github.io/spectrum/)
@@ -26,5 +26,5 @@
 ## Special Thanks
 * Curtis: music finder
 * Scott: video acquirer
-* Cory and friend: music creators
+* Cory and Ryan Davis: music creators
 * All the Minna officers that participated in letting their likeness be used for this game!!

@@ -194,9 +194,12 @@ function AndrewLee:move()
   self.pos = self.pos + self.vel
   self.hitbox:move(self.vel.x,self.vel.y)
 <<<<<<< HEAD
+<<<<<<< HEAD
   
   if self.pos.x < DIST_FROM_EDGE-BOSS_SIZE/2 then
 =======
+=======
+>>>>>>> a9eadd9cdde5cb78e9d55019200ac861762de3b3
 
   if self.pos.x < DIST_FROM_EDGE then
 >>>>>>> origin/master
