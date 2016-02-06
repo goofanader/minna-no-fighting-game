@@ -9,7 +9,7 @@ local VERT_SPEED = 0.5
 local SPECIAL_COOLDOWN = 15 --seconds
 local SUMMON_COOLDOWN = 5 --seconds
 local SLIDER_COOLDOWN = 0.5
-local SLIDER_SPEED = 5
+local SLIDER_SPEED = 15
 local SLIDER_SCALE = 0.75 --How big the images are
 local SLIDER_DAMAGE = 1
 
@@ -103,11 +103,11 @@ function AndrewLee:update(dt)
       end
     end
   end
-  
+
   for index, slider in ipairs(self.sliders) do --Remove sliders when they leave the screen
     slider.pos = slider.pos + slider.vel
     slider.hitbox:move(slider.vel.x,slider.vel.y)
-    
+
     for shape, delta in pairs(HC.collisions(slider.hitbox)) do
       if shape.class == 'player' then
         local alreadyHit = false
@@ -125,7 +125,7 @@ function AndrewLee:update(dt)
         end
       end
     end
-    
+
     local trailLength = self.imageTrail:getHeight()
     if slider.vel.x > 0 then
       if slider.pos.x > ORIG_WIDTH+slider.img:getWidth()+trailLength then
@@ -147,13 +147,13 @@ function AndrewLee:update(dt)
       table.remove(self.sliders,index)
     end
   end
-  
-  
+
+
 end
 
 function AndrewLee:specialAttack(dt)
   self.sliderTimer = self.sliderTimer - dt
-  
+
   if self.sliderTimer <= 0 then
     local slider = {}
     local rando = love.math.random(9)
@@ -180,7 +180,7 @@ function AndrewLee:specialAttack(dt)
     table.insert(self.sliders,slider)
     self.sliderTimer = love.math.random()*SLIDER_COOLDOWN + 0.5
   end
-  
+
   if self.specialTimer < -(5 + 5*self.hp/self.maxHP) then
     self.lag = 1 --seconds
     self.specialTimer = love.math.random(SPECIAL_COOLDOWN)+SPECIAL_COOLDOWN
@@ -190,10 +190,10 @@ end
 function AndrewLee:move()
   local DIST_FROM_EDGE = 50
   local FLOAT_HEIGHT = 20
-  
+
   self.pos = self.pos + self.vel
   self.hitbox:move(self.vel.x,self.vel.y)
-  
+
   if self.pos.x < DIST_FROM_EDGE then
     self.vel.x = HORIZ_SPEED
     self:faceDirection('right')
@@ -201,13 +201,13 @@ function AndrewLee:move()
     self.vel.x = -HORIZ_SPEED
     self:faceDirection('left')
   end
-  
+
   if self.pos.y >= Y_POS then
     self.vel.y = -VERT_SPEED
   elseif self.pos.y < Y_POS - FLOAT_HEIGHT then
     self.vel.y = VERT_SPEED
   end
-  
+
 end
 
 function AndrewLee:faceDirection(direction)
