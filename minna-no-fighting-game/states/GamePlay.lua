@@ -107,14 +107,9 @@ function GamePlay:update(dt)
       CurrentBoss.songAudio:rewind()
       CurrentBoss.songAudio:play()
     else
-<<<<<<< HEAD
       Gamestate.switch(GameOver, true) --WIN SCREEN
       players = {}
       enemies = {}
-=======
-      --TODO: Win Screen!
-      self:goToMenu()
->>>>>>> origin/master
     end
   elseif playerHP <= 0 then
     Gamestate.switch(GameOver, false) --LOSE SCREEN
