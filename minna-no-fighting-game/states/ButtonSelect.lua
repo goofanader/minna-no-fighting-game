@@ -23,17 +23,16 @@ function ButtonSelect:enter(prevState, playersInfo)
   numberOfPlayers = #playersInfo
 
   for i = 1, numberOfPlayers do
-    local location = vector(ORIG_WIDTH/#players*(i-0.5) , ORIG_HEIGHT/2)
-    players[i].pos = location
-    --players[i]:spawn(location)
+    players[i].pos = vector(ORIG_WIDTH/#players*(i-0.5)-SPRITE_SIZE/2 , ORIG_HEIGHT/2)
   end
 end
 
 function ButtonSelect:draw()
+  
   if selection <= numberOfPlayers then
-    love.graphics.print(players[selection].name..", please press and release your button!",10,10)
+    love.graphics.printf( players[selection].name..", please press and release your button!", 10, 10, ORIG_WIDTH/2, 'center', 0, 6, 6)
   else
-    love.graphics.print("All Players Joined! Press ENTER to start game!",10,10)
+    love.graphics.printf("All Players Joined! Press ENTER to start game!", 10, 10, ORIG_WIDTH/2, 'center', 0, 6, 6)
   end
 
   love.graphics.push()
@@ -41,18 +40,9 @@ function ButtonSelect:draw()
   love.graphics.scale(scale)
 
   for i=1, numberOfPlayers do
-    if pressed[i] then
-      love.graphics.setColor(0,255,0,255)
-    elseif selection > i then
-      love.graphics.setColor(0,0,255,255)
-    end
-
-    love.graphics.rectangle('fill', WINDOW_WIDTH/numberOfPlayers*(i-0.5) , WINDOW_HEIGHT/2 , 10 , 10)
-    love.graphics.setColor(255,255,255,255)
-
     players[i]:draw()
-    love.graphics.pop()
   end
+  love.graphics.pop()
 end
 
 function ButtonSelect:update(dt)

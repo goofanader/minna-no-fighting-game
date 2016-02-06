@@ -33,9 +33,12 @@ function GamePlay:enter(prevState, playerList)
     players[i]:spawn(vector(25 * i, Y_POS + i))
   end
 
-  Bosses = {Isaac(numberOfEnemies),
+  Bosses = {
+    Isaac(numberOfEnemies),
+    Annaliese(numberOfEnemies),
     Phyllis(numberOfEnemies),
-    AndrewLee(numberOfEnemies) }
+    AndrewLee(numberOfEnemies)
+    }
   
   BossNumber = 1
   CurrentBoss = Bosses[BossNumber]

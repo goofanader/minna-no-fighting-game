@@ -4,12 +4,12 @@ local anim8 = require "libraries/anim8"
 require "classes/BossClasses/Boss"
 Isaac = Class {__includes = Boss}
 
-local SPEED = 0.75
+local SPEED = 0.5
 local ATTACK_COOLDOWN = 5 --seconds
 local SUMMON_COOLDOWN = 5 --seconds
 local ITEM_FLOAT_TIME = 1 --seconds
-local ITEM_SPEED = 2
-local DAMAGE = 5
+local ITEM_SPEED = 3
+local DAMAGE = 10
 
 function Isaac:init(minionCount)
   local HP = 200*minionCount

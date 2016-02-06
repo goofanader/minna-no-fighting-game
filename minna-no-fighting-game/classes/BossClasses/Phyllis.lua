@@ -8,7 +8,7 @@ local SPEED = 0.25
 local ATTACK_TIME = 6 --seconds
 local REST_TIME = 2 --seconds
 local SUMMON_COOLDOWN = 5 --seconds
-local DAMAGE = 5
+local DAMAGE = 20
 
 function Phyllis:init(minionCount)
   local HP = 200*minionCount
