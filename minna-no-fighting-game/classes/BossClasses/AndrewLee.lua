@@ -8,14 +8,16 @@ local HORIZ_SPEED = 1
 local VERT_SPEED = 0.5
 local SPECIAL_COOLDOWN = 10 --seconds
 local SUMMON_COOLDOWN = 5 --seconds
-local SLIDER_COOLDOWN = 0.5
+local SLIDER_COOLDOWN = 0.25
 local SLIDER_SPEED = 15
 local SLIDER_SCALE = 0.75 --How big the images are
-local SLIDER_DAMAGE = 1
+local SLIDER_DAMAGE = 2
 
 function AndrewLee:init(minionCount)
   local HP = 200*minionCount
-  Boss.init(self, HP, minionCount)
+  local name = 'Omega Andrew Lee'
+  local monologue = 'Hey there!'
+  Boss.init(self, HP, minionCount, name, monologue)
   self.idle = love.graphics.newImage('assets/sprites/bosses/andrew_lee/andrew_lee_idle.png')
   self.hand = love.graphics.newImage('assets/sprites/bosses/andrew_lee/andrew_lee_idle_hand.png')
   self.sliderpics = {}
@@ -178,7 +180,7 @@ function AndrewLee:specialAttack(dt)
     slider.hitbox.class = 'projectile'
     slider.targetsHit = {}
     table.insert(self.sliders,slider)
-    self.sliderTimer = love.math.random()*SLIDER_COOLDOWN + 0.5
+    self.sliderTimer = love.math.random()*SLIDER_COOLDOWN + SLIDER_COOLDOWN
   end
 
   if self.specialTimer < -(5 + 5*self.hp/self.maxHP) then

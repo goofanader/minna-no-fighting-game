@@ -384,9 +384,10 @@ function Player:canMove()
 end
 
 function Player:hit(damage)
-  --self.hp = self.hp - damage
-  if false then --TODO: Put Party HP Here
-    self:kill()
+  playerHP = playerHP - damage
+  if playerHP <= 0 then
+    playerHP = 0
+    --GAME OVER
   else
     self.state = 'flinch'
     self.currClass = self.classes[NO_RANGE]

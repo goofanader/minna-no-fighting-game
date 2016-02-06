@@ -33,11 +33,14 @@ function GamePlay:enter(prevState, playerList)
     players[i]:spawn(vector(25 * i, Y_POS + i))
   end
 
-  Bosses = {
+  playerHP = 400*numberOfPlayers
+  playerMaxHP = playerHP
+
+  Bosses = {AndrewLee(numberOfEnemies),
     Isaac(numberOfEnemies),
     Annaliese(numberOfEnemies),
-    Phyllis(numberOfEnemies),
-    AndrewLee(numberOfEnemies)
+    Phyllis(numberOfEnemies)
+    
     }
   
   BossNumber = 1
@@ -73,7 +76,21 @@ function GamePlay:draw()
   love.graphics.draw(backgrounds["fg"]["benches"])
   love.graphics.draw(backgrounds["fg"]["trees"]["left"])
   love.graphics.draw(backgrounds["fg"]["trees"]["right"])
-
+  
+  --Player HP Bar
+  local EDGE_BUFFER = 15
+  local BORDER = 5
+  local width = ORIG_WIDTH-EDGE_BUFFER*2
+  local height = EDGE_BUFFER*2
+  local x = EDGE_BUFFER
+  local y = ORIG_HEIGHT-EDGE_BUFFER-height
+  love.graphics.setColor(0,0,0)
+  love.graphics.rectangle('fill', x, y, width, height)
+  love.graphics.setColor(255,0,0)
+  love.graphics.rectangle('fill', x+BORDER, y+BORDER, (width-BORDER*2)*playerHP/playerMaxHP, height-BORDER*2)
+  love.graphics.setColor(255,255,255)
+  love.graphics.print('MINNA', x+EDGE_BUFFER, y+EDGE_BUFFER/2, 0, 1, 1)
+  
   love.graphics.pop()
 end
 

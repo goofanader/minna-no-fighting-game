@@ -14,7 +14,9 @@ local METEOR_DAMAGE = 5
 
 function Annaliese:init(minionCount)
   local HP = 150*minionCount
-  Boss.init(self, HP, minionCount)
+  local name = 'Annaliese'
+  local monologue = 'Hey there!'
+  Boss.init(self, HP, minionCount, name, monologue)
   
   self.img = love.graphics.newImage('assets/sprites/bosses/annaliese/annaliese.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())

@@ -13,7 +13,9 @@ local DAMAGE = 10
 
 function Isaac:init(minionCount)
   local HP = 200*minionCount
-  Boss.init(self, HP, minionCount)
+  local name = 'The Cat King'
+  local monologue = 'Hey there!'
+  Boss.init(self, HP, minionCount, name, monologue)
   
   self.img = love.graphics.newImage('assets/sprites/bosses/isaac_cameron/isaac.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
