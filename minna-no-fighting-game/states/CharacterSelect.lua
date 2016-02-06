@@ -129,8 +129,7 @@ function CharacterSelect:buildGUI()
       local player = players[i]
 
       if player["imageDir"] ~= nil then
-        local location = vector(ORIG_WIDTH/#players*(i-0.5) , ORIG_HEIGHT/2)
-        local newPlayer = Player(location, player["imageDir"], nil, player["name"], player["button"]:GetProperty("playerIndex"))
+        local newPlayer = Player(nil, player["imageDir"], nil, player["name"], player["button"]:GetProperty("playerIndex"))
         table.insert(newPlayers, newPlayer)
       end
     end

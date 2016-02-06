@@ -12,12 +12,21 @@ local buttons = {}
 local pressed = {}
 local pressFlag
 
+local WINDOW_WIDTH = ORIG_WIDTH
+local WINDOW_HEIGHT = ORIG_HEIGHT
+
 function ButtonSelect:enter(prevState, playersInfo)
   selection = 1
   pressed = {}
 
   players = playersInfo
   numberOfPlayers = #playersInfo
+
+  for i = 1, numberOfPlayers do
+    local location = vector(ORIG_WIDTH/#players*(i-0.5) , ORIG_HEIGHT/2)
+    players[i].pos = location
+    --players[i]:spawn(location)
+  end
 end
 
 function ButtonSelect:draw()
@@ -26,6 +35,10 @@ function ButtonSelect:draw()
   else
     love.graphics.print("All Players Joined! Press ENTER to start game!",10,10)
   end
+
+  love.graphics.push()
+  love.graphics.translate(translation.x, translation.y)
+  love.graphics.scale(scale)
 
   for i=1, numberOfPlayers do
     if pressed[i] then
@@ -36,8 +49,9 @@ function ButtonSelect:draw()
 
     love.graphics.rectangle('fill', WINDOW_WIDTH/numberOfPlayers*(i-0.5) , WINDOW_HEIGHT/2 , 10 , 10)
     love.graphics.setColor(255,255,255,255)
-    
+
     players[i]:draw()
+    love.graphics.pop()
   end
 end
 
