@@ -20,6 +20,7 @@ local players
 local numPlayers
 local selectedPlayer
 local song
+local sfx
 
 CharacterSelect = {}
 
@@ -272,7 +273,10 @@ function CharacterSelect:init()
   self:buildGUI()
 
   song = love.audio.newSource(MUSIC_FOLDER .."/Eric Skiff - Chibi Ninja CC.mp3")
+  song:setVolume(0.7)
   song:setLooping(true)
+
+  sfx = love.audio.newSource(SOUNDS_FOLDER .. "/announcer_choose_fighter.wav", "static")
 end
 
 function CharacterSelect:enter()
@@ -293,6 +297,7 @@ function CharacterSelect:enter()
   end]]
   song:rewind()
   song:play()
+  sfx:play()
 end
 
 function CharacterSelect:draw()

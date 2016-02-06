@@ -11,8 +11,11 @@ local WINDOW_HEIGHT = ORIG_HEIGHT
 --local players
 
 local backgrounds
+local fightSFX, winSFX
 
 function GamePlay:init(prevState, playerList)
+  fightSFX = love.audio.newSource(SOUNDS_FOLDER .. "/announcer_fight.wav", "static")
+  winSFX = love.audio.newSource(SOUNDS_FOLDER .. "/announcer_boss_defeated.wav", "static")
 end
 
 function GamePlay:enter(prevState, playerList)
@@ -48,6 +51,8 @@ function GamePlay:enter(prevState, playerList)
 
   CurrentBoss.songAudio:rewind()
   CurrentBoss.songAudio:play()
+
+  fightSFX:play()
 end
 
 function GamePlay:draw()
@@ -92,6 +97,7 @@ function GamePlay:update(dt)
   end
   if CurrentBoss:isDefeated() then
     CurrentBoss.songAudio:stop()
+    winSFX:play()
 
     if BossNumber < #Bosses then
       BossNumber = BossNumber + 1

@@ -12,9 +12,14 @@ local buttons = {}
 local pressed = {}
 local pressFlag
 local song
+local sfx, hasPlayedSFX
 
 local WINDOW_WIDTH = ORIG_WIDTH
 local WINDOW_HEIGHT = ORIG_HEIGHT
+
+function ButtonSelect:init(prevState, playersInfo, prevSong)
+  sfx = love.audio.newSource(SOUNDS_FOLDER .. "/announcer_ready.wav", "static")
+end
 
 function ButtonSelect:enter(prevState, playersInfo, prevSong)
   selection = 1
@@ -26,8 +31,9 @@ function ButtonSelect:enter(prevState, playersInfo, prevSong)
   for i = 1, numberOfPlayers do
     players[i].pos = vector(ORIG_WIDTH/#players*(i-0.5)-SPRITE_SIZE/2 , ORIG_HEIGHT/2)
   end
-  
+
   song = prevSong
+  hasPlayedSFX = false
 end
 
 function ButtonSelect:draw()
@@ -51,6 +57,13 @@ end
 function ButtonSelect:update(dt)
   for i=1, numberOfPlayers do
     players[i]:update(dt)
+  end
+
+  if selection > numberOfPlayers then
+    if not hasPlayedSFX then
+      sfx:play()
+      hasPlayedSFX = false
+    end
   end
 end
 

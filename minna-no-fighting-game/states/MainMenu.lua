@@ -29,13 +29,18 @@ function MainMenu:init()
   end
 
   song = love.audio.newSource(MUSIC_FOLDER .. "/mainmenu.mp3")
+  song:setVolume(0.55)
   song:setLooping(true)
+
+  titleCall = love.audio.newSource(SOUNDS_FOLDER .. "/announcer_title_0.wav", 'static')
 end
 
 function MainMenu:enter()
   selection = 1
   song:rewind()
   song:play()
+
+  titleCall:play()
 end
 
 function MainMenu:draw()

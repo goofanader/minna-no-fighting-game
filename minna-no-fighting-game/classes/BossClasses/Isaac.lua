@@ -28,6 +28,8 @@ function Isaac:init(minionCount)
   self.items = {}
   self.animation = self.idle
   self.flip = 1
+
+  self.songAudio:setVolume(0.5)
 end
 
 function Isaac:spawn(pos)
