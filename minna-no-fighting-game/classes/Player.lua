@@ -341,7 +341,7 @@ function Player:move_with_collision(dx, dy)
 
   local pushback = 0 --Player Pushback
   for shape, delta in pairs(HC.collisions(self.hitbox)) do
-    if shape.class == 'player' then
+    if shape.class == 'player' or shape.class == 'boss' then
       pushback = pushback + delta.x
     end
   end

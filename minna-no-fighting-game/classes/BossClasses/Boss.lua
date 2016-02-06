@@ -6,6 +6,7 @@ Boss = Class {}
 function Boss:init(hp, minionCount)
   self.alive = false
   self.hp = hp
+  self.maxHP = hp
   self.minionCount = minionCount
   for i=1,minionCount do
     enemies[i] = Enemy(vector(0,Y_POS+love.math.random(12)),'assets/sprites/animal.png')
@@ -28,6 +29,7 @@ function Boss:hit(damage)
   self.hp = self.hp - damage
   if self.hp <= 0 then
     --self:kill()
+    self.hp = 0
   end
 end
 
