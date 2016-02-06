@@ -107,9 +107,14 @@ function GamePlay:update(dt)
       CurrentBoss.songAudio:rewind()
       CurrentBoss.songAudio:play()
     else
+<<<<<<< HEAD
       Gamestate.switch(GameOver, true) --WIN SCREEN
       players = {}
       enemies = {}
+=======
+      --TODO: Win Screen!
+      self:goToMenu()
+>>>>>>> origin/master
     end
   elseif playerHP <= 0 then
     Gamestate.switch(GameOver, false) --LOSE SCREEN
@@ -126,11 +131,25 @@ end
 
 function GamePlay:keyreleased(key, code)
   if key == 'return' then
-    Gamestate.switch(MainMenu)
-    players = {}
-    enemies = {}
+    self:goToMenu()
   end
 end
 
 function GamePlay:keypressed(key, isrepeat)
+end
+
+function GamePlay:goToMenu()
+  CurrentBoss.songAudio:stop()
+
+  for i, player in ipairs(players) do
+    if player.runningSound:isPlaying() then
+      player.runningSound:stop()
+    end
+    if player.hitSound:isPlaying() then
+      player.hitSound:stop()
+    end
+  end
+  players = {}
+  enemies = {}
+  Gamestate.switch(MainMenu)
 end
