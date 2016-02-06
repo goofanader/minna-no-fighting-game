@@ -22,3 +22,9 @@
 
 ## Other
 * CHANGELOG format help: [olivierlacan's Keep a Changelog site](http://keepachangelog.com/)
+
+## Special Thanks
+* Curtis: music finder
+* Scott: video acquirer
+* Cory and friend: music creators
+* All the Minna officers that participated in letting their likeness be used for this game!!

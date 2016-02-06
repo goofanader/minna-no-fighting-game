@@ -12,6 +12,40 @@ require "states/CharacterSelect"
 
 function loadFonts()
   --open_sans_bold = love.graphics.newFont(yui.Theme.open_sans_bold, 14)
+  fightingFont = love.graphics.newImageFont(ASSETS_FOLDER .. "/fonts/3D Font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ.'/,\":()_-?!1234567890$", 5)
+end
+
+function requireLuaFiles(directory)
+  local files = love.filesystem.getDirectoryItems(directory)
+  local badFilenames = {".", ".."}
+
+  for index, file in ipairs(files) do
+    local filename = directory .. "/" .. file
+    local fileExt = split(file, "%.")
+    fileExt = fileExt[#fileExt]
+    local isIgnoringFile = false
+
+    for i = 1, #badFilenames do
+      if file == badFilenames[i] then
+        isIgnoringFile = true
+        break
+      end
+    end
+
+    if not isIgnoringFile then
+      if file:sub(1,1) == "." then
+        isIgnoringFile = true
+      end
+    end
+
+    if not isIgnoringFile then
+      if love.filesystem.isDirectory(filename) then
+        requireLuaFiles(filename)
+      elseif fileExt == "lua" then
+        require(filename:gsub(".lua", ""))
+      end
+    end
+  end
 end
 
 function love.load()
@@ -25,6 +59,8 @@ function love.load()
   love.graphics.setDefaultFilter("nearest", "nearest")
 
   loadFonts()
+  requireLuaFiles(BOSS_CLASS_FOLDER)
+  --love.graphics.setFont(fightingFont)
 
   Gamestate.registerEvents()
   Gamestate.switch(MainMenu)

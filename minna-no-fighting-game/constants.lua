@@ -13,10 +13,13 @@ ANIMAL_CLASS = "ANIMAL"
 CLOSE_RANGE = "CLOSE"
 NO_RANGE = "NONE"
 
+CORRECT_SLASH = love.system.getOS() == "Windows" and "\\" or "/"
+
 ASSETS_FOLDER = "assets"
 BACKGROUNDS_FOLDER = ASSETS_FOLDER .. "/backgrounds"
 SPRITES_FOLDER = ASSETS_FOLDER .. "/sprites"
 BOSSES_FOLDER = SPRITES_FOLDER .. "/bosses"
+BOSS_CLASS_FOLDER = "classes/BossClasses"
 
 CHARACTERS_FOLDER = "characters"
 
@@ -26,6 +29,10 @@ IMAGES_URL = SITE_START .. ".media/images/CREATED_SPRITESHEETS"
 
 function trim(s)
   return s:match'^()%s*$' and '' or s:match'^%s*(.*%S)'
+end
+
+function convertToCorrectSlash(filename)
+  return filename:gsub("/", CORRECT_SLASH)
 end
 
 ---
