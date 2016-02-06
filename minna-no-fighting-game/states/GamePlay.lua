@@ -10,6 +10,20 @@ local WINDOW_WIDTH = ORIG_WIDTH
 local WINDOW_HEIGHT = ORIG_HEIGHT
 --local players
 
+local backgrounds
+
+function GamePlay:init(prevState, playerList)
+  local backgroundsFolder = BACKGROUNDS_FOLDER .. "/Subway/"
+  backgrounds = {}
+
+  backgrounds["bg"] = love.graphics.newImage(backgroundsFolder .. "/bg.png")
+  backgrounds["fg"] = {}
+  backgrounds["fg"]["benches"] = love.graphics.newImage(backgroundsFolder.."/fg_benches.png")
+  backgrounds["fg"]["trees"] = {}
+  backgrounds["fg"]["trees"]["left"] = love.graphics.newImage(backgroundsFolder.."/fg_tree_left.png")
+  backgrounds["fg"]["trees"]["right"] = love.graphics.newImage(backgroundsFolder.."/fg_tree_right.png")
+end
+
 function GamePlay:enter(prevState, playerList)
   players = playerList
   numberOfPlayers = #players
@@ -18,7 +32,7 @@ function GamePlay:enter(prevState, playerList)
   for i=1,numberOfPlayers do
     players[i]:spawn(vector(25 * i, Y_POS + i))
   end
-  
+
   Bosses = {Phyllis(numberOfEnemies),AndrewLee(numberOfEnemies)}
   BossNumber = 1
   CurrentBoss = Bosses[BossNumber]
@@ -35,11 +49,13 @@ function GamePlay:enter(prevState, playerList)
 end
 
 function GamePlay:draw()
-  love.graphics.print("You're playing a game! Press your button!", 10, 10)
+  --love.graphics.print("You're playing a game! Press your button!", 10, 10)
 
   love.graphics.push()
   love.graphics.translate(translation.x, translation.y)
   love.graphics.scale(scale)
+
+  love.graphics.draw(backgrounds["bg"])
 
   for i=1,numberOfPlayers do
     players[i]:draw()
@@ -47,6 +63,10 @@ function GamePlay:draw()
   if CurrentBoss then
     CurrentBoss:draw()
   end
+
+  love.graphics.draw(backgrounds["fg"]["benches"])
+  love.graphics.draw(backgrounds["fg"]["trees"]["left"])
+  love.graphics.draw(backgrounds["fg"]["trees"]["right"])
 
   love.graphics.pop()
 end
@@ -69,7 +89,7 @@ function GamePlay:update(dt)
       enemies = {}
     end
   end
-  
+
 end
 
 function GamePlay:keyreleased(key, code)
