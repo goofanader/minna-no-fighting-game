@@ -11,18 +11,14 @@ local FLINCH_TIME = 0.2 --seconds
 
 function Player:init(pos, imagefilesLocation, button, name, id)
   self.classes = self:getClasses(imagefilesLocation)
+  self.currClass = self.classes[NO_RANGE]
+  self.animation = self.currClass.idle
+  self.pos = pos
   self.button = button
   self.name = name
   self.id = id
-  --[[local g = anim8.newGrid(SPRITE_SIZE,SPRITE_SIZE,self.img:getWidth(),self.img:getHeight())
-  self.running = anim8.newAnimation(g('1-8',1),0.1)
-  self.punch1 = anim8.newAnimation(g('1-8',2),0.02,'pauseAtEnd')
-  self.punch2 = anim8.newAnimation(g('1-8',3),0.02,'pauseAtEnd')
-  self.punch3 = anim8.newAnimation(g('1-8',4,'1-8',5,1,6),0.02,'pauseAtEnd')
-  self.hitstun = anim8.newAnimation(g('2-3',6),0.1)
-  self.idle = anim8.newAnimation(g('4-8',6,'1-7',7),0.1)
-  self.animation = self.idle]]
-  self:spawn(pos)
+  self.lag = 0
+  --self:spawn(pos)
 end
 
 function Player:getClasses(imagesLocation)
@@ -298,15 +294,12 @@ function Player:draw()
     love.graphics.rectangle('fill', self.pos.x, self.pos.y+SPRITE_SIZE+3, self.charge, 3)
     love.graphics.setColor(255,255,255,255)
   end]]
-  if isDrawingHitbox then self.hitbox:draw('line') end
+  if isDrawingHitbox and self.hitbox then self.hitbox:draw('line') end
 
   if isDrawingHitbox and self.punchbox then
     love.graphics.setColor(0,255,0)
     self.punchbox:draw('line')
     love.graphics.setColor(255,255,255)
-  end
-  if self.currentFrame then
-    love.graphics.print(self.currentFrame,self.pos.x,self.pos.y-10)
   end
 
 end
@@ -399,5 +392,15 @@ function Player:hit(damage)
     self.currClass = self.classes[NO_RANGE]
     self.animation = self.currClass.hitstun
     self.lag = FLINCH_TIME
+  end
+end
+
+function Player:selected(bool)
+  if bool then
+    self.currClass = self.classes[CLOSE_RANGE]
+    self.animation = self.currClass.running
+  else
+    self.currClass = self.classes[NO_RANGE]
+    self.animation = self.currClass.idle
   end
 end

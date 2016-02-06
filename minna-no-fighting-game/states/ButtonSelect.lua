@@ -22,7 +22,7 @@ end
 
 function ButtonSelect:draw()
   if selection <= numberOfPlayers then
-    love.graphics.print("Player "..selection..", please press and release your button!",10,10)
+    love.graphics.print(players[selection].name..", please press and release your button!",10,10)
   else
     love.graphics.print("All Players Joined! Press ENTER to start game!",10,10)
   end
@@ -36,10 +36,15 @@ function ButtonSelect:draw()
 
     love.graphics.rectangle('fill', WINDOW_WIDTH/numberOfPlayers*(i-0.5) , WINDOW_HEIGHT/2 , 10 , 10)
     love.graphics.setColor(255,255,255,255)
+    
+    players[i]:draw()
   end
 end
 
 function ButtonSelect:update(dt)
+  for i=1, numberOfPlayers do
+    players[i]:update(dt)
+  end
 end
 
 function ButtonSelect:isButton(otherButton, button, joystick)
@@ -59,6 +64,7 @@ function ButtonSelect:joystickpressed(joystick, button)
       if self:isButton(buttons[i], button, joystick) then
         pressed[i] = true
         pressFlag = true
+        players[i]:selected(true)
       end
     end
   end
@@ -74,6 +80,7 @@ function ButtonSelect:joystickreleased(joystick, button)
       if self:isButton(buttons[i], button, joystick) then
         pressed[i] = false
         pressFlag = true
+        players[i]:selected(false)
         break
       end
     end
@@ -91,6 +98,7 @@ function ButtonSelect:keypressed(key, code)
       if self:isButton(buttons[i], key) then
         pressed[i] = true
         pressFlag = true
+        players[i]:selected(true)
       end
     end
   end
@@ -104,8 +112,6 @@ function ButtonSelect:keyreleased(key, code)
     if lastPressed.type == KEYBOARD and lastPressed.button == 'return' and selection > 1 then
       numberOfPlayers = selection-1
       for i=1, numberOfPlayers do
-        --moved spawn to GamePlay.lua
-        --hitbox creation deleted, part of spawn function instead
         players[i].button = buttons[i]
       end
       numberOfPlayers = selection-1
@@ -125,6 +131,7 @@ function ButtonSelect:keyreleased(key, code)
         if self:isButton(buttons[i], key) then
           pressed[i] = false
           pressFlag = true
+          players[i]:selected(false)
           break
         end
       end
