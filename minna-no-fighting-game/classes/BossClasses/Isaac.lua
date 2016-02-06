@@ -2,28 +2,31 @@ local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
 require "classes/BossClasses/Boss"
-Phyllis = Class {__includes = Boss}
+Isaac = Class {__includes = Boss}
 
 local SPEED = 0.25
-local ATTACK_TIME = 6 --seconds
-local REST_TIME = 2 --seconds
+local ATTACK_TIMER = 6 --seconds
 local SUMMON_COOLDOWN = 5 --seconds
 
-function Phyllis:init(minionCount)
+function Isaac:init(minionCount)
   local HP = 200*minionCount
   Boss.init(self, HP, minionCount)
   
-  self.img = love.graphics.newImage('assets/sprites/bosses/phyllis_douglas/phyllis.png')
+  self.img = love.graphics.newImage('assets/sprites/bosses/isaac_cameron/isaac.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
-  self.running = anim8.newAnimation(g('1-6',2),0.1)
-  self.resting = anim8.newAnimation(g('2-3',1),0.75)
-  self.summoning = anim8.newAnimation(g('4-5',1),0.75)
-  self.animation = self.running
-
+  self.idle = anim8.newAnimation(g('2-3',1),1)
+  self.walking = anim8.newAnimation(g('4-6',1,1,2),0.75)
+  self.pointing = anim8.newAnimation(g('2-3',2),0.75)
+  self.itemImages = {}
+  for i=1,3 do
+    self.itemImages[i]=love.graphics.newImage('assets/sprites/bosses/andrew_lee/slidingImages/' .. i .. '.jpg')
+  end
+  self.items = {}
+  self.animation = self.idle
   self.flip = 1
 end
 
-function Phyllis:spawn(pos)
+function Isaac:spawn(pos)
   self.pos = pos
   self.alive = true
   self.spawned = true
@@ -32,11 +35,11 @@ function Phyllis:spawn(pos)
   self.hitbox.class = 'boss'
   self:faceDirection('left')
   self.summonTimer = 0 --seconds
-  self.attackTimer = love.math.random(ATTACK_TIME)+ATTACK_TIME --seconds
+  self.attackTimer = love.math.random(ATTACK_TIMER)+ATTACK_TIMER --seconds
   self.lag = 0
 end
 
-function Phyllis:draw()
+function Isaac:draw()
   Boss.draw(self)
   if self.alive then
     self.animation:draw(self.img, self.pos.x, self.pos.y)
@@ -47,7 +50,7 @@ function Phyllis:draw()
   end
 end
 
-function Phyllis:update(dt)
+function Isaac:update(dt)
   Boss.update(self, dt)
   
   if not self.alive and not self.spawned then
@@ -61,7 +64,7 @@ function Phyllis:update(dt)
         self:summonMinions()
         self.summonTimer = love.math.random(SUMMON_COOLDOWN)+SUMMON_COOLDOWN
         self.lag = 1.5 --seconds
-        self.animation = self.summoning
+        self.animation = self.pointing
       else
         self:attack(dt)
       end
@@ -72,13 +75,13 @@ function Phyllis:update(dt)
   
 end
 
-function Phyllis:attack(dt)  
+function Isaac:attack(dt)  
   
   self.animation = self.running
   
   local DIST_FROM_EDGE = 50
   
-  self.vel.x = self.flip*SPEED*math.ceil(self.attackTimer/(ATTACK_TIME*2)*8)
+  self.vel.x = self.flip*SPEED*math.ceil(self.attackTimer/(ATTACK_TIMER*2)*8)
   self.pos = self.pos + self.vel
   self.hitbox:move(self.vel.x,self.vel.y)
   
@@ -91,12 +94,12 @@ function Phyllis:attack(dt)
   self.attackTimer = self.attackTimer - dt
   if self.attackTimer < 0 then
     self.lag = love.math.random(REST_TIME)+REST_TIME --seconds
-    self.attackTimer = love.math.random(ATTACK_TIME)+ATTACK_TIME --seconds
+    self.attackTimer = love.math.random(ATTACK_TIMER)+ATTACK_TIMER --seconds
     self.animation = self.resting
   end
 end
 
-function Phyllis:faceDirection(direction)
+function Isaac:faceDirection(direction)
   if direction == 'right' and self.flip == -1 then
     self.running:flipH()
     self.resting:flipH()
