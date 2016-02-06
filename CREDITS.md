@@ -12,7 +12,7 @@
 * trikey
 
 ## Libraries
-* [HardonCollider](http://vrld.github.io/HardonCollider/)
+* [HardonCollider](http://hc.readthedocs.org/en/latest/)
 * [hump](http://hump.readthedocs.org/en/latest/index.html)
 * [anim8](https://github.com/kikito/anim8#anim8)
 * [Spectrum, a JQuery Color Picker](https://bgrins.github.io/spectrum/)
