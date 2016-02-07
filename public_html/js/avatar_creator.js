@@ -231,7 +231,7 @@
                 maxChars = 80;
             var errText = "Name needs to be between " + minChars + "-" + maxChars + " letters.";
 
-            if ($(this).val().length < minChars || $(this).val().length > maxChars)
+            if ($(this).val().trim().length < minChars || $(this).val().trim().length > maxChars)
             {
                 $(this).siblings('.help-block').html(errText);
                 $(this).closest('.form-group').removeClass('has-success').addClass('has-error');
@@ -302,6 +302,9 @@
                     {})
                 };
             }
+
+            var avatarName = $('#avatarName').val().trim();
+            $('#avatarName').val(avatarName);
 
             var input = $("<input>").attr("type", "hidden").attr("name", "characterData").val(JSON.stringify(charData));
             $(this).append($(input));
