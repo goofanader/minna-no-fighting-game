@@ -17,14 +17,14 @@ function Isaac:init(minionCount)
   local monologue = 'Hey there!'
   Boss.init(self, HP, minionCount, name, monologue, MUSIC_FOLDER .. "/YZYX - Neon Genesis Evangelion - Cruel Angel's Thesis (Game Boy version) (Probably Copyrighted).mp3", THE_SILO)
 
-  self.img = love.graphics.newImage('assets/sprites/bosses/isaac_cameron/isaac.png')
+  self.img = love.graphics.newImage(BOSSES_FOLDER .. '/isaac_cameron/isaac.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
   self.idle = anim8.newAnimation(g('2-3',1),0.75)
   self.walking = anim8.newAnimation(g('4-6',1,1,2),0.1)
   self.pointing = anim8.newAnimation(g('2-3',2),0.75)
-  self.itemImages = {love.graphics.newImage('assets/sprites/bosses/isaac_cameron/book1.png'),
-    love.graphics.newImage('assets/sprites/bosses/isaac_cameron/book2.png'),
-    love.graphics.newImage('assets/sprites/bosses/isaac_cameron/drill.png') }
+  self.itemImages = {love.graphics.newImage(BOSSES_FOLDER .. '/isaac_cameron/book1.png'),
+    love.graphics.newImage(BOSSES_FOLDER .. '/isaac_cameron/book2.png'),
+    love.graphics.newImage(BOSSES_FOLDER .. '/isaac_cameron/drill.png') }
   self.items = {}
   self.animation = self.idle
   self.flip = 1

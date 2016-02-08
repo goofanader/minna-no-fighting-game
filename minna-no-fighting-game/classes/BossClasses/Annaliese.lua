@@ -18,7 +18,7 @@ function Annaliese:init(minionCount)
   local monologue = 'Hey there!'
   Boss.init(self, HP, minionCount, name, monologue, nil, THE_SILO)
 
-  self.img = love.graphics.newImage('assets/sprites/bosses/annaliese/annaliese.png')
+  self.img = love.graphics.newImage(BOSSES_FOLDER .. '/annaliese/Annaliese.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
   self.idle = anim8.newAnimation(g('2-3',1),0.75)
   self.moving = anim8.newAnimation(g('4-5',1),0.1)

@@ -21,14 +21,14 @@ function AndrewLee:init(minionCount)
   local name = 'Omega Andrew Lee'
   local monologue = 'Hey there!'
   Boss.init(self, HP, minionCount, name, monologue, BOSSES_FOLDER .. "/andrew_lee/Trammell Starks - Good Times.mp3", SUBWAY)
-  self.idle = love.graphics.newImage('assets/sprites/bosses/andrew_lee/andrew_lee_idle.png')
-  self.hand = love.graphics.newImage('assets/sprites/bosses/andrew_lee/andrew_lee_idle_hand.png')
+  self.idle = love.graphics.newImage(BOSSES_FOLDER .. '/andrew_lee/andrew_lee_idle.png')
+  self.hand = love.graphics.newImage(BOSSES_FOLDER .. '/andrew_lee/andrew_lee_idle_hand.png')
   self.sliderpics = {}
   for i=1,9 do
-    self.sliderpics[i] = love.graphics.newImage('assets/sprites/bosses/andrew_lee/slidingImages/' .. i .. '.jpg')
+    self.sliderpics[i] = love.graphics.newImage(BOSSES_FOLDER .. '/andrew_lee/slidingImages/' .. i .. '.jpg')
   end
   self.sliders = {}
-  self.imageTrail = love.graphics.newImage('assets/sprites/bosses/andrew_lee/imageTrail.png')
+  self.imageTrail = love.graphics.newImage(BOSSES_FOLDER .. '/andrew_lee/imageTrail.png')
 
   self.frame = self.idle
   self.flip = 1

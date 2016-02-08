@@ -18,7 +18,7 @@ function Phyllis:init(minionCount)
   local monologue = 'Hey there!'
   Boss.init(self, HP, minionCount, name, monologue, MUSIC_FOLDER .. "/NoMode - CUPMEN__a_song_for_cup_ramen_ CC.mp3", SUBWAY)
 
-  self.img = love.graphics.newImage('assets/sprites/bosses/phyllis_douglas/phyllis.png')
+  self.img = love.graphics.newImage(BOSSES_FOLDER .. '/phyllis_douglas/phyllis.png')
   local g = anim8.newGrid(BOSS_SIZE,BOSS_SIZE,self.img:getWidth(),self.img:getHeight())
   self.running = anim8.newAnimation(g('1-6',2),0.1)
   self.resting = anim8.newAnimation(g('2-3',1),0.75)
