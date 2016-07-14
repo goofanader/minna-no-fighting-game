@@ -9,12 +9,12 @@ AndrewLee = Class {
 
 local HORIZ_SPEED = 1
 local VERT_SPEED = 0.5
-local SPECIAL_COOLDOWN = 10 --seconds
+local SPECIAL_COOLDOWN = 5 --seconds
 local SUMMON_COOLDOWN = 5 --seconds
 local SLIDER_COOLDOWN = 0.25
 local SLIDER_SPEED = 15
 local SLIDER_SCALE = 0.75 --How big the images are
-local SLIDER_DAMAGE = 2
+local SLIDER_DAMAGE = 4
 
 function AndrewLee:init(minionCount)
   local HP = 200*minionCount

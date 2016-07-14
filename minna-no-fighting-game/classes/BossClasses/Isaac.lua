@@ -2,7 +2,7 @@ local Class = require "libraries/hump.class"
 local anim8 = require "libraries/anim8"
 
 require "classes/BossClasses/Boss"
-Isaac = Class {__includes = Boss}
+Isaac = Class {__includes = Boss, itemUpSFX = love.sound.newSoundData(BOSSES_FOLDER .. "/isaac_cameron/item_float_up.wav"), itemThrownSFX = love.sound.newSoundData(BOSSES_FOLDER .. "/isaac_cameron/throw_item.wav")}
 
 local SPEED = 0.5
 local ATTACK_COOLDOWN = 5 --seconds
@@ -101,6 +101,7 @@ function Isaac:update(dt)
       item.vel = (players[love.math.random(numberOfPlayers)].pos - item.pos):normalized()*ITEM_SPEED
       --item.omega = (love.math.random()-0.5)/10
       item.fired = true
+      local sound = love.audio.newSource(Isaac.itemThrownSFX, "static")
     end
 
     item.pos = item.pos + item.vel
@@ -172,6 +173,9 @@ function Isaac:attack()
     item.targetsHit = {}
     table.insert(self.items,item)
   end
+
+  local sound = love.audio.newSource(Isaac.itemUpSFX, "static")
+  sound:play()
 end
 
 function Isaac:faceDirection(direction)
